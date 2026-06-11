@@ -2,7 +2,7 @@
   "template_id": "local_llm",
   "display_name": "本地大模型",
   "category": "AI",
-  "description": "本地大模型入门环境，优先选择 Ollama 或 LM Studio，并按内存/显存选择模型。",
+  "description": "本地大模型入门环境，优先选择 Ollama 或 LM Studio，并按内存和显存选择模型。",
   "requirements": {
     "min_ram_gb": 16,
     "recommended_ram_gb": 32,
@@ -21,14 +21,15 @@
     {"app_id": "git", "required": false, "reason": "获取开源工具和示例项目时有用。"}
   ],
   "config_recommendations": [
-    "16GB 内存建议 7B Q4/Q5 量化模型。",
+    "16GB 内存建议从 7B Q4/Q5 量化模型开始。",
     "32GB 内存可以尝试更大上下文或更大模型。",
-    "显存越大，本地模型体验越好。",
-    "新手优先 LM Studio 或 Ollama。"
+    "显存越大，本地模型体验通常越好。",
+    "新手优先选择 LM Studio 或 Ollama。"
   ],
   "risk_warnings": [
-    "不建议低内存电脑直接跑 32B/70B 模型。",
-    "长上下文会显著增加内存/显存压力。"
+    "不建议低内存电脑直接运行 32B/70B 模型。",
+    "长上下文会显著增加内存和显存压力。",
+    "模型文件可能占用大量磁盘空间。"
   ],
   "not_recommended": [
     "16GB 以下内存运行大模型或长上下文。",

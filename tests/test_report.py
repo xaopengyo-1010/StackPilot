@@ -4,7 +4,7 @@ from stackpilot.report import generate_report
 from tests.test_recommender import sample_profile
 
 
-def test_report_generates_markdown_and_json(tmp_path):
+def test_report_generates_chinese_markdown_and_structured_json(tmp_path):
     md_path, json_path, recommendation = generate_report(
         "ai_beginner",
         output_dir=tmp_path,
@@ -16,13 +16,24 @@ def test_report_generates_markdown_and_json(tmp_path):
     assert recommendation.template_id == "ai_beginner"
 
     markdown = md_path.read_text(encoding="utf-8")
-    assert "# StackPilot Environment Blueprint Report" in markdown
-    assert "Display name: AI 入门体验" in markdown
-    assert "## 10. Transparency Notice" in markdown
-    assert "StackPilot v0.1 does not download" in markdown
-    assert "不会自动下载" in markdown
+    assert "# StackPilot 应用推荐报告" in markdown
+    assert "电脑配置摘要" in markdown
+    assert "适配度评分" in markdown
+    assert "推荐应用" in markdown
+    assert "规则判断与风险提示" in markdown
+    assert "StackPilot 当前版本只生成本地推荐报告" in markdown
+    assert "None" not in markdown
+    assert "traceback" not in markdown.casefold()
 
     payload = json.loads(json_path.read_text(encoding="utf-8"))
-    assert payload["recommendation"]["template_id"] == "ai_beginner"
-    assert payload["recommendation"]["display_name"] == "AI 入门体验"
-    assert payload["profile"]["os_name"] == "Windows"
+    assert payload["hardware_profile"]["os_name"] == "Windows"
+    assert payload["goal"]["id"] == "ai_beginner"
+    assert payload["goal"]["name"] == "AI 入门体验"
+    assert isinstance(payload["suitability_score"], int | float)
+    assert "required_apps" in payload
+    assert "optional_apps" in payload
+    assert "findings" in payload
+    assert "warnings" in payload
+    assert "not_recommended" in payload
+    assert "next_steps" in payload
+    assert payload["generated_at"]

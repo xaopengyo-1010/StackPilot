@@ -16,19 +16,19 @@
     {"app_id": "chatgpt", "required": true, "reason": "通用 AI 对话、写作和学习工具。"},
     {"app_id": "claude", "required": true, "reason": "适合长文本阅读、写作和分析。"},
     {"app_id": "gemini", "required": true, "reason": "Google AI 工具，适合搜索、文档和多模态体验。"},
-    {"app_id": "perplexity", "required": false, "reason": "带来源的 AI 搜索工具。"},
+    {"app_id": "perplexity", "required": false, "reason": "带来源引用的 AI 搜索工具。"},
     {"app_id": "poe", "required": false, "reason": "聚合多种模型的体验入口。"},
     {"app_id": "ollama", "required": false, "reason": "配置足够时可尝试本地模型。"},
     {"app_id": "lm_studio", "required": false, "reason": "配置足够时可用桌面界面尝试本地模型。"}
   ],
   "config_recommendations": [
-    "普通用户优先使用网页 AI。",
-    "本地模型需要看内存和显存。",
-    "如果电脑配置较低，不建议直接跑大模型。",
+    "普通用户优先使用网页 AI 工具。",
+    "本地模型需要重点关注内存、显存和磁盘空间。",
+    "如果电脑配置较低，不建议直接运行大模型。",
     "先从网页工具学习提示词和工作流。"
   ],
   "risk_warnings": [
-    "网页 AI 账号和隐私设置需要用户自行确认。",
+    "网页 AI 账号、同步和隐私设置需要用户自行确认。",
     "本地模型文件可能占用大量磁盘空间。"
   ],
   "not_recommended": [

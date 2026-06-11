@@ -3,602 +3,602 @@
     {
       "app_id": "vscode",
       "name": "VS Code",
-      "category": "Coding",
+      "category": "开发",
       "official_source": "https://code.visualstudio.com/",
-      "install_methods": ["Manual install from official website or package manager"],
-      "description": "General-purpose code editor.",
-      "config_notes": ["Install only the extensions you need for the selected workflow."],
-      "risk_notes": ["Too many extensions can slow startup or conflict with each other."]
+      "install_methods": ["从官方网站或包管理器手动安装"],
+      "description": "通用代码编辑器。",
+      "config_notes": ["只安装当前工作流真正需要的扩展。"],
+      "risk_notes": ["扩展过多可能拖慢启动速度或相互冲突。"]
     },
     {
       "app_id": "git",
       "name": "Git",
-      "category": "Coding",
+      "category": "开发",
       "official_source": "https://git-scm.com/",
-      "install_methods": ["Manual install from official website or package manager"],
-      "description": "Distributed version control system.",
-      "config_notes": ["Configure user name, email, credential manager, and default branch policy."],
-      "risk_notes": ["Only clone repositories you trust and review scripts before running them."]
+      "install_methods": ["从官方网站或包管理器手动安装"],
+      "description": "分布式版本控制工具。",
+      "config_notes": ["配置用户名、邮箱、凭据管理器和默认分支策略。"],
+      "risk_notes": ["只克隆可信仓库，运行脚本前先阅读内容。"]
     },
     {
       "app_id": "python",
       "name": "Python",
-      "category": "Coding",
+      "category": "开发",
       "official_source": "https://www.python.org/",
-      "install_methods": ["Manual install from official website, Microsoft Store, pyenv, or package manager"],
-      "description": "Python runtime for development and automation.",
-      "config_notes": ["Use virtual environments per project to avoid dependency conflicts."],
-      "risk_notes": ["Avoid installing packages globally unless you understand the impact."]
+      "install_methods": ["从官方网站、Microsoft Store、pyenv 或包管理器手动安装"],
+      "description": "用于开发、脚本和自动化的 Python 运行时。",
+      "config_notes": ["每个项目优先使用独立虚拟环境，避免依赖冲突。"],
+      "risk_notes": ["不了解影响时，不建议把包直接安装到全局环境。"]
     },
     {
       "app_id": "nodejs",
       "name": "Node.js",
-      "category": "Coding",
+      "category": "开发",
       "official_source": "https://nodejs.org/",
-      "install_methods": ["Manual install from official website, nvm, fnm, or package manager"],
-      "description": "JavaScript runtime for frontend and tooling workflows.",
-      "config_notes": ["Prefer an LTS release for starter environments."],
-      "risk_notes": ["Project dependency scripts should be reviewed before execution."]
+      "install_methods": ["从官方网站、nvm、fnm 或包管理器手动安装"],
+      "description": "前端和工具链常用的 JavaScript 运行时。",
+      "config_notes": ["入门环境优先选择 LTS 版本。"],
+      "risk_notes": ["执行项目依赖脚本前应先确认来源可信。"]
     },
     {
       "app_id": "pnpm",
       "name": "pnpm",
-      "category": "Coding",
+      "category": "开发",
       "official_source": "https://pnpm.io/",
-      "install_methods": ["Manual install using official pnpm instructions"],
-      "description": "Fast disk-efficient JavaScript package manager.",
-      "config_notes": ["Enable Corepack if your Node.js workflow uses it."],
-      "risk_notes": ["Lockfiles should be committed for reproducible installs."]
+      "install_methods": ["按 pnpm 官方说明手动安装"],
+      "description": "速度快、节省磁盘空间的 JavaScript 包管理器。",
+      "config_notes": ["如果 Node.js 工作流需要，可以启用 Corepack。"],
+      "risk_notes": ["提交 lockfile 才更容易复现安装结果。"]
     },
     {
       "app_id": "docker_desktop",
       "name": "Docker Desktop",
-      "category": "Coding",
+      "category": "开发",
       "official_source": "https://www.docker.com/products/docker-desktop/",
-      "install_methods": ["Manual install from Docker official website"],
-      "description": "Container runtime and desktop management UI.",
-      "config_notes": ["Allocate conservative CPU, RAM, and disk limits on smaller PCs."],
-      "risk_notes": ["Containers consume disk and memory; review images before running them."]
+      "install_methods": ["从 Docker 官方网站手动安装"],
+      "description": "容器运行时和桌面管理界面。",
+      "config_notes": ["小内存电脑应保守设置 CPU、内存和磁盘占用上限。"],
+      "risk_notes": ["容器会消耗磁盘和内存，运行镜像前应确认来源。"]
     },
     {
       "app_id": "wsl2_ubuntu",
       "name": "WSL2 Ubuntu",
-      "category": "Coding",
+      "category": "开发",
       "official_source": "https://learn.microsoft.com/windows/wsl/",
-      "install_methods": ["Manual setup using official Microsoft WSL documentation"],
-      "description": "Ubuntu Linux environment on Windows through WSL2.",
-      "config_notes": ["Use WSL2 for Linux-native developer tooling when needed."],
-      "risk_notes": ["WSL setup changes Windows optional features and should be reviewed manually."]
+      "install_methods": ["按 Microsoft 官方 WSL 文档手动配置"],
+      "description": "Windows 上通过 WSL2 运行的 Ubuntu Linux 环境。",
+      "config_notes": ["需要 Linux 原生开发工具时再启用 WSL2。"],
+      "risk_notes": ["WSL 配置会涉及 Windows 可选功能，应手动确认后再操作。"]
     },
     {
       "app_id": "windows_terminal",
       "name": "Windows Terminal",
-      "category": "Coding",
+      "category": "开发",
       "official_source": "https://github.com/microsoft/terminal",
-      "install_methods": ["Manual install from Microsoft Store or official GitHub releases"],
-      "description": "Modern terminal application for Windows shells.",
-      "config_notes": ["Pin commonly used shells such as PowerShell, Command Prompt, and WSL."],
-      "risk_notes": ["Shell profiles can run startup scripts; keep them simple and trusted."]
+      "install_methods": ["从 Microsoft Store 或官方 GitHub Release 手动安装"],
+      "description": "Windows 上的现代终端应用。",
+      "config_notes": ["可固定 PowerShell、命令提示符和 WSL 等常用 shell。"],
+      "risk_notes": ["Shell 配置文件可能执行启动脚本，保持简单可信。"]
     },
     {
       "app_id": "cursor",
       "name": "Cursor",
-      "category": "Vibe Coding",
+      "category": "AI 编程",
       "official_source": "https://www.cursor.com/",
-      "install_methods": ["Manual install from official website"],
-      "description": "AI-focused code editor.",
-      "config_notes": ["Configure model provider, privacy settings, and repository indexing intentionally."],
-      "risk_notes": ["Review privacy and data-sharing settings before use."]
+      "install_methods": ["从官方网站手动安装"],
+      "description": "面向 AI 编程的代码编辑器。",
+      "config_notes": ["认真配置模型提供方、隐私设置和仓库索引范围。"],
+      "risk_notes": ["使用前先检查隐私和数据共享设置。"]
     },
     {
       "app_id": "codex_cli",
       "name": "Codex CLI",
-      "category": "Vibe Coding",
-      "official_source": "OpenAI Codex CLI official documentation",
-      "install_methods": ["Manual install using official documentation"],
-      "description": "Command-line coding assistant workflow tool.",
-      "config_notes": ["Use project-level instructions and review generated diffs."],
-      "risk_notes": ["Do not run generated commands blindly."]
+      "category": "AI 编程",
+      "official_source": "OpenAI Codex CLI 官方文档",
+      "install_methods": ["按官方文档手动安装"],
+      "description": "面向命令行工作流的 AI 编程助手。",
+      "config_notes": ["使用项目级说明文件，并认真审查生成的 diff。"],
+      "risk_notes": ["不要盲目运行 AI 生成的命令。"]
     },
     {
       "app_id": "continue",
       "name": "Continue",
-      "category": "Vibe Coding",
+      "category": "AI 编程",
       "official_source": "https://www.continue.dev/",
-      "install_methods": ["Manual install from official extension marketplace or website"],
-      "description": "Open-source AI coding assistant extension.",
-      "config_notes": ["Configure model endpoints and repository context carefully."],
-      "risk_notes": ["Review what code context is sent to external services."]
+      "install_methods": ["从官方扩展市场或官方网站手动安装"],
+      "description": "开源 AI 编程助手扩展。",
+      "config_notes": ["谨慎配置模型端点和仓库上下文。"],
+      "risk_notes": ["确认哪些代码上下文会发送到外部服务。"]
     },
     {
       "app_id": "github_copilot",
       "name": "GitHub Copilot",
-      "category": "Vibe Coding",
+      "category": "AI 编程",
       "official_source": "https://github.com/features/copilot",
-      "install_methods": ["Manual install from official editor extension marketplace"],
-      "description": "AI coding assistant from GitHub.",
-      "config_notes": ["Review organization policy and editor settings."],
-      "risk_notes": ["Generated code must be reviewed and tested."]
+      "install_methods": ["从官方编辑器扩展市场手动安装"],
+      "description": "GitHub 提供的 AI 编程助手。",
+      "config_notes": ["确认组织策略和编辑器设置。"],
+      "risk_notes": ["生成代码仍然需要人工审查和测试。"]
     },
     {
       "app_id": "browser",
-      "name": "Browser",
+      "name": "浏览器",
       "category": "AI",
-      "official_source": "Use an official browser source such as Chrome, Edge, Firefox, or Safari.",
-      "install_methods": ["Use the system browser or install manually from an official source"],
-      "description": "General web browser for AI tools, office apps, documentation, and downloads.",
-      "config_notes": ["Keep the browser updated and use separate profiles for work and personal accounts when helpful."],
-      "risk_notes": ["Review account, sync, extension, and privacy settings."]
+      "official_source": "使用 Chrome、Edge、Firefox 或 Safari 等官方来源。",
+      "install_methods": ["使用系统浏览器，或从官方来源手动安装"],
+      "description": "访问 AI 工具、办公应用、文档和下载页面的基础入口。",
+      "config_notes": ["保持浏览器更新，必要时为工作和个人账号使用不同配置文件。"],
+      "risk_notes": ["检查账号同步、扩展和隐私设置。"]
     },
     {
       "app_id": "chatgpt",
       "name": "ChatGPT",
       "category": "AI",
       "official_source": "https://chatgpt.com/",
-      "install_methods": ["Use the official web app or official desktop app"],
-      "description": "General AI assistant for conversation, writing, learning, and workflows.",
-      "config_notes": ["Review memory, privacy, and data controls before using sensitive content."],
-      "risk_notes": ["AI answers can be wrong; verify important outputs."]
+      "install_methods": ["使用官方网页应用或官方桌面应用"],
+      "description": "用于对话、写作、学习和工作流辅助的通用 AI 助手。",
+      "config_notes": ["处理敏感内容前先检查记忆、隐私和数据控制设置。"],
+      "risk_notes": ["AI 回答可能出错，重要内容需要核验。"]
     },
     {
       "app_id": "claude",
       "name": "Claude",
       "category": "AI",
       "official_source": "https://claude.ai/",
-      "install_methods": ["Use the official web app or official desktop app"],
-      "description": "AI assistant commonly used for long-form reading, writing, and analysis.",
-      "config_notes": ["Use project or chat organization to separate different work contexts."],
-      "risk_notes": ["Review privacy settings before uploading documents."]
+      "install_methods": ["使用官方网页应用或官方桌面应用"],
+      "description": "常用于长文阅读、写作和分析的 AI 助手。",
+      "config_notes": ["使用项目或对话组织不同工作上下文。"],
+      "risk_notes": ["上传文档前先确认隐私设置。"]
     },
     {
       "app_id": "gemini",
       "name": "Gemini",
       "category": "AI",
       "official_source": "https://gemini.google.com/",
-      "install_methods": ["Use the official web app"],
-      "description": "Google AI assistant for web, productivity, and multimodal workflows.",
-      "config_notes": ["Check account and workspace data settings before use."],
-      "risk_notes": ["Generated content should be verified for accuracy."]
+      "install_methods": ["使用官方网页应用"],
+      "description": "Google 的 AI 助手，适合搜索、生产力和多模态体验。",
+      "config_notes": ["使用前检查账号和工作区数据设置。"],
+      "risk_notes": ["生成内容应核验准确性。"]
     },
     {
       "app_id": "perplexity",
       "name": "Perplexity",
       "category": "AI",
       "official_source": "https://www.perplexity.ai/",
-      "install_methods": ["Use the official web app"],
-      "description": "AI search and answer tool with cited sources.",
-      "config_notes": ["Open cited sources for important claims."],
-      "risk_notes": ["Citations can still be incomplete or misinterpreted."]
+      "install_methods": ["使用官方网页应用"],
+      "description": "带引用来源的 AI 搜索和问答工具。",
+      "config_notes": ["重要结论应打开引用来源继续核对。"],
+      "risk_notes": ["引用仍可能不完整或被误解。"]
     },
     {
       "app_id": "poe",
       "name": "Poe",
       "category": "AI",
       "official_source": "https://poe.com/",
-      "install_methods": ["Use the official web app or official mobile app"],
-      "description": "Multi-model AI chat platform.",
-      "config_notes": ["Compare model behavior with simple test prompts before relying on it."],
-      "risk_notes": ["Review each model's data and usage terms."]
+      "install_methods": ["使用官方网页应用或官方移动应用"],
+      "description": "聚合多种模型的 AI 聊天平台。",
+      "config_notes": ["正式依赖前，用简单提示词比较不同模型表现。"],
+      "risk_notes": ["注意不同模型各自的数据和使用条款。"]
     },
     {
       "app_id": "comfyui",
       "name": "ComfyUI",
       "category": "AI",
       "official_source": "https://github.com/comfyanonymous/ComfyUI",
-      "install_methods": ["Manual install from official repository instructions"],
-      "description": "Node-based local AI image generation workflow tool.",
-      "config_notes": ["Keep models on an SSD and separate Python environments per AI tool."],
-      "risk_notes": ["Large model files consume significant disk space and VRAM."]
+      "install_methods": ["按官方仓库说明手动安装"],
+      "description": "节点式本地 AI 图像生成工作流工具。",
+      "config_notes": ["模型建议放在 SSD，并为不同 AI 工具隔离 Python 环境。"],
+      "risk_notes": ["大模型文件会明显占用磁盘空间和显存。"]
     },
     {
       "app_id": "cuda_pytorch_note",
-      "name": "CUDA/PyTorch note",
+      "name": "CUDA/PyTorch 兼容提醒",
       "category": "AI",
       "official_source": "https://pytorch.org/get-started/locally/",
-      "install_methods": ["Do not install automatically; review official CUDA/PyTorch compatibility guidance"],
-      "description": "Compatibility note for matching GPU driver, CUDA runtime, and PyTorch builds.",
-      "config_notes": ["Use the official PyTorch selector and ComfyUI documentation before installing packages."],
-      "risk_notes": ["Wrong CUDA/PyTorch combinations can break local AI environments."]
+      "install_methods": ["不要自动安装；先查看官方 CUDA/PyTorch 兼容说明"],
+      "description": "用于提醒显卡驱动、CUDA 运行时和 PyTorch 构建版本需要匹配。",
+      "config_notes": ["安装包前先使用官方 PyTorch 选择器和 ComfyUI 文档确认版本。"],
+      "risk_notes": ["错误的 CUDA/PyTorch 组合可能导致本地 AI 环境无法运行。"]
     },
     {
       "app_id": "ollama",
       "name": "Ollama",
       "category": "AI",
       "official_source": "https://ollama.com/",
-      "install_methods": ["Manual install from official website"],
-      "description": "Local model runner for supported LLMs.",
-      "config_notes": ["Start with smaller models on systems with limited RAM or VRAM."],
-      "risk_notes": ["Model files can be large and may run slowly on low-memory machines."]
+      "install_methods": ["从官方网站手动安装"],
+      "description": "用于运行受支持本地大模型的工具。",
+      "config_notes": ["内存或显存有限时先从小模型开始。"],
+      "risk_notes": ["模型文件可能很大，低内存电脑运行会很慢。"]
     },
     {
       "app_id": "lm_studio",
       "name": "LM Studio",
       "category": "AI",
       "official_source": "https://lmstudio.ai/",
-      "install_methods": ["Manual install from official website"],
-      "description": "Desktop application for local LLM experimentation.",
-      "config_notes": ["Choose quantized models that fit available RAM and VRAM."],
-      "risk_notes": ["Large models can make the system unresponsive on underpowered PCs."]
+      "install_methods": ["从官方网站手动安装"],
+      "description": "用于本地大模型实验的桌面应用。",
+      "config_notes": ["选择适合当前内存和显存的量化模型。"],
+      "risk_notes": ["过大的模型可能让低配电脑卡顿或无响应。"]
     },
     {
       "app_id": "llama_cpp",
       "name": "llama.cpp",
       "category": "AI",
       "official_source": "https://github.com/ggml-org/llama.cpp",
-      "install_methods": ["Manual setup from official repository releases or build instructions"],
-      "description": "Local inference project for GGUF language models.",
-      "config_notes": ["Use prebuilt binaries when available; build from source only when needed."],
-      "risk_notes": ["Build options and model formats can be confusing for beginners."]
+      "install_methods": ["从官方仓库 Release 或构建说明手动配置"],
+      "description": "用于 GGUF 语言模型本地推理的项目。",
+      "config_notes": ["优先使用可用的预编译版本，确有需要再从源码构建。"],
+      "risk_notes": ["构建选项和模型格式对新手可能比较复杂。"]
     },
     {
       "app_id": "open_webui",
       "name": "Open WebUI",
       "category": "AI",
       "official_source": "https://github.com/open-webui/open-webui",
-      "install_methods": ["Manual setup from official documentation"],
-      "description": "Web interface for local model runners such as Ollama.",
-      "config_notes": ["Run only on trusted local networks unless you understand authentication and exposure risks."],
-      "risk_notes": ["Misconfigured services can expose local model endpoints."]
+      "install_methods": ["按官方文档手动配置"],
+      "description": "为 Ollama 等本地模型运行器提供网页界面。",
+      "config_notes": ["除非理解认证和暴露风险，否则只在可信本地网络使用。"],
+      "risk_notes": ["配置不当可能暴露本地模型服务。"]
     },
     {
       "app_id": "anythingllm",
       "name": "AnythingLLM",
       "category": "AI",
       "official_source": "https://anythingllm.com/",
-      "install_methods": ["Manual install from official website or official repository"],
-      "description": "Local or self-hosted workspace-style LLM and knowledge base tool.",
-      "config_notes": ["Keep document workspaces scoped and review storage locations."],
-      "risk_notes": ["Sensitive documents should not be indexed without understanding storage and privacy settings."]
+      "install_methods": ["从官方网站或官方仓库手动安装"],
+      "description": "本地或自托管的工作区式 LLM 与知识库工具。",
+      "config_notes": ["为不同资料建立清晰工作区，并确认存储位置。"],
+      "risk_notes": ["不了解存储和隐私设置前，不要索引敏感文档。"]
     },
     {
       "app_id": "ffmpeg",
       "name": "FFmpeg",
-      "category": "AI",
+      "category": "媒体",
       "official_source": "https://ffmpeg.org/",
-      "install_methods": ["Manual install from official builds or package manager"],
-      "description": "Media processing toolkit.",
-      "config_notes": ["Keep FFmpeg on PATH only if required by your workflow."],
-      "risk_notes": ["Complex command lines can overwrite files if used carelessly."]
+      "install_methods": ["从官方构建或包管理器手动安装"],
+      "description": "媒体处理工具集。",
+      "config_notes": ["只有工作流需要时再加入 PATH。"],
+      "risk_notes": ["复杂命令如果写错参数，可能覆盖已有文件。"]
     },
     {
       "app_id": "prism_launcher",
       "name": "Prism Launcher",
       "category": "Minecraft",
       "official_source": "https://prismlauncher.org/",
-      "install_methods": ["Manual install from official website"],
-      "description": "Minecraft launcher with instance and modpack management.",
-      "config_notes": ["Use separate instances for shader, modded, and vanilla profiles."],
-      "risk_notes": ["Only install mods from trusted sources."]
+      "install_methods": ["从官方网站手动安装"],
+      "description": "支持实例和整合包管理的 Minecraft 启动器。",
+      "config_notes": ["为光影、整合包和原版分别创建实例。"],
+      "risk_notes": ["只从可信来源安装模组。"]
     },
     {
       "app_id": "fabric",
       "name": "Fabric",
       "category": "Minecraft",
       "official_source": "https://fabricmc.net/",
-      "install_methods": ["Manual setup through Fabric official installer or launcher integration"],
-      "description": "Lightweight Minecraft mod loader.",
-      "config_notes": ["Match Fabric loader and mod versions to the Minecraft version."],
-      "risk_notes": ["Version mismatch can prevent Minecraft from launching."]
+      "install_methods": ["通过 Fabric 官方安装器或启动器集成手动配置"],
+      "description": "轻量 Minecraft 模组加载器。",
+      "config_notes": ["Fabric Loader、模组和 Minecraft 版本必须匹配。"],
+      "risk_notes": ["版本不匹配可能导致游戏无法启动。"]
     },
     {
       "app_id": "iris",
       "name": "Iris Shaders",
       "category": "Minecraft",
       "official_source": "https://irisshaders.dev/",
-      "install_methods": ["Manual install from official source or mod platform"],
-      "description": "Shader loader for modern Minecraft.",
-      "config_notes": ["Pair with Sodium for performance."],
-      "risk_notes": ["Shader presets can heavily impact frame rate."]
+      "install_methods": ["从官方来源或模组平台手动安装"],
+      "description": "现代 Minecraft 光影加载器。",
+      "config_notes": ["通常与 Sodium 搭配以改善性能。"],
+      "risk_notes": ["光影预设可能显著影响帧率。"]
     },
     {
       "app_id": "sodium",
       "name": "Sodium",
       "category": "Minecraft",
       "official_source": "https://modrinth.com/mod/sodium",
-      "install_methods": ["Manual install from Modrinth or official project page"],
-      "description": "Minecraft rendering performance mod.",
-      "config_notes": ["Use as a base for performance-sensitive shader setups."],
-      "risk_notes": ["Check compatibility with other rendering mods."]
+      "install_methods": ["从 Modrinth 或官方项目页手动安装"],
+      "description": "Minecraft 渲染性能优化模组。",
+      "config_notes": ["适合作为性能敏感光影配置的基础。"],
+      "risk_notes": ["需要检查与其他渲染模组的兼容性。"]
     },
     {
       "app_id": "lithium",
       "name": "Lithium",
       "category": "Minecraft",
       "official_source": "https://modrinth.com/mod/lithium",
-      "install_methods": ["Manual install from Modrinth or official project page"],
-      "description": "Minecraft game logic optimization mod.",
-      "config_notes": ["Keep mod versions aligned with your loader version."],
-      "risk_notes": ["Server and client mod compatibility should be checked."]
+      "install_methods": ["从 Modrinth 或官方项目页手动安装"],
+      "description": "Minecraft 游戏逻辑优化模组。",
+      "config_notes": ["保持模组版本与加载器版本一致。"],
+      "risk_notes": ["需要检查服务端和客户端模组兼容性。"]
     },
     {
       "app_id": "ferritecore",
       "name": "FerriteCore",
       "category": "Minecraft",
       "official_source": "https://modrinth.com/mod/ferrite-core",
-      "install_methods": ["Manual install from Modrinth or official project page"],
-      "description": "Minecraft memory optimization mod.",
-      "config_notes": ["Useful when running large modpacks on limited RAM."],
-      "risk_notes": ["Check compatibility notes for each Minecraft version."]
+      "install_methods": ["从 Modrinth 或官方项目页手动安装"],
+      "description": "Minecraft 内存优化模组。",
+      "config_notes": ["运行大型整合包且内存有限时比较有用。"],
+      "risk_notes": ["不同 Minecraft 版本需要查看兼容说明。"]
     },
     {
       "app_id": "distant_horizons",
       "name": "Distant Horizons",
       "category": "Minecraft",
       "official_source": "https://modrinth.com/mod/distanthorizons",
-      "install_methods": ["Manual install from Modrinth or official project page"],
-      "description": "Minecraft far-distance terrain rendering mod.",
-      "config_notes": ["Increase settings gradually and watch memory use."],
-      "risk_notes": ["High settings can consume substantial CPU, RAM, disk, and GPU resources."]
+      "install_methods": ["从 Modrinth 或官方项目页手动安装"],
+      "description": "Minecraft 远距离地形渲染模组。",
+      "config_notes": ["逐步提高设置，并观察内存占用。"],
+      "risk_notes": ["高设置会明显消耗 CPU、内存、磁盘和显卡资源。"]
     },
     {
       "app_id": "modrinth_app",
       "name": "Modrinth App",
       "category": "Minecraft",
       "official_source": "https://modrinth.com/app",
-      "install_methods": ["Manual install from official website"],
-      "description": "Minecraft mod and modpack manager.",
-      "config_notes": ["Use separate profiles for experiments."],
-      "risk_notes": ["Review mod permissions and sources."]
+      "install_methods": ["从官方网站手动安装"],
+      "description": "Minecraft 模组和整合包管理工具。",
+      "config_notes": ["为实验内容使用独立配置文件。"],
+      "risk_notes": ["检查模组权限和来源。"]
     },
     {
       "app_id": "steam",
       "name": "Steam",
-      "category": "Gaming",
+      "category": "游戏",
       "official_source": "https://store.steampowered.com/about/",
-      "install_methods": ["Manual install from official website"],
-      "description": "PC game store and library client.",
-      "config_notes": ["Place large game libraries on a disk with enough free space."],
-      "risk_notes": ["Downloads and shader caches can consume significant disk space."]
+      "install_methods": ["从官方网站手动安装"],
+      "description": "PC 游戏商店和游戏库客户端。",
+      "config_notes": ["大型游戏库应放在剩余空间充足的磁盘。"],
+      "risk_notes": ["游戏下载和着色器缓存会占用大量磁盘空间。"]
     },
     {
       "app_id": "epic_games_launcher",
       "name": "Epic Games Launcher",
-      "category": "Gaming",
+      "category": "游戏",
       "official_source": "https://store.epicgames.com/download",
-      "install_methods": ["Manual install from official website"],
-      "description": "PC game store and launcher.",
-      "config_notes": ["Choose library locations intentionally."],
-      "risk_notes": ["Background launchers can consume startup resources."]
+      "install_methods": ["从官方网站手动安装"],
+      "description": "Epic 游戏商店和启动器。",
+      "config_notes": ["认真选择游戏库位置。"],
+      "risk_notes": ["后台启动器会占用开机和后台资源。"]
     },
     {
       "app_id": "nvidia_app",
       "name": "NVIDIA App",
-      "category": "Gaming",
+      "category": "游戏",
       "official_source": "https://www.nvidia.com/software/nvidia-app/",
-      "install_methods": ["Manual install from NVIDIA official website"],
-      "description": "NVIDIA driver and settings companion app.",
-      "config_notes": ["Use official driver channels and avoid unnecessary overlays."],
-      "risk_notes": ["Driver updates should be reviewed for your hardware and games."]
+      "install_methods": ["从 NVIDIA 官方网站手动安装"],
+      "description": "NVIDIA 驱动和设置管理工具。",
+      "config_notes": ["使用官方驱动渠道，并按需关闭不必要的 overlay。"],
+      "risk_notes": ["驱动更新前应确认适合自己的硬件和游戏。"]
     },
     {
       "app_id": "msi_afterburner",
       "name": "MSI Afterburner",
-      "category": "Gaming",
+      "category": "游戏",
       "official_source": "https://www.msi.com/Landing/afterburner/graphics-cards",
-      "install_methods": ["Manual install from official MSI source"],
-      "description": "GPU monitoring and tuning utility.",
-      "config_notes": ["Use monitoring features first; avoid overclocking unless experienced."],
-      "risk_notes": ["Incorrect tuning can reduce stability."]
+      "install_methods": ["从 MSI 官方来源手动安装"],
+      "description": "GPU 监控和调校工具。",
+      "config_notes": ["新手优先使用监控功能，不建议直接超频。"],
+      "risk_notes": ["错误调校可能影响稳定性。"]
     },
     {
       "app_id": "capframex",
       "name": "CapFrameX",
-      "category": "Gaming",
+      "category": "游戏",
       "official_source": "https://www.capframex.com/",
-      "install_methods": ["Manual install from official website"],
-      "description": "Frame-time capture and analysis tool.",
-      "config_notes": ["Use for repeatable benchmark comparisons."],
-      "risk_notes": ["Benchmark overlays can affect measurements if configured poorly."]
+      "install_methods": ["从官方网站手动安装"],
+      "description": "帧时间采集和分析工具。",
+      "config_notes": ["适合做可重复的性能对比。"],
+      "risk_notes": ["配置不当的 overlay 可能影响测试结果。"]
     },
     {
       "app_id": "rtss",
       "name": "RTSS",
-      "category": "Gaming",
+      "category": "游戏",
       "official_source": "https://www.guru3d.com/download/rtss-rivatuner-statistics-server-download/",
-      "install_methods": ["Manual install, commonly bundled with MSI Afterburner"],
-      "description": "RivaTuner Statistics Server overlay and frame limiter.",
-      "config_notes": ["Pair with MSI Afterburner for monitoring overlays; keep overlay minimal."],
-      "risk_notes": ["Overlays can conflict with some games or anti-cheat systems."]
+      "install_methods": ["手动安装，通常随 MSI Afterburner 一起提供"],
+      "description": "RivaTuner Statistics Server overlay 和帧率限制工具。",
+      "config_notes": ["与 MSI Afterburner 搭配时保持 overlay 简洁。"],
+      "risk_notes": ["overlay 可能与部分游戏或反作弊系统冲突。"]
     },
     {
       "app_id": "discord",
       "name": "Discord",
-      "category": "Gaming",
+      "category": "游戏",
       "official_source": "https://discord.com/",
-      "install_methods": ["Manual install from official website"],
-      "description": "Voice and community chat client.",
-      "config_notes": ["Disable unnecessary startup and overlay options if performance is a concern."],
-      "risk_notes": ["Overlays and background activity can affect game performance."]
+      "install_methods": ["从官方网站手动安装"],
+      "description": "语音和社区聊天客户端。",
+      "config_notes": ["如果关注游戏性能，可以关闭不必要的开机启动和 overlay。"],
+      "risk_notes": ["overlay 和后台活动可能影响游戏性能。"]
     },
     {
       "app_id": "seven_zip",
       "name": "7-Zip",
-      "category": "Utility",
+      "category": "实用工具",
       "official_source": "https://www.7-zip.org/",
-      "install_methods": ["Manual install from official website or package manager"],
-      "description": "File archiver for common compressed formats.",
-      "config_notes": ["Use for trusted archives and keep extracted files organized."],
-      "risk_notes": ["Do not run executables from unknown archives without checking the source."]
+      "install_methods": ["从官方网站或包管理器手动安装"],
+      "description": "常见压缩格式的文件压缩和解压工具。",
+      "config_notes": ["只处理可信来源的压缩包，并整理好解压目录。"],
+      "risk_notes": ["不要直接运行未知压缩包里的可执行文件。"]
     },
     {
       "app_id": "obs_studio",
       "name": "OBS Studio",
-      "category": "Creator",
+      "category": "创作",
       "official_source": "https://obsproject.com/",
-      "install_methods": ["Manual install from official website"],
-      "description": "Open-source recording and streaming software.",
-      "config_notes": ["Use hardware encoding when available and test bitrates before recording important work."],
-      "risk_notes": ["High-resolution recording can consume disk and GPU resources quickly."]
+      "install_methods": ["从官方网站手动安装"],
+      "description": "开源录屏和直播软件。",
+      "config_notes": ["可用硬件编码时优先测试硬件编码，重要录制前先试录。"],
+      "risk_notes": ["高分辨率录制会快速消耗磁盘和显卡资源。"]
     },
     {
       "app_id": "davinci_resolve",
       "name": "DaVinci Resolve",
-      "category": "Creator",
+      "category": "创作",
       "official_source": "https://www.blackmagicdesign.com/products/davinciresolve",
-      "install_methods": ["Manual install from official website"],
-      "description": "Video editing and color grading application.",
-      "config_notes": ["Place media cache on a fast disk with sufficient free space."],
-      "risk_notes": ["Low-RAM systems may struggle with high-resolution timelines."]
+      "install_methods": ["从官方网站手动安装"],
+      "description": "视频剪辑和调色应用。",
+      "config_notes": ["把媒体缓存放在速度快且空间充足的磁盘。"],
+      "risk_notes": ["低内存电脑处理高分辨率时间线可能吃力。"]
     },
     {
       "app_id": "audacity",
       "name": "Audacity",
-      "category": "Creator",
+      "category": "创作",
       "official_source": "https://www.audacityteam.org/",
-      "install_methods": ["Manual install from official website"],
-      "description": "Audio recording and editing application.",
-      "config_notes": ["Set project sample rates intentionally for your workflow."],
-      "risk_notes": ["Always keep source audio backups before destructive edits."]
+      "install_methods": ["从官方网站手动安装"],
+      "description": "音频录制和编辑应用。",
+      "config_notes": ["根据工作流设置采样率和项目格式。"],
+      "risk_notes": ["破坏性编辑前保留源音频备份。"]
     },
     {
       "app_id": "capcut_jianying",
-      "name": "CapCut/Jianying",
-      "category": "Creator",
+      "name": "CapCut/剪映",
+      "category": "创作",
       "official_source": "https://www.capcut.com/",
-      "install_methods": ["Manual install from official source"],
-      "description": "Video editing application for quick creator workflows.",
-      "config_notes": ["Review export settings and cloud features before use."],
-      "risk_notes": ["Cloud and account features may have privacy implications."]
+      "install_methods": ["从官方来源手动安装"],
+      "description": "适合快速创作短视频的视频剪辑应用。",
+      "config_notes": ["使用前检查导出设置和云功能。"],
+      "risk_notes": ["云端和账号功能可能涉及隐私问题。"]
     },
     {
       "app_id": "handbrake",
       "name": "HandBrake",
-      "category": "Creator",
+      "category": "创作",
       "official_source": "https://handbrake.fr/",
-      "install_methods": ["Manual install from official website"],
-      "description": "Graphical video transcoding tool.",
-      "config_notes": ["Use presets first, then adjust bitrate and codec settings carefully."],
-      "risk_notes": ["Aggressive compression can reduce output quality."]
+      "install_methods": ["从官方网站手动安装"],
+      "description": "图形界面视频转码工具。",
+      "config_notes": ["优先使用预设，再谨慎调整码率和编码设置。"],
+      "risk_notes": ["过度压缩会降低画质。"]
     },
     {
       "app_id": "krita",
       "name": "Krita",
-      "category": "Creator",
+      "category": "创作",
       "official_source": "https://krita.org/",
-      "install_methods": ["Manual install from official website or store"],
-      "description": "Digital painting and image creation application.",
-      "config_notes": ["Configure tablet input and brush presets for your workflow."],
-      "risk_notes": ["Large canvases can use substantial RAM."]
+      "install_methods": ["从官方网站或应用商店手动安装"],
+      "description": "数字绘画和图像创作应用。",
+      "config_notes": ["根据自己的设备配置数位板输入和画笔预设。"],
+      "risk_notes": ["大画布会占用较多内存。"]
     },
     {
       "app_id": "blender",
       "name": "Blender",
-      "category": "Creator",
+      "category": "创作",
       "official_source": "https://www.blender.org/",
-      "install_methods": ["Manual install from official website or package manager"],
-      "description": "3D modeling, animation, rendering, and compositing suite.",
-      "config_notes": ["Check GPU rendering settings and cache locations before large projects."],
-      "risk_notes": ["Rendering can consume significant CPU, GPU, RAM, and disk resources."]
+      "install_methods": ["从官方网站或包管理器手动安装"],
+      "description": "3D 建模、动画、渲染和合成工具。",
+      "config_notes": ["大型项目开始前检查 GPU 渲染设置和缓存位置。"],
+      "risk_notes": ["渲染会消耗大量 CPU、GPU、内存和磁盘资源。"]
     },
     {
       "app_id": "google_chrome",
       "name": "Google Chrome",
-      "category": "Office",
+      "category": "办公",
       "official_source": "https://www.google.com/chrome/",
-      "install_methods": ["Manual install from official website"],
-      "description": "Chromium-based browser commonly used for web apps and office workflows.",
-      "config_notes": ["Review sync, profile, extension, and privacy settings."],
-      "risk_notes": ["Too many extensions can affect security and performance."]
+      "install_methods": ["从官方网站手动安装"],
+      "description": "常用于网页应用和办公场景的 Chromium 浏览器。",
+      "config_notes": ["检查同步、配置文件、扩展和隐私设置。"],
+      "risk_notes": ["扩展过多会影响安全和性能。"]
     },
     {
       "app_id": "microsoft_edge",
       "name": "Microsoft Edge",
-      "category": "Office",
+      "category": "办公",
       "official_source": "https://www.microsoft.com/edge",
-      "install_methods": ["Usually included with Windows or manual install from Microsoft"],
-      "description": "Microsoft browser integrated with Windows and Microsoft accounts.",
-      "config_notes": ["Review sync, sidebar, extension, and account settings."],
-      "risk_notes": ["Enterprise or school accounts may apply policies."]
+      "install_methods": ["通常随 Windows 提供，也可从 Microsoft 官方来源手动安装"],
+      "description": "与 Windows 和 Microsoft 账号集成较深的浏览器。",
+      "config_notes": ["检查同步、侧边栏、扩展和账号设置。"],
+      "risk_notes": ["企业或学校账号可能套用管理策略。"]
     },
     {
       "app_id": "office_suite_note",
-      "name": "WPS Office or Microsoft Office note",
-      "category": "Office",
-      "official_source": "Use official WPS Office or Microsoft Office sources based on your license.",
-      "install_methods": ["Manual install only after choosing the licensed office suite"],
-      "description": "Reminder to choose an office suite based on license, compatibility, and collaboration needs.",
-      "config_notes": ["Confirm file compatibility and account requirements before standardizing on one suite."],
-      "risk_notes": ["Avoid unofficial installers and cracked office suites."]
+      "name": "WPS Office 或 Microsoft Office 提醒",
+      "category": "办公",
+      "official_source": "根据授权选择 WPS Office 或 Microsoft Office 官方来源。",
+      "install_methods": ["先确认授权和协作需求，再手动安装办公套件"],
+      "description": "提醒用户按授权、兼容性和协作需求选择办公套件。",
+      "config_notes": ["统一使用前确认文件兼容性和账号要求。"],
+      "risk_notes": ["避免非官方安装器和破解办公套件。"]
     },
     {
       "app_id": "obsidian",
       "name": "Obsidian",
-      "category": "Office",
+      "category": "办公",
       "official_source": "https://obsidian.md/",
-      "install_methods": ["Manual install from official website"],
-      "description": "Local Markdown note-taking and knowledge base application.",
-      "config_notes": ["Keep vaults backed up and review community plugins before enabling them."],
-      "risk_notes": ["Untrusted plugins can affect local files."]
+      "install_methods": ["从官方网站手动安装"],
+      "description": "本地 Markdown 笔记和知识库应用。",
+      "config_notes": ["做好 vault 备份，启用社区插件前先确认来源。"],
+      "risk_notes": ["不可信插件可能影响本地文件。"]
     },
     {
       "app_id": "notion",
       "name": "Notion",
-      "category": "Office",
+      "category": "办公",
       "official_source": "https://www.notion.so/",
-      "install_methods": ["Use official web app or desktop app"],
-      "description": "Online workspace for notes, docs, databases, and collaboration.",
-      "config_notes": ["Use workspaces and permissions deliberately."],
-      "risk_notes": ["Sensitive documents depend on cloud account and sharing settings."]
+      "install_methods": ["使用官方网页应用或桌面应用"],
+      "description": "用于笔记、文档、数据库和协作的在线工作区。",
+      "config_notes": ["谨慎设置工作区和共享权限。"],
+      "risk_notes": ["敏感文档依赖云账号和分享设置保护。"]
     },
     {
       "app_id": "zotero",
       "name": "Zotero",
-      "category": "Office",
+      "category": "办公",
       "official_source": "https://www.zotero.org/",
-      "install_methods": ["Manual install from official website"],
-      "description": "Reference manager for papers, citations, and research materials.",
-      "config_notes": ["Configure browser connector and storage/sync settings intentionally."],
-      "risk_notes": ["Large libraries and PDFs can consume sync storage."]
+      "install_methods": ["从官方网站手动安装"],
+      "description": "论文、引用和研究资料管理工具。",
+      "config_notes": ["配置浏览器连接器和存储/同步设置。"],
+      "risk_notes": ["大型资料库和 PDF 可能占用同步空间。"]
     },
     {
       "app_id": "snipaste",
       "name": "Snipaste",
-      "category": "Office",
+      "category": "办公",
       "official_source": "https://www.snipaste.com/",
-      "install_methods": ["Manual install from official website or store"],
-      "description": "Screenshot and pin-to-screen utility.",
-      "config_notes": ["Configure hotkeys to avoid conflicts with other screenshot tools."],
-      "risk_notes": ["Screenshots can contain sensitive information."]
+      "install_methods": ["从官方网站或应用商店手动安装"],
+      "description": "截图和贴图工具。",
+      "config_notes": ["设置快捷键时避免和其他截图工具冲突。"],
+      "risk_notes": ["截图可能包含敏感信息。"]
     },
     {
       "app_id": "sharex",
       "name": "ShareX",
-      "category": "Office",
+      "category": "办公",
       "official_source": "https://getsharex.com/",
-      "install_methods": ["Manual install from official website or store"],
-      "description": "Advanced screenshot, screen recording, and workflow automation tool.",
-      "config_notes": ["Review upload destinations and automation actions before use."],
-      "risk_notes": ["Misconfigured upload actions can share sensitive screenshots."]
+      "install_methods": ["从官方网站或应用商店手动安装"],
+      "description": "进阶截图、录屏和工作流自动化工具。",
+      "config_notes": ["使用前检查上传目标和自动化动作。"],
+      "risk_notes": ["上传动作配置错误可能分享敏感截图。"]
     },
     {
       "app_id": "sumatrapdf",
       "name": "SumatraPDF",
-      "category": "Office",
+      "category": "办公",
       "official_source": "https://www.sumatrapdfreader.org/",
-      "install_methods": ["Manual install from official website"],
-      "description": "Lightweight PDF and document reader for Windows.",
-      "config_notes": ["Use as a fast reader alongside a full PDF editor if needed."],
-      "risk_notes": ["Use current versions for safer document handling."]
+      "install_methods": ["从官方网站手动安装"],
+      "description": "Windows 上的轻量 PDF 和文档阅读器。",
+      "config_notes": ["可作为快速阅读器，与完整 PDF 编辑器搭配使用。"],
+      "risk_notes": ["保持当前版本更利于安全处理文档。"]
     },
     {
       "app_id": "everything",
       "name": "Everything",
-      "category": "Office",
+      "category": "办公",
       "official_source": "https://www.voidtools.com/",
-      "install_methods": ["Manual install from official website"],
-      "description": "Fast local file search utility for Windows.",
-      "config_notes": ["Limit indexes if privacy or performance requirements demand it."],
-      "risk_notes": ["Search indexes can reveal filenames on shared machines."]
+      "install_methods": ["从官方网站手动安装"],
+      "description": "Windows 上的快速本地文件搜索工具。",
+      "config_notes": ["有隐私或性能要求时，可限制索引范围。"],
+      "risk_notes": ["共享电脑上，搜索索引可能暴露文件名。"]
     },
     {
       "app_id": "powertoys",
       "name": "PowerToys",
-      "category": "Office",
+      "category": "办公",
       "official_source": "https://learn.microsoft.com/windows/powertoys/",
-      "install_methods": ["Manual install from Microsoft Store, GitHub, or winget"],
-      "description": "Microsoft utility suite for advanced Windows productivity.",
-      "config_notes": ["Enable only modules you actually use, such as FancyZones or PowerToys Run."],
-      "risk_notes": ["Global hotkeys can conflict with existing workflows."]
+      "install_methods": ["从 Microsoft Store、GitHub 或 winget 手动安装"],
+      "description": "Microsoft 提供的 Windows 进阶效率工具集。",
+      "config_notes": ["只启用真正需要的模块，如 FancyZones 或 PowerToys Run。"],
+      "risk_notes": ["全局快捷键可能和现有工作流冲突。"]
     }
   ]
 }

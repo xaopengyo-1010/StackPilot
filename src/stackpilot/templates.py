@@ -11,8 +11,35 @@ class UnknownTemplateError(ValueError):
     def __init__(self, template_id: str, available: list[str]) -> None:
         self.template_id = template_id
         self.available = available
-        message = f"Unknown goal '{template_id}'. Available templates: {', '.join(available)}"
+        message = f"未知目标：{template_id}。可用模板：{', '.join(available)}"
         super().__init__(message)
+
+
+TEMPLATE_AUDIENCES = {
+    "coding_starter": "第一次配置编程环境的新手。",
+    "vibe_coding": "想用 AI 辅助写代码，同时保留代码审查和测试习惯的用户。",
+    "ai_beginner": "想先体验网页 AI 工具的普通用户。",
+    "comfyui_starter": "想在本地尝试 AI 绘图和 ComfyUI 工作流的用户。",
+    "local_llm": "想在本机运行 Ollama、LM Studio 等本地模型的用户。",
+    "gaming_setup": "想整理游戏平台、驱动和性能监控工具的玩家。",
+    "creator_setup": "想做录屏、剪辑、音频和素材处理的内容创作者。",
+    "office_productivity": "想准备浏览器、文档、笔记、截图、PDF 等基础工具的办公用户。",
+}
+
+TEMPLATE_ORDER = {
+    "coding_starter": 0,
+    "vibe_coding": 1,
+    "ai_beginner": 2,
+    "comfyui_starter": 3,
+    "local_llm": 4,
+    "gaming_setup": 5,
+    "creator_setup": 6,
+    "office_productivity": 7,
+}
+
+
+def template_audience(template_id: str) -> str:
+    return TEMPLATE_AUDIENCES.get(template_id, "适合需要该模板所描述工作流的用户。")
 
 
 def project_root() -> Path:
@@ -55,7 +82,7 @@ def load_templates(path: str | Path | None = None) -> list[TemplateDefinition]:
     for template_file in sorted(templates_path.glob("*.json")):
         raw = json.loads(template_file.read_text(encoding="utf-8"))
         definitions.append(parse_model(TemplateDefinition, raw))
-    return definitions
+    return sorted(definitions, key=lambda template: (TEMPLATE_ORDER.get(template.template_id, 999), template.template_id))
 
 
 def available_template_ids(path: str | Path | None = None) -> list[str]:

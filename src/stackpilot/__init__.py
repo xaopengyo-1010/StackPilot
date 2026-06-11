@@ -1,3 +1,3 @@
-"""StackPilot v0.1."""
+"""StackPilot v0.2 Alpha."""
 
-__version__ = "0.1.0"
+__version__ = "0.2.0a0"

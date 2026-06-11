@@ -15,7 +15,7 @@ EXPECTED_TEMPLATE_DISPLAY_NAMES = {
 }
 
 
-def test_templates_can_load():
+def test_templates_can_load_eight_templates():
     templates = load_templates()
     ids = {template.template_id for template in templates}
 
@@ -84,6 +84,7 @@ def test_app_catalog_can_load():
     }
 
     assert required_app_ids <= set(catalog)
+    assert catalog["git"].install_methods[0] == "从官方网站或包管理器手动安装"
 
 
 def test_all_template_apps_exist_in_catalog():
@@ -97,10 +98,11 @@ def test_all_template_apps_exist_in_catalog():
     assert missing == []
 
 
-def test_unknown_goal_reports_clear_error():
+def test_unknown_goal_reports_chinese_error():
     with pytest.raises(UnknownTemplateError) as exc_info:
         load_template("does_not_exist")
 
     message = str(exc_info.value)
-    assert "Unknown goal 'does_not_exist'" in message
+    assert "未知目标：does_not_exist" in message
+    assert "可用模板" in message
     assert "coding_starter" in message

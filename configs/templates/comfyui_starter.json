@@ -12,31 +12,31 @@
     "os": ["Windows 10", "Windows 11", "Linux"]
   },
   "apps": [
-    {"app_id": "git", "required": true, "reason": "用于获取和管理开源 AI 绘图项目。"},
-    {"app_id": "python", "required": true, "reason": "运行 ComfyUI 和相关节点的基础运行时。"},
-    {"app_id": "comfyui", "required": true, "reason": "核心本地 AI 绘图工作流工具。"},
+    {"app_id": "git", "required": true, "reason": "用于下载和管理开源 AI 绘图项目。"},
+    {"app_id": "python", "required": true, "reason": "运行 ComfyUI 和相关 Python 工具。"},
+    {"app_id": "comfyui", "required": true, "reason": "本地 AI 图像生成工作流核心。"},
     {"app_id": "ffmpeg", "required": false, "reason": "处理图片序列、视频和部分节点依赖时有用。"},
-    {"app_id": "nvidia_app", "required": false, "reason": "NVIDIA 显卡用户用于驱动和设置管理。"},
-    {"app_id": "cuda_pytorch_note", "required": false, "reason": "仅提示 CUDA/PyTorch 版本兼容，不自动安装。"}
+    {"app_id": "nvidia_app", "required": false, "reason": "NVIDIA 显卡用户可用于驱动和设置管理。"},
+    {"app_id": "cuda_pytorch_note", "required": false, "reason": "用于提醒 CUDA/PyTorch 版本兼容关系，不自动安装。"}
   ],
   "config_recommendations": [
-    "显存低于 6GB 不推荐重型工作流。",
+    "如果显存低于 8GB，建议使用轻量工作流。",
     "模型文件建议放在剩余空间充足的 SSD。",
-    "不要随便运行来路不明的安装器。",
+    "不要混装多个互相冲突的 Python 环境。",
     "custom nodes 要注意来源和版本兼容。"
   ],
   "risk_warnings": [
-    "低显存设备可能生成很慢或爆显存。",
+    "低显存设备不适合运行重型图像生成工作流。",
     "ComfyUI 依赖较多，新手容易遇到节点缺失问题。",
-    "StackPilot v0.1 只推荐，不自动安装。"
+    "StackPilot 当前版本只生成推荐报告，不会自动安装 ComfyUI。"
   ],
   "not_recommended": [
     "显存低于 6GB 的设备运行重型工作流。",
     "从不可信来源下载模型、节点或安装脚本。"
   ],
   "next_steps": [
-    "确认显卡、显存和剩余磁盘空间。",
-    "只从官方仓库和可信来源安装。",
+    "查看推荐应用清单。",
+    "根据官方来源手动安装需要的软件。",
     "先运行一个基础工作流，再逐步添加 custom nodes。"
   ]
 }

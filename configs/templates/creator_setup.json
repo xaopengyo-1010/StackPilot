@@ -1,7 +1,7 @@
 {
   "template_id": "creator_setup",
   "display_name": "视频/内容创作",
-  "category": "Creator",
+  "category": "创作",
   "description": "视频和内容创作入门环境，覆盖录屏、转码、剪辑、音频和素材处理。",
   "requirements": {
     "min_ram_gb": 16,
@@ -23,7 +23,7 @@
   ],
   "config_recommendations": [
     "录屏优先使用 OBS。",
-    "视频转码/批处理可以使用 FFmpeg 或 HandBrake。",
+    "视频转码和批处理可以使用 FFmpeg 或 HandBrake。",
     "音频清理可以使用 Audacity。",
     "低配电脑不建议直接做重型 4K 视频剪辑。"
   ],

@@ -1,7 +1,7 @@
 {
   "template_id": "office_productivity",
   "display_name": "办公生产力",
-  "category": "Office",
+  "category": "办公",
   "description": "办公生产力基础环境，覆盖浏览器、办公套件、压缩、搜索、截图、PDF、笔记和资料管理。",
   "requirements": {
     "min_ram_gb": 4,
@@ -27,14 +27,14 @@
     {"app_id": "powertoys", "required": false, "reason": "适合进阶 Windows 用户的效率工具集。"}
   ],
   "config_recommendations": [
-    "浏览器、压缩工具、PDF 阅读器、截图工具是基础。",
+    "浏览器、压缩工具、PDF 阅读器和截图工具是基础。",
     "Obsidian 适合本地笔记，Notion 适合在线协作。",
     "Zotero 适合论文和资料管理。",
     "PowerToys 适合进阶 Windows 用户。"
   ],
   "risk_warnings": [
     "在线协作工具需要用户自行确认账号、同步和隐私设置。",
-    "不要从非官方来源下载安装办公套件或插件。"
+    "不要从非官方来源下载办公套件或插件。"
   ],
   "not_recommended": [
     "在工作资料目录中混用不可信同步工具。"

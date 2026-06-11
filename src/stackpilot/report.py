@@ -4,124 +4,238 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
-from .models import SystemProfile, TemplateRecommendation
+from .models import AppRecommendation, HardwareProfile, RecommendationResult, ReportData, RuleFinding
 from .recommender import recommend
 from .scanner import scan_system
-from .templates import project_root
+from .templates import project_root, template_audience
 from .utils import model_to_dict
 
 
 REPORT_MD = "stackpilot-report.md"
 REPORT_JSON = "stackpilot-report.json"
 
-TRANSPARENCY_EN = (
-    "StackPilot v0.1 does not download, install, modify, clean, optimize, "
-    "or monitor your system automatically.\n"
-    "It only generates an environment blueprint and recommendation report."
-)
-
-TRANSPARENCY_ZH = (
-    "StackPilot v0.1 不会自动下载、安装、修改、清理、优化或监控你的系统。\n"
-    "它只生成环境蓝图和推荐报告。"
+TRANSPARENCY_NOTICE = (
+    "StackPilot 当前版本只生成本地推荐报告，不会自动下载、安装软件或修改系统设置。"
 )
 
 
 def default_output_dir() -> Path:
+    """Return the default directory used for generated reports."""
+
     return project_root() / "outputs" / "reports"
 
 
-def _format_list(values: list[str]) -> str:
+def _missing(value: object | None) -> str:
+    if value is None:
+        return "未检测到"
+    if isinstance(value, str) and not value.strip():
+        return "未检测到"
+    return str(value)
+
+
+def _format_gb(value: float | None) -> str:
+    if value is None:
+        return "未检测到"
+    return f"{value:g} GB"
+
+
+def _format_score(score: float) -> str:
+    return f"{score:g}"
+
+
+def _score_explanation(score: float) -> str:
+    if score >= 90:
+        return "非常适合。"
+    if score >= 75:
+        return "比较适合。"
+    if score >= 60:
+        return "可以尝试，但需要注意限制。"
+    if score >= 40:
+        return "不太推荐，可能体验一般。"
+    return "不推荐，建议更换目标或升级配置。"
+
+
+def _format_list(values: list[str], empty_text: str) -> str:
     if not values:
-        return "- None"
+        return empty_text
     return "\n".join(f"- {value}" for value in values)
 
 
-def _format_apps(recommendation: TemplateRecommendation) -> str:
-    if not recommendation.recommended_apps:
-        return "- None"
-    lines: list[str] = []
-    for app in recommendation.recommended_apps:
-        required = "required" if app.required else "optional"
-        lines.append(f"- **{app.name}** (`{app.app_id}`, {required}) - {app.reason}")
-        lines.append(f"  - Source: {app.official_source}")
-        lines.append(f"  - Install method: {app.install_method}")
-        if app.config_notes:
-            lines.append(f"  - Notes: {'; '.join(app.config_notes)}")
-        if app.risk_notes:
-            lines.append(f"  - Risks: {'; '.join(app.risk_notes)}")
+def _format_profile(profile: HardwareProfile) -> str:
+    gpu_names = "、".join(profile.gpu_names) if profile.gpu_names else "未检测到"
+    rows = {
+        "系统": f"{_missing(profile.os_name)} {_missing(profile.os_version)}".strip(),
+        "架构": _missing(profile.architecture),
+        "CPU": _missing(profile.cpu_name),
+        "CPU 核心数": _missing(profile.cpu_cores),
+        "内存": _format_gb(profile.ram_gb),
+        "显卡": gpu_names,
+        "显存": _format_gb(profile.vram_gb),
+        "磁盘总容量": _format_gb(profile.disk_total_gb),
+        "磁盘剩余空间": _format_gb(profile.disk_free_gb),
+        "Python": profile.python_version if profile.python_installed and profile.python_version else "未检测到",
+        "Node.js": profile.node_version if profile.node_installed and profile.node_version else "未检测到",
+        "Git": profile.git_version if profile.git_installed and profile.git_version else "未检测到",
+        "pnpm": profile.pnpm_version if profile.pnpm_installed and profile.pnpm_version else "未检测到",
+        "Docker": profile.docker_version if profile.docker_installed and profile.docker_version else "未检测到",
+        "WSL": "已检测到" if profile.wsl_installed else "未检测到",
+        "NVIDIA 驱动": profile.nvidia_driver_version or "未检测到",
+    }
+    return "\n".join(f"- {key}：{value}" for key, value in rows.items())
+
+
+def _format_apps(apps: list[AppRecommendation]) -> str:
+    if not apps:
+        return "暂无推荐应用。"
+
+    lines = [
+        "| 应用 | 必装/可选 | 推荐原因 | 安装方式 | 备注 |",
+        "| -- | ----- | ---- | ---- | -- |",
+    ]
+    for app in apps:
+        required = "必装" if app.required else "可选"
+        notes = [*app.config_notes, *app.risk_notes]
+        note_text = "<br>".join(notes) if notes else "无"
+        lines.append(
+            f"| {app.name} | {required} | {app.reason} | {app.install_method} | {note_text} |"
+        )
     return "\n".join(lines)
 
 
-def _markdown(profile: SystemProfile, recommendation: TemplateRecommendation) -> str:
-    gpu_names = ", ".join(profile.gpu_names) if profile.gpu_names else "Not detected"
-    return f"""# StackPilot Environment Blueprint Report
+def _format_evidence(evidence: dict[str, object | None]) -> str:
+    if not evidence:
+        return "无"
+    parts = []
+    for key, value in evidence.items():
+        parts.append(f"{key}={_missing(value)}")
+    return "；".join(parts)
 
-## 1. System Summary
 
-- OS: {profile.os_name} {profile.os_version}
-- Architecture: {profile.architecture}
-- CPU: {profile.cpu_name or "Not detected"}
-- CPU cores: {profile.cpu_cores if profile.cpu_cores is not None else "Not detected"}
-- RAM: {profile.total_ram_gb if profile.total_ram_gb is not None else "Not detected"} GB
-- GPU: {gpu_names}
-- GPU VRAM: {profile.gpu_vram_gb if profile.gpu_vram_gb is not None else "Not detected"} GB
-- Disk total: {profile.disk_total_gb if profile.disk_total_gb is not None else "Not detected"} GB
-- Disk free: {profile.disk_free_gb if profile.disk_free_gb is not None else "Not detected"} GB
-- Python: {profile.python_version if profile.python_installed else "Not detected"}
-- Node.js: {profile.node_version if profile.node_installed else "Not detected"}
-- Git: {profile.git_version if profile.git_installed else "Not detected"}
-- pnpm: {profile.pnpm_version if profile.pnpm_installed else "Not detected"}
-- Docker: {profile.docker_version if profile.docker_installed else "Not detected"}
-- WSL available: {profile.wsl_available}
-- NVIDIA driver: {profile.nvidia_driver_version or "Not detected"}
+def _format_findings(findings: list[RuleFinding]) -> str:
+    if not findings:
+        return "暂无明显风险提示。"
 
-## 2. Selected Goal
+    level_names = {
+        "critical": "严重",
+        "warning": "提醒",
+        "info": "信息",
+    }
+    lines = [
+        "| 等级 | 标题 | 说明 | 依据 |",
+        "| -- | -- | -- | -- |",
+    ]
+    for finding in findings:
+        lines.append(
+            f"| {level_names[finding.level]} | {finding.title} | {finding.message} | {_format_evidence(finding.evidence)} |"
+        )
+    return "\n".join(lines)
 
-- Goal: `{recommendation.template_id}`
-- Display name: {recommendation.display_name}
-- Category: {recommendation.category}
 
-## 3. Suitability Score
+def _score_reason(recommendation: RecommendationResult) -> str:
+    critical_count = sum(1 for finding in recommendation.findings if finding.level == "critical")
+    warning_count = sum(1 for finding in recommendation.findings if finding.level == "warning")
+    info_count = sum(1 for finding in recommendation.findings if finding.level == "info")
+    return (
+        "评分基于集中规则判断：严重问题每项扣 25 分，提醒项每项扣 10 分，信息项不扣分。"
+        f"当前发现严重 {critical_count} 项、提醒 {warning_count} 项、信息 {info_count} 项。"
+    )
 
-{recommendation.suitability_score}/100
 
-## 4. Recommended Template
+def render_markdown(report_data: ReportData) -> str:
+    """Render a Chinese Markdown report from structured report data."""
 
-{recommendation.summary}
+    profile = report_data.hardware_profile
+    recommendation = report_data.recommendation
+    score = _format_score(recommendation.suitability_score)
+    return f"""# StackPilot 应用推荐报告
 
-## 5. Recommended Apps
+## 电脑配置摘要
 
-{_format_apps(recommendation)}
+{_format_profile(profile)}
 
-## 6. Configuration Recommendations
+## 使用目标
 
-{_format_list(recommendation.config_recommendations)}
+目标：{recommendation.display_name}
+模板 ID：{recommendation.template_id}
+适合人群：{template_audience(recommendation.template_id)}
 
-## 7. Risk Warnings
+## 适配度评分
 
-{_format_list(recommendation.risk_warnings)}
+适配度评分：{score} / 100
 
-## 8. Not Recommended For This PC
+{_score_explanation(recommendation.suitability_score)}
 
-{_format_list(recommendation.not_recommended)}
+{_score_reason(recommendation)}
 
-## 9. Next Steps
+## 推荐应用
 
-{_format_list(recommendation.next_steps)}
+{_format_apps(recommendation.recommended_apps)}
 
-## 10. Transparency Notice
+## 规则判断与风险提示
 
-{TRANSPARENCY_EN}
+{_format_findings(recommendation.findings)}
 
-{TRANSPARENCY_ZH}
+## 配置建议
+
+{_format_list(recommendation.config_recommendations, "暂无额外配置建议。")}
+
+## 当前不推荐事项
+
+{_format_list(recommendation.not_recommended, "暂无明显不推荐事项。")}
+
+## 下一步建议
+
+{_format_list(recommendation.next_steps, "暂无下一步建议。")}
+
+## 说明
+
+{TRANSPARENCY_NOTICE}
+请优先从软件官方渠道下载安装应用。
 """
+
+
+def _apps_to_dict(apps: list[AppRecommendation]) -> list[dict]:
+    return [model_to_dict(app) for app in apps]
+
+
+def render_json_payload(report_data: ReportData) -> dict:
+    """Render a structured JSON-compatible report payload."""
+
+    recommendation = report_data.recommendation
+    profile = report_data.hardware_profile
+    payload = {
+        "generated_at": report_data.generated_at,
+        "hardware_profile": model_to_dict(profile),
+        "goal": {
+            "id": recommendation.goal_id,
+            "name": recommendation.goal_name,
+            "category": recommendation.category,
+            "summary": recommendation.summary,
+        },
+        "suitability_score": recommendation.suitability_score,
+        "required_apps": _apps_to_dict(recommendation.required_apps),
+        "optional_apps": _apps_to_dict(recommendation.optional_apps),
+        "findings": [model_to_dict(finding) for finding in recommendation.findings],
+        "warnings": recommendation.warnings,
+        "not_recommended": recommendation.not_recommended,
+        "next_steps": recommendation.next_steps,
+        "transparency_notice": {
+            "en": TRANSPARENCY_NOTICE,
+            "zh": TRANSPARENCY_NOTICE,
+        },
+        "profile": model_to_dict(profile),
+        "recommendation": model_to_dict(recommendation),
+    }
+    return payload
 
 
 def generate_report(
     goal: str,
     output_dir: str | Path | None = None,
-    profile: SystemProfile | None = None,
-) -> tuple[Path, Path, TemplateRecommendation]:
+    profile: HardwareProfile | None = None,
+) -> tuple[Path, Path, RecommendationResult]:
+    """Generate Markdown and JSON reports for a selected goal."""
+
     profile = profile or scan_system()
     recommendation = recommend(goal, profile=profile)
     target_dir = Path(output_dir) if output_dir is not None else default_output_dir()
@@ -129,16 +243,16 @@ def generate_report(
 
     md_path = target_dir / REPORT_MD
     json_path = target_dir / REPORT_JSON
+    generated_at = datetime.now(timezone.utc).isoformat()
+    report_data = ReportData(
+        hardware_profile=profile,
+        recommendation=recommendation,
+        generated_at=generated_at,
+    )
 
-    md_path.write_text(_markdown(profile, recommendation), encoding="utf-8")
-    json_payload = {
-        "generated_at": datetime.now(timezone.utc).isoformat(),
-        "profile": model_to_dict(profile),
-        "recommendation": model_to_dict(recommendation),
-        "transparency_notice": {
-            "en": TRANSPARENCY_EN,
-            "zh": TRANSPARENCY_ZH,
-        },
-    }
-    json_path.write_text(json.dumps(json_payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    md_path.write_text(render_markdown(report_data), encoding="utf-8")
+    json_path.write_text(
+        json.dumps(render_json_payload(report_data), ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
     return md_path, json_path, recommendation

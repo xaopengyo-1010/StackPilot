@@ -6,7 +6,7 @@ from pathlib import Path
 import psutil
 
 from . import detector
-from .models import SystemProfile
+from .models import HardwareProfile
 from .utils import bytes_to_gb
 
 
@@ -14,7 +14,7 @@ def _safe_call(label: str, warnings: list[str], func, default=None):
     try:
         return func()
     except Exception as exc:  # pragma: no cover - defensive boundary for OS probes.
-        warnings.append(f"{label} detection failed: {exc}")
+        warnings.append(f"{label}检测失败：{exc}")
         return default
 
 
@@ -42,33 +42,33 @@ def _disk_usage():
     return psutil.disk_usage(anchor)
 
 
-def scan_system() -> SystemProfile:
+def scan_system() -> HardwareProfile:
     warnings: list[str] = []
 
-    ram = _safe_call("RAM", warnings, lambda: psutil.virtual_memory(), None)
-    disk = _safe_call("Disk", warnings, _disk_usage, None)
-    gpu_names = _safe_call("GPU", warnings, detector.detect_gpu_names, [])
-    gpu_vram_gb = _safe_call("GPU VRAM", warnings, detector.detect_gpu_vram_gb, None)
-    nvidia_driver = _safe_call("NVIDIA driver", warnings, detector.detect_nvidia_driver, None)
+    ram = _safe_call("内存", warnings, lambda: psutil.virtual_memory(), None)
+    disk = _safe_call("磁盘", warnings, _disk_usage, None)
+    gpu_names = _safe_call("显卡", warnings, detector.detect_gpu_names, [])
+    gpu_vram_gb = _safe_call("显存", warnings, detector.detect_gpu_vram_gb, None)
+    nvidia_driver = _safe_call("NVIDIA 驱动", warnings, detector.detect_nvidia_driver, None)
 
     if not gpu_names:
-        warnings.append("GPU names could not be detected.")
+        warnings.append("未检测到显卡名称。")
     if gpu_names and gpu_vram_gb is None:
-        warnings.append("VRAM could not be detected.")
+        warnings.append("未检测到显存信息。")
     if any("nvidia" in name.casefold() for name in gpu_names) and nvidia_driver is None:
-        warnings.append("NVIDIA driver version could not be detected.")
+        warnings.append("未检测到 NVIDIA 驱动版本。")
 
     node_version = detector.get_command_version("node", ["--version"])
     git_version = detector.get_command_version("git", ["--version"])
     pnpm_version = detector.get_command_version("pnpm", ["--version"])
     docker_version = detector.get_command_version("docker", ["--version"])
 
-    return SystemProfile(
-        os_name=platform.system() or "Unknown",
-        os_version=platform.version() or platform.release() or "Unknown",
-        architecture=platform.machine() or "Unknown",
+    return HardwareProfile(
+        os_name=platform.system() or "未知",
+        os_version=platform.version() or platform.release() or "未知",
+        architecture=platform.machine() or "未知",
         cpu_name=_safe_call("CPU", warnings, _cpu_name, None),
-        cpu_cores=_safe_call("CPU cores", warnings, lambda: psutil.cpu_count(logical=True), None),
+        cpu_cores=_safe_call("CPU 核心数", warnings, lambda: psutil.cpu_count(logical=True), None),
         total_ram_gb=bytes_to_gb(ram.total) if ram else None,
         gpu_names=gpu_names,
         gpu_vram_gb=gpu_vram_gb,

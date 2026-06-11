@@ -1,18 +1,9 @@
 {
-  "version": "0.1",
+  "version": "0.2",
   "score_range": [0, 100],
-  "penalties": {
-    "missing_ram": 8,
-    "below_min_ram": 35,
-    "below_recommended_ram": 12,
-    "missing_gpu_for_gpu_template": 30,
-    "missing_vram": 12,
-    "below_min_vram": 35,
-    "below_recommended_vram": 14,
-    "missing_disk": 5,
-    "below_min_disk": 20,
-    "os_mismatch": 10
-  },
-  "ram_thresholds_gb": [8, 16, 32, 64],
-  "vram_thresholds_gb": [4, 6, 8, 12, 24]
+  "rule_finding_penalties": {
+    "critical": 25,
+    "warning": 10,
+    "info": 0
+  }
 }

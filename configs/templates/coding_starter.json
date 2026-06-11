@@ -1,7 +1,7 @@
 {
   "template_id": "coding_starter",
   "display_name": "写代码入门",
-  "category": "Coding",
+  "category": "开发",
   "description": "基础编程环境，适合从 VS Code、Git、Python、Node.js 和 pnpm 开始。",
   "requirements": {
     "min_ram_gb": 8,
@@ -12,23 +12,23 @@
     "os": ["Windows 10", "Windows 11"]
   },
   "apps": [
-    {"app_id": "vscode", "required": true, "reason": "主要代码编辑器，适合入门和长期项目。"},
+    {"app_id": "vscode", "required": true, "reason": "主要代码编辑器，适合入门学习和长期项目。"},
     {"app_id": "git", "required": true, "reason": "用于版本控制、回滚和协作。"},
-    {"app_id": "python", "required": true, "reason": "常用脚本、自动化和后端开发运行时。"},
-    {"app_id": "nodejs", "required": true, "reason": "前端、CLI 和工具链常用运行时。"},
+    {"app_id": "python", "required": true, "reason": "常用于脚本、自动化和后端开发。"},
+    {"app_id": "nodejs", "required": true, "reason": "前端、CLI 和现代工具链常用运行时。"},
     {"app_id": "pnpm", "required": true, "reason": "现代 JavaScript 项目的高效包管理器。"},
-    {"app_id": "docker_desktop", "required": false, "reason": "容器开发可选，新手可后续需要再装。"},
-    {"app_id": "wsl2_ubuntu", "required": false, "reason": "Windows 上的 Linux 开发环境，可选。"},
+    {"app_id": "docker_desktop", "required": false, "reason": "容器开发可选，新手可以后续需要时再安装。"},
+    {"app_id": "wsl2_ubuntu", "required": false, "reason": "Windows 上的 Linux 开发环境，可按需安装。"},
     {"app_id": "windows_terminal", "required": false, "reason": "更好的 Windows 命令行体验。"}
   ],
   "config_recommendations": [
-    "Python 和 Node.js 安装后确认 PATH。",
-    "Git 配置用户名和邮箱。",
-    "初学者先不要同时装太多语言环境。",
-    "Docker/WSL2 对新手可选，后续需要再装。"
+    "Python 和 Node.js 安装后确认命令能在终端中识别。",
+    "Git 需要配置用户名、邮箱和凭据管理方式。",
+    "初学者先不要同时安装过多语言环境。",
+    "Docker 和 WSL2 对新手可选，后续需要时再安装。"
   ],
   "risk_warnings": [
-    "StackPilot v0.1 只推荐工具，不自动安装。",
+    "StackPilot 当前版本只生成推荐报告，不会自动安装任何工具。",
     "Docker 和 WSL2 会占用额外内存与磁盘空间。"
   ],
   "not_recommended": [
@@ -37,6 +37,6 @@
   "next_steps": [
     "手动安装必装工具。",
     "创建一个小项目并提交第一次 Git commit。",
-    "重新运行 StackPilot 检查工具识别情况。"
+    "安装后再次运行 StackPilot 检查环境识别情况。"
   ]
 }

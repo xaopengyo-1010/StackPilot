@@ -6,106 +6,136 @@ import typer
 from rich.console import Console
 from rich.table import Table
 
-from .models import SystemProfile, TemplateRecommendation
+from .models import HardwareProfile, RecommendationResult
 from .recommender import recommend
 from .report import generate_report
 from .scanner import scan_system
-from .templates import UnknownTemplateError, load_templates
+from .templates import UnknownTemplateError, load_template, load_templates, template_audience
 
 
-app = typer.Typer(help="StackPilot environment blueprint generator.")
+app = typer.Typer(help="StackPilot：给小白用的电脑应用推荐助手。")
 console = Console()
 
 
-def _print_profile(profile: SystemProfile) -> None:
-    table = Table(title="StackPilot System Scan")
-    table.add_column("Field")
-    table.add_column("Value")
+def _missing(value: object | None) -> str:
+    if value is None:
+        return "未检测到"
+    if isinstance(value, str) and not value.strip():
+        return "未检测到"
+    return str(value)
+
+
+def _format_gb(value: float | None) -> str:
+    if value is None:
+        return "未检测到"
+    return f"{value:g} GB"
+
+
+def _format_score(score: float) -> str:
+    return f"{score:g}"
+
+
+def _print_profile(profile: HardwareProfile) -> None:
+    table = Table(title="电脑配置摘要")
+    table.add_column("项目")
+    table.add_column("检测结果")
     values = {
-        "OS": f"{profile.os_name} {profile.os_version}",
-        "Architecture": profile.architecture,
-        "CPU": profile.cpu_name or "Not detected",
-        "CPU cores": str(profile.cpu_cores) if profile.cpu_cores is not None else "Not detected",
-        "RAM": f"{profile.total_ram_gb} GB" if profile.total_ram_gb is not None else "Not detected",
-        "GPU": ", ".join(profile.gpu_names) if profile.gpu_names else "Not detected",
-        "GPU VRAM": f"{profile.gpu_vram_gb} GB" if profile.gpu_vram_gb is not None else "Not detected",
-        "Disk total": f"{profile.disk_total_gb} GB" if profile.disk_total_gb is not None else "Not detected",
-        "Disk free": f"{profile.disk_free_gb} GB" if profile.disk_free_gb is not None else "Not detected",
-        "Python": profile.python_version if profile.python_installed else "Not detected",
-        "Node.js": profile.node_version if profile.node_installed else "Not detected",
-        "Git": profile.git_version if profile.git_installed else "Not detected",
-        "pnpm": profile.pnpm_version if profile.pnpm_installed else "Not detected",
-        "Docker": profile.docker_version if profile.docker_installed else "Not detected",
-        "WSL available": str(profile.wsl_available),
-        "NVIDIA driver": profile.nvidia_driver_version or "Not detected",
+        "系统": f"{_missing(profile.os_name)} {_missing(profile.os_version)}".strip(),
+        "架构": _missing(profile.architecture),
+        "CPU": _missing(profile.cpu_name),
+        "CPU 核心数": _missing(profile.cpu_cores),
+        "内存": _format_gb(profile.ram_gb),
+        "显卡": "、".join(profile.gpu_names) if profile.gpu_names else "未检测到",
+        "显存": _format_gb(profile.vram_gb),
+        "磁盘总容量": _format_gb(profile.disk_total_gb),
+        "磁盘剩余空间": _format_gb(profile.disk_free_gb),
+        "Python": profile.python_version if profile.python_installed and profile.python_version else "未检测到",
+        "Node.js": profile.node_version if profile.node_installed and profile.node_version else "未检测到",
+        "Git": profile.git_version if profile.git_installed and profile.git_version else "未检测到",
+        "pnpm": profile.pnpm_version if profile.pnpm_installed and profile.pnpm_version else "未检测到",
+        "Docker": profile.docker_version if profile.docker_installed and profile.docker_version else "未检测到",
+        "WSL": "已检测到" if profile.wsl_installed else "未检测到",
+        "NVIDIA 驱动": profile.nvidia_driver_version or "未检测到",
     }
     for key, value in values.items():
         table.add_row(key, value)
     console.print(table)
     if profile.warnings:
-        console.print("[yellow]Warnings[/yellow]")
+        console.print("[yellow]检测提示[/yellow]")
         for warning in profile.warnings:
             console.print(f"- {warning}")
 
 
-def _print_recommendation(recommendation: TemplateRecommendation) -> None:
-    console.print(f"[bold]{recommendation.display_name}[/bold] ({recommendation.template_id})")
-    console.print(f"Category: {recommendation.category}")
-    console.print(f"Suitability score: {recommendation.suitability_score}/100")
-    console.print(recommendation.summary)
+def _print_section(title: str, values: list[str], empty_text: str) -> None:
+    console.print(f"[bold]{title}[/bold]")
+    if values:
+        for value in values:
+            console.print(f"- {value}")
+    else:
+        console.print(empty_text)
 
-    app_table = Table(title="Recommended Apps")
-    app_table.add_column("App")
-    app_table.add_column("Required")
-    app_table.add_column("Reason")
-    app_table.add_column("Source")
+
+def _print_findings(recommendation: RecommendationResult) -> None:
+    console.print("[bold]规则判断与风险提示：[/bold]")
+    if not recommendation.findings:
+        console.print("暂无明显风险提示。")
+        return
+    level_names = {"critical": "严重", "warning": "提醒", "info": "信息"}
+    for finding in recommendation.findings:
+        console.print(f"- [{level_names[finding.level]}] {finding.title}：{finding.message}")
+
+
+def _print_recommendation(recommendation: RecommendationResult) -> None:
+    console.print(f"[bold]推荐结果：{recommendation.display_name}[/bold]")
+    console.print("")
+    console.print(f"适配度评分：{_format_score(recommendation.suitability_score)} / 100")
+    console.print("")
+
+    console.print("[bold]推荐应用：[/bold]")
     for item in recommendation.recommended_apps:
-        app_table.add_row(item.name, str(item.required), item.reason, item.official_source)
-    console.print(app_table)
+        required = "必装" if item.required else "可选"
+        console.print(f"- {item.name}（{required}）：{item.reason}")
+    console.print("")
 
-    sections = [
-        ("Configuration Recommendations", recommendation.config_recommendations),
-        ("Risk Warnings", recommendation.risk_warnings),
-        ("Not Recommended", recommendation.not_recommended),
-        ("Next Steps", recommendation.next_steps),
-    ]
-    for title, values in sections:
-        console.print(f"[bold]{title}[/bold]")
-        if values:
-            for value in values:
-                console.print(f"- {value}")
-        else:
-            console.print("- None")
+    _print_findings(recommendation)
+    console.print("")
+    _print_section("配置建议：", recommendation.config_recommendations, "暂无额外配置建议。")
+    console.print("")
+    _print_section("当前不推荐事项：", recommendation.not_recommended, "暂无明显不推荐事项。")
+    console.print("")
+    _print_section("下一步：", recommendation.next_steps, "暂无下一步建议。")
 
 
-def _available_template_text() -> str:
-    return ", ".join(template.template_id for template in load_templates())
+def _missing_goal() -> None:
+    console.print("[red]缺少 --goal。[/red]请先运行 `python -m stackpilot list-templates` 查看可用模板。")
 
 
 @app.command("scan")
 def scan_command() -> None:
-    """Scan public local system information."""
+    """检测本机公开系统信息。"""
+
     _print_profile(scan_system())
 
 
 @app.command("list-templates")
 def list_templates_command() -> None:
-    """List available recommendation templates."""
-    table = Table(title="StackPilot Templates")
-    table.add_column("Goal")
-    table.add_column("Display name")
-    table.add_column("Category")
-    table.add_column("Description")
+    """列出可用推荐模板。"""
+
+    table = Table(title="可用模板")
+    table.add_column("模板 ID")
+    table.add_column("模板名称")
+    table.add_column("适合谁")
     for template in load_templates():
-        table.add_row(template.template_id, template.display_name, template.category, template.description)
+        table.add_row(template.template_id, template.display_name, template_audience(template.template_id))
     console.print(table)
 
 
 @app.command("recommend")
-def recommend_command(goal: Optional[str] = typer.Option(None, "--goal", "-g", help="Template goal id.")) -> None:
-    """Generate a recommendation for a selected goal."""
+def recommend_command(goal: Optional[str] = typer.Option(None, "--goal", "-g", help="模板 ID。")) -> None:
+    """根据使用目标生成应用推荐。"""
+
     if not goal:
-        console.print("[red]Missing --goal.[/red] Run `python -m stackpilot list-templates` to see available goals.")
+        _missing_goal()
         raise typer.Exit(code=1)
     try:
         _print_recommendation(recommend(goal))
@@ -115,39 +145,46 @@ def recommend_command(goal: Optional[str] = typer.Option(None, "--goal", "-g", h
 
 
 @app.command("report")
-def report_command(goal: Optional[str] = typer.Option(None, "--goal", "-g", help="Template goal id.")) -> None:
-    """Generate Markdown and JSON reports."""
+def report_command(goal: Optional[str] = typer.Option(None, "--goal", "-g", help="模板 ID。")) -> None:
+    """生成 Markdown 和 JSON 推荐报告。"""
+
     if not goal:
-        console.print("[red]Missing --goal.[/red] Run `python -m stackpilot list-templates` to see available goals.")
+        _missing_goal()
         raise typer.Exit(code=1)
     try:
         md_path, json_path, recommendation = generate_report(goal)
     except UnknownTemplateError as exc:
         console.print(f"[red]{exc}[/red]")
         raise typer.Exit(code=1) from exc
-    console.print(f"Generated report for [bold]{recommendation.template_id}[/bold]")
-    console.print(f"- {md_path}")
-    console.print(f"- {json_path}")
+    console.print(f"报告已生成：{recommendation.display_name}")
+    console.print(str(md_path))
+    console.print(str(json_path))
 
 
 @app.command("doctor")
-def doctor_command(goal: Optional[str] = typer.Option(None, "--goal", "-g", help="Template goal id.")) -> None:
-    """Run scan, recommendation, and report generation."""
+def doctor_command(goal: Optional[str] = typer.Option(None, "--goal", "-g", help="模板 ID。")) -> None:
+    """检测电脑配置，生成推荐和报告。"""
+
     if not goal:
-        console.print("[red]Missing --goal.[/red] Run `python -m stackpilot list-templates` to see available goals.")
+        _missing_goal()
         raise typer.Exit(code=1)
-    profile = scan_system()
-    _print_profile(profile)
     try:
-        recommendation = recommend(goal, profile=profile)
-        _print_recommendation(recommendation)
+        template = load_template(goal)
+    except UnknownTemplateError as exc:
+        console.print(f"[red]{exc}[/red]")
+        raise typer.Exit(code=1) from exc
+
+    console.print("正在检测电脑配置...")
+    profile = scan_system()
+    console.print(f"正在生成推荐：{template.display_name}...")
+    try:
         md_path, json_path, _ = generate_report(goal, profile=profile)
     except UnknownTemplateError as exc:
         console.print(f"[red]{exc}[/red]")
         raise typer.Exit(code=1) from exc
-    console.print("[bold]Report outputs[/bold]")
-    console.print(f"- {md_path}")
-    console.print(f"- {json_path}")
+    console.print("报告已生成：")
+    console.print(str(md_path))
+    console.print(str(json_path))
 
 
 def main() -> None:

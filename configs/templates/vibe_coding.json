@@ -1,8 +1,8 @@
 {
   "template_id": "vibe_coding",
   "display_name": "AI 辅助写代码",
-  "category": "Vibe Coding",
-  "description": "AI 辅助写代码环境，强调先会运行、测试、提交，再让 AI 参与修改。",
+  "category": "AI 编程",
+  "description": "AI 辅助写代码环境，强调先会运行、测试和提交，再让 AI 参与修改。",
   "requirements": {
     "min_ram_gb": 8,
     "recommended_ram_gb": 16,
@@ -16,20 +16,20 @@
     {"app_id": "git", "required": true, "reason": "用于管理 AI 修改前后的差异。"},
     {"app_id": "python", "required": true, "reason": "常见 AI 编程和脚本项目运行时。"},
     {"app_id": "nodejs", "required": true, "reason": "前端、CLI 和现代工具链常用运行时。"},
-    {"app_id": "codex_cli", "required": false, "reason": "命令行 AI 编程工作流可选。"},
+    {"app_id": "codex_cli", "required": false, "reason": "命令行 AI 编程工作流，可选使用。"},
     {"app_id": "continue", "required": false, "reason": "开源 AI 编程助手扩展。"},
     {"app_id": "github_copilot", "required": false, "reason": "托管式 AI 编程助手。"},
     {"app_id": "vscode", "required": false, "reason": "稳定通用编辑器，可作为 Cursor 之外的备用选择。"}
   ],
   "config_recommendations": [
     "先准备 Git 基础和项目目录。",
-    "AI 写代码前先学会运行、测试和提交。",
+    "让 AI 写代码前，先学会运行、测试和提交。",
     "推荐每个项目都使用 Git 管理。",
     "不要盲目接受 AI 生成代码，必须运行测试。"
   ],
   "risk_warnings": [
     "AI 可能生成错误代码或危险命令。",
-    "把仓库内容发给在线服务前先检查隐私设置。"
+    "把仓库内容发送给在线服务前，先检查隐私和数据设置。"
   ],
   "not_recommended": [
     "不阅读 diff、不运行测试就提交 AI 生成代码。"
@@ -37,6 +37,6 @@
   "next_steps": [
     "创建一个可运行的小项目。",
     "用 Git 提交初始版本。",
-    "让 AI 做一个小改动并运行测试验证。"
+    "让 AI 做一个小改动，并运行测试验证。"
   ]
 }

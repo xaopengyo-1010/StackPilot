@@ -1,8 +1,8 @@
 {
   "template_id": "gaming_setup",
   "display_name": "游戏玩家常用软件",
-  "category": "Gaming",
-  "description": "游戏玩家常用软件环境，包含游戏平台、驱动工具、语音和性能监控。",
+  "category": "游戏",
+  "description": "游戏玩家常用软件环境，包含游戏平台、驱动工具、语音沟通和性能监控。",
   "requirements": {
     "min_ram_gb": 8,
     "recommended_ram_gb": 16,
@@ -13,7 +13,7 @@
   },
   "apps": [
     {"app_id": "steam", "required": true, "reason": "主要 PC 游戏平台和游戏库。"},
-    {"app_id": "nvidia_app", "required": true, "reason": "NVIDIA GPU 用户用于驱动和设置管理；非 NVIDIA 可跳过。"},
+    {"app_id": "nvidia_app", "required": true, "reason": "NVIDIA GPU 用户用于驱动和设置管理；非 NVIDIA 用户可跳过。"},
     {"app_id": "discord", "required": true, "reason": "常用语音和社区沟通工具。"},
     {"app_id": "epic_games_launcher", "required": false, "reason": "Epic 游戏库可选启动器。"},
     {"app_id": "msi_afterburner", "required": false, "reason": "帧率、温度和硬件监控工具。"},
@@ -22,10 +22,10 @@
     {"app_id": "seven_zip", "required": false, "reason": "处理压缩包、补丁包和备份文件。"}
   ],
   "config_recommendations": [
-    "NVIDIA 用户先保证驱动正常。",
-    "需要监控帧率可以使用 MSI Afterburner + RTSS。",
+    "NVIDIA 用户先确认显卡驱动版本正常。",
+    "需要监控帧率时可以使用 MSI Afterburner + RTSS。",
     "想分析帧时间可以使用 CapFrameX。",
-    "不建议新手乱改 BIOS/超频设置。"
+    "不建议新手随意修改 BIOS 或超频设置。"
   ],
   "risk_warnings": [
     "多个启动器和 overlay 会占用后台资源。",

@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "stackpilot"
-version = "0.1.0"
-description = "Open-source environment blueprint generator."
+version = "0.2.0a0"
+description = "Chinese CLI assistant that recommends PC apps from local hardware facts and rule findings."
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
@@ -18,6 +18,10 @@ dependencies = [
   "rich>=13.0",
   "psutil>=5.9"
 ]
+
+[project.urls]
+Homepage = "https://github.com/xaopengyo-1010/StackPilot"
+Repository = "https://github.com/xaopengyo-1010/StackPilot"
 
 [project.optional-dependencies]
 dev = [
