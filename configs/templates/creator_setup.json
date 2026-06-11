@@ -1,0 +1,38 @@
+{
+  "template_id": "creator_setup",
+  "name": "Creator Setup",
+  "category": "Creator",
+  "description": "A starter creator workflow for recording, editing, audio cleanup, and media processing.",
+  "requirements": {
+    "min_ram_gb": 16,
+    "recommended_ram_gb": 32,
+    "min_vram_gb": 4,
+    "recommended_vram_gb": 8,
+    "min_disk_free_gb": 100,
+    "os": ["Windows 10", "Windows 11", "macOS", "Linux"]
+  },
+  "apps": [
+    {"app_id": "obs_studio", "required": true, "reason": "Core screen recording and streaming tool."},
+    {"app_id": "ffmpeg", "required": true, "reason": "General media conversion and processing toolkit."},
+    {"app_id": "davinci_resolve", "required": false, "reason": "Recommended for more advanced video editing workflows."},
+    {"app_id": "audacity", "required": false, "reason": "Useful for audio recording and cleanup."},
+    {"app_id": "capcut_jianying", "required": false, "reason": "Useful for quick social video editing workflows."}
+  ],
+  "config_recommendations": [
+    "Keep recording output and editing cache on a disk with enough free space.",
+    "Use hardware encoding when available and stable.",
+    "Test one short recording before important capture sessions."
+  ],
+  "risk_warnings": [
+    "High-bitrate recording can fill disks quickly.",
+    "4K editing can be slow on systems with limited RAM or VRAM."
+  ],
+  "not_recommended": [
+    "4K multi-layer editing on systems below 16GB RAM."
+  ],
+  "next_steps": [
+    "Pick a recording resolution and codec target.",
+    "Install creator tools manually from official sources.",
+    "Run a short recording and playback test."
+  ]
+}

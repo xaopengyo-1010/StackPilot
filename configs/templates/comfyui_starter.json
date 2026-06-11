@@ -1,0 +1,37 @@
+{
+  "template_id": "comfyui_starter",
+  "name": "ComfyUI Starter",
+  "category": "AI",
+  "description": "A starter blueprint for local AI image generation with ComfyUI.",
+  "requirements": {
+    "min_ram_gb": 16,
+    "recommended_ram_gb": 32,
+    "min_vram_gb": 6,
+    "recommended_vram_gb": 12,
+    "min_disk_free_gb": 50,
+    "os": ["Windows 10", "Windows 11", "Linux"]
+  },
+  "apps": [
+    {"app_id": "git", "required": true, "reason": "Used to clone and manage open-source AI projects manually."},
+    {"app_id": "python", "required": true, "reason": "Required for running Python-based AI tools."},
+    {"app_id": "comfyui", "required": true, "reason": "Core local AI image generation workflow tool."},
+    {"app_id": "ffmpeg", "required": false, "reason": "Useful for workflows that process image sequences or video."}
+  ],
+  "config_recommendations": [
+    "If VRAM is below 8GB, use lightweight workflows.",
+    "Place model files on an SSD with enough free space.",
+    "Avoid mixing multiple incompatible Python environments."
+  ],
+  "risk_warnings": [
+    "Low-VRAM systems are not recommended for heavy image generation models.",
+    "StackPilot v0.1 does not install ComfyUI automatically; it only generates a blueprint."
+  ],
+  "not_recommended": [
+    "Heavy video generation workflows on GPUs with less than 8GB VRAM."
+  ],
+  "next_steps": [
+    "Review the recommended apps.",
+    "Install dependencies manually from official sources.",
+    "Run StackPilot again after installation to verify your environment."
+  ]
+}

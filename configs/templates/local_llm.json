@@ -1,0 +1,37 @@
+{
+  "template_id": "local_llm",
+  "name": "Local LLM",
+  "category": "AI",
+  "description": "A local language model blueprint focused on Ollama, LM Studio, and conservative model sizing.",
+  "requirements": {
+    "min_ram_gb": 16,
+    "recommended_ram_gb": 32,
+    "min_vram_gb": 0,
+    "recommended_vram_gb": 12,
+    "min_disk_free_gb": 60,
+    "os": ["Windows 10", "Windows 11", "macOS", "Linux"]
+  },
+  "apps": [
+    {"app_id": "ollama", "required": true, "reason": "Simple local LLM runtime for supported models."},
+    {"app_id": "lm_studio", "required": false, "reason": "Desktop interface for trying and comparing local models."},
+    {"app_id": "git", "required": false, "reason": "Useful for reviewing open-source model tooling manually."},
+    {"app_id": "python", "required": false, "reason": "Useful for local AI scripting and examples."}
+  ],
+  "config_recommendations": [
+    "Start with small quantized models before trying larger models.",
+    "Keep model storage on a disk with enough free space.",
+    "Avoid running multiple large local models at the same time."
+  ],
+  "risk_warnings": [
+    "Large local models can consume substantial RAM, VRAM, and disk space.",
+    "StackPilot v0.1 does not download models automatically."
+  ],
+  "not_recommended": [
+    "Large 30B+ models on systems with limited RAM or unknown VRAM."
+  ],
+  "next_steps": [
+    "Choose a small model target.",
+    "Install one local LLM tool manually.",
+    "Run StackPilot again after setup to check detected tools."
+  ]
+}

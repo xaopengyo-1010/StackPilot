@@ -1,0 +1,41 @@
+{
+  "template_id": "minecraft_realism",
+  "name": "Minecraft Realism",
+  "category": "Minecraft",
+  "description": "A Minecraft visual realism blueprint using performance mods, shader loaders, careful presets, and optional distant terrain.",
+  "requirements": {
+    "min_ram_gb": 8,
+    "recommended_ram_gb": 16,
+    "min_vram_gb": 4,
+    "recommended_vram_gb": 8,
+    "min_disk_free_gb": 20,
+    "os": ["Windows 10", "Windows 11", "macOS", "Linux"]
+  },
+  "apps": [
+    {"app_id": "prism_launcher", "required": true, "reason": "Manages separate Minecraft instances for modded setups."},
+    {"app_id": "fabric", "required": true, "reason": "Lightweight mod loader for the recommended performance stack."},
+    {"app_id": "sodium", "required": true, "reason": "Base rendering performance mod."},
+    {"app_id": "iris", "required": true, "reason": "Shader support for modern Minecraft."},
+    {"app_id": "lithium", "required": false, "reason": "Improves game logic performance."},
+    {"app_id": "ferritecore", "required": false, "reason": "Reduces memory pressure in modded setups."},
+    {"app_id": "distant_horizons", "required": false, "reason": "Adds far-distance terrain rendering on capable PCs."},
+    {"app_id": "modrinth_app", "required": false, "reason": "Alternative mod and modpack management tool."}
+  ],
+  "config_recommendations": [
+    "Use separate instances for vanilla, shader, and heavy modded profiles.",
+    "Increase shader and Distant Horizons settings gradually.",
+    "Keep texture resolution aligned with available VRAM."
+  ],
+  "risk_warnings": [
+    "Shaders and high-resolution textures can heavily reduce frame rate.",
+    "Distant Horizons can increase CPU, RAM, disk, and GPU load."
+  ],
+  "not_recommended": [
+    "Path-traced shader presets on systems without a capable discrete GPU."
+  ],
+  "next_steps": [
+    "Create a separate Minecraft instance.",
+    "Install mods manually from official or trusted mod sources.",
+    "Test one shader preset before adding texture packs or distant terrain."
+  ]
+}

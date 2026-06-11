@@ -1,0 +1,41 @@
+{
+  "template_id": "vibe_coding",
+  "name": "Vibe Coding",
+  "category": "Vibe Coding",
+  "description": "An AI-assisted coding blueprint using VS Code, Cursor, Git, Node.js, Python, Codex CLI, and optional assistant extensions.",
+  "requirements": {
+    "min_ram_gb": 8,
+    "recommended_ram_gb": 16,
+    "min_vram_gb": 0,
+    "recommended_vram_gb": 0,
+    "min_disk_free_gb": 20,
+    "os": ["Windows 10", "Windows 11", "macOS", "Linux"]
+  },
+  "apps": [
+    {"app_id": "vscode", "required": true, "reason": "Stable editor baseline for coding workflows."},
+    {"app_id": "cursor", "required": false, "reason": "AI-focused editor option for assisted coding."},
+    {"app_id": "git", "required": true, "reason": "Required for version control and reviewing generated changes."},
+    {"app_id": "nodejs", "required": true, "reason": "Needed for many frontend, CLI, and tooling projects."},
+    {"app_id": "python", "required": true, "reason": "Needed for Python projects and many automation workflows."},
+    {"app_id": "codex_cli", "required": false, "reason": "Command-line AI coding workflow option."},
+    {"app_id": "github_copilot", "required": false, "reason": "Optional hosted coding assistant."},
+    {"app_id": "continue", "required": false, "reason": "Optional open-source coding assistant extension."}
+  ],
+  "config_recommendations": [
+    "Keep Git status clean before asking AI tools to modify a project.",
+    "Review every generated diff before running commands or committing.",
+    "Use project instructions to document local conventions."
+  ],
+  "risk_warnings": [
+    "AI coding tools can produce incorrect code and unsafe commands.",
+    "Review privacy settings before sending repository context to external services."
+  ],
+  "not_recommended": [
+    "Using AI-generated commands without reading them first."
+  ],
+  "next_steps": [
+    "Install the required editor, runtime, and Git tools manually.",
+    "Choose one AI assistant workflow to start.",
+    "Run StackPilot again after installation to verify tool detection."
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "template_id": "coding_starter",
+  "name": "Coding Starter",
+  "category": "Coding",
+  "description": "A practical starter blueprint for Python, JavaScript, Git, editor, and optional container workflows.",
+  "requirements": {
+    "min_ram_gb": 8,
+    "recommended_ram_gb": 16,
+    "min_vram_gb": 0,
+    "recommended_vram_gb": 0,
+    "min_disk_free_gb": 10,
+    "os": ["Windows 10", "Windows 11", "macOS", "Linux"]
+  },
+  "apps": [
+    {"app_id": "vscode", "required": true, "reason": "Primary editor for coding projects."},
+    {"app_id": "git", "required": true, "reason": "Required for source control and open-source project workflows."},
+    {"app_id": "python", "required": true, "reason": "Python runtime for scripting and backend development."},
+    {"app_id": "nodejs", "required": true, "reason": "JavaScript runtime for frontend and tooling workflows."},
+    {"app_id": "pnpm", "required": false, "reason": "Recommended package manager for modern JavaScript projects."},
+    {"app_id": "docker_desktop", "required": false, "reason": "Useful for containerized development when the PC has enough resources."},
+    {"app_id": "wsl2_ubuntu", "required": false, "reason": "Useful on Windows for Linux-native developer tooling."}
+  ],
+  "config_recommendations": [
+    "Use one project folder for source code and one virtual environment per Python project.",
+    "Prefer LTS Node.js for starter workflows.",
+    "Install Docker only if the workflow actually needs containers."
+  ],
+  "risk_warnings": [
+    "StackPilot v0.1 does not install developer tools automatically.",
+    "Docker can consume significant RAM and disk space on smaller PCs."
+  ],
+  "not_recommended": [
+    "Running multiple heavy IDEs, containers, and dev servers at once on low-RAM systems."
+  ],
+  "next_steps": [
+    "Install required tools manually from official sources.",
+    "Create a small test project.",
+    "Run StackPilot again after installation to verify detected tools."
+  ]
+}

@@ -1,0 +1,334 @@
+{
+  "apps": [
+    {
+      "app_id": "vscode",
+      "name": "Visual Studio Code",
+      "category": "Coding",
+      "official_source": "https://code.visualstudio.com/",
+      "install_methods": ["Manual install from official website or package manager"],
+      "description": "General-purpose code editor.",
+      "config_notes": ["Install only the extensions you need for the selected workflow."],
+      "risk_notes": ["Too many extensions can slow startup or conflict with each other."]
+    },
+    {
+      "app_id": "git",
+      "name": "Git",
+      "category": "Coding",
+      "official_source": "https://git-scm.com/",
+      "install_methods": ["Manual install from official website or package manager"],
+      "description": "Distributed version control system.",
+      "config_notes": ["Configure user name, email, credential manager, and default branch policy."],
+      "risk_notes": ["Only clone repositories you trust and review scripts before running them."]
+    },
+    {
+      "app_id": "python",
+      "name": "Python",
+      "category": "Coding",
+      "official_source": "https://www.python.org/",
+      "install_methods": ["Manual install from official website, Microsoft Store, pyenv, or package manager"],
+      "description": "Python runtime for development and automation.",
+      "config_notes": ["Use virtual environments per project to avoid dependency conflicts."],
+      "risk_notes": ["Avoid installing packages globally unless you understand the impact."]
+    },
+    {
+      "app_id": "nodejs",
+      "name": "Node.js",
+      "category": "Coding",
+      "official_source": "https://nodejs.org/",
+      "install_methods": ["Manual install from official website, nvm, fnm, or package manager"],
+      "description": "JavaScript runtime for frontend and tooling workflows.",
+      "config_notes": ["Prefer an LTS release for starter environments."],
+      "risk_notes": ["Project dependency scripts should be reviewed before execution."]
+    },
+    {
+      "app_id": "pnpm",
+      "name": "pnpm",
+      "category": "Coding",
+      "official_source": "https://pnpm.io/",
+      "install_methods": ["Manual install using official pnpm instructions"],
+      "description": "Fast disk-efficient JavaScript package manager.",
+      "config_notes": ["Enable Corepack if your Node.js workflow uses it."],
+      "risk_notes": ["Lockfiles should be committed for reproducible installs."]
+    },
+    {
+      "app_id": "docker_desktop",
+      "name": "Docker Desktop",
+      "category": "Coding",
+      "official_source": "https://www.docker.com/products/docker-desktop/",
+      "install_methods": ["Manual install from Docker official website"],
+      "description": "Container runtime and desktop management UI.",
+      "config_notes": ["Allocate conservative CPU, RAM, and disk limits on smaller PCs."],
+      "risk_notes": ["Containers consume disk and memory; review images before running them."]
+    },
+    {
+      "app_id": "wsl2_ubuntu",
+      "name": "WSL2 Ubuntu",
+      "category": "Coding",
+      "official_source": "https://learn.microsoft.com/windows/wsl/",
+      "install_methods": ["Manual setup using official Microsoft WSL documentation"],
+      "description": "Ubuntu Linux environment on Windows through WSL2.",
+      "config_notes": ["Use WSL2 for Linux-native developer tooling when needed."],
+      "risk_notes": ["WSL setup changes Windows optional features and should be reviewed manually."]
+    },
+    {
+      "app_id": "cursor",
+      "name": "Cursor",
+      "category": "Vibe Coding",
+      "official_source": "https://www.cursor.com/",
+      "install_methods": ["Manual install from official website"],
+      "description": "AI-focused code editor.",
+      "config_notes": ["Configure model provider, privacy settings, and repository indexing intentionally."],
+      "risk_notes": ["Review privacy and data-sharing settings before use."]
+    },
+    {
+      "app_id": "codex_cli",
+      "name": "Codex CLI",
+      "category": "Vibe Coding",
+      "official_source": "OpenAI Codex CLI official documentation",
+      "install_methods": ["Manual install using official documentation"],
+      "description": "Command-line coding assistant workflow tool.",
+      "config_notes": ["Use project-level instructions and review generated diffs."],
+      "risk_notes": ["Do not run generated commands blindly."]
+    },
+    {
+      "app_id": "continue",
+      "name": "Continue",
+      "category": "Vibe Coding",
+      "official_source": "https://www.continue.dev/",
+      "install_methods": ["Manual install from official extension marketplace or website"],
+      "description": "Open-source AI coding assistant extension.",
+      "config_notes": ["Configure model endpoints and repository context carefully."],
+      "risk_notes": ["Review what code context is sent to external services."]
+    },
+    {
+      "app_id": "github_copilot",
+      "name": "GitHub Copilot",
+      "category": "Vibe Coding",
+      "official_source": "https://github.com/features/copilot",
+      "install_methods": ["Manual install from official editor extension marketplace"],
+      "description": "AI coding assistant from GitHub.",
+      "config_notes": ["Review organization policy and editor settings."],
+      "risk_notes": ["Generated code must be reviewed and tested."]
+    },
+    {
+      "app_id": "comfyui",
+      "name": "ComfyUI",
+      "category": "AI",
+      "official_source": "https://github.com/comfyanonymous/ComfyUI",
+      "install_methods": ["Manual install from official repository instructions"],
+      "description": "Node-based local AI image generation workflow tool.",
+      "config_notes": ["Keep models on an SSD and separate Python environments per AI tool."],
+      "risk_notes": ["Large model files consume significant disk space and VRAM."]
+    },
+    {
+      "app_id": "ollama",
+      "name": "Ollama",
+      "category": "AI",
+      "official_source": "https://ollama.com/",
+      "install_methods": ["Manual install from official website"],
+      "description": "Local model runner for supported LLMs.",
+      "config_notes": ["Start with smaller models on systems with limited RAM or VRAM."],
+      "risk_notes": ["Model files can be large and may run slowly on low-memory machines."]
+    },
+    {
+      "app_id": "lm_studio",
+      "name": "LM Studio",
+      "category": "AI",
+      "official_source": "https://lmstudio.ai/",
+      "install_methods": ["Manual install from official website"],
+      "description": "Desktop application for local LLM experimentation.",
+      "config_notes": ["Choose quantized models that fit available RAM and VRAM."],
+      "risk_notes": ["Large models can make the system unresponsive on underpowered PCs."]
+    },
+    {
+      "app_id": "ffmpeg",
+      "name": "FFmpeg",
+      "category": "AI",
+      "official_source": "https://ffmpeg.org/",
+      "install_methods": ["Manual install from official builds or package manager"],
+      "description": "Media processing toolkit.",
+      "config_notes": ["Keep FFmpeg on PATH only if required by your workflow."],
+      "risk_notes": ["Complex command lines can overwrite files if used carelessly."]
+    },
+    {
+      "app_id": "prism_launcher",
+      "name": "Prism Launcher",
+      "category": "Minecraft",
+      "official_source": "https://prismlauncher.org/",
+      "install_methods": ["Manual install from official website"],
+      "description": "Minecraft launcher with instance and modpack management.",
+      "config_notes": ["Use separate instances for shader, modded, and vanilla profiles."],
+      "risk_notes": ["Only install mods from trusted sources."]
+    },
+    {
+      "app_id": "fabric",
+      "name": "Fabric",
+      "category": "Minecraft",
+      "official_source": "https://fabricmc.net/",
+      "install_methods": ["Manual setup through Fabric official installer or launcher integration"],
+      "description": "Lightweight Minecraft mod loader.",
+      "config_notes": ["Match Fabric loader and mod versions to the Minecraft version."],
+      "risk_notes": ["Version mismatch can prevent Minecraft from launching."]
+    },
+    {
+      "app_id": "iris",
+      "name": "Iris Shaders",
+      "category": "Minecraft",
+      "official_source": "https://irisshaders.dev/",
+      "install_methods": ["Manual install from official source or mod platform"],
+      "description": "Shader loader for modern Minecraft.",
+      "config_notes": ["Pair with Sodium for performance."],
+      "risk_notes": ["Shader presets can heavily impact frame rate."]
+    },
+    {
+      "app_id": "sodium",
+      "name": "Sodium",
+      "category": "Minecraft",
+      "official_source": "https://modrinth.com/mod/sodium",
+      "install_methods": ["Manual install from Modrinth or official project page"],
+      "description": "Minecraft rendering performance mod.",
+      "config_notes": ["Use as a base for performance-sensitive shader setups."],
+      "risk_notes": ["Check compatibility with other rendering mods."]
+    },
+    {
+      "app_id": "lithium",
+      "name": "Lithium",
+      "category": "Minecraft",
+      "official_source": "https://modrinth.com/mod/lithium",
+      "install_methods": ["Manual install from Modrinth or official project page"],
+      "description": "Minecraft game logic optimization mod.",
+      "config_notes": ["Keep mod versions aligned with your loader version."],
+      "risk_notes": ["Server and client mod compatibility should be checked."]
+    },
+    {
+      "app_id": "ferritecore",
+      "name": "FerriteCore",
+      "category": "Minecraft",
+      "official_source": "https://modrinth.com/mod/ferrite-core",
+      "install_methods": ["Manual install from Modrinth or official project page"],
+      "description": "Minecraft memory optimization mod.",
+      "config_notes": ["Useful when running large modpacks on limited RAM."],
+      "risk_notes": ["Check compatibility notes for each Minecraft version."]
+    },
+    {
+      "app_id": "distant_horizons",
+      "name": "Distant Horizons",
+      "category": "Minecraft",
+      "official_source": "https://modrinth.com/mod/distanthorizons",
+      "install_methods": ["Manual install from Modrinth or official project page"],
+      "description": "Minecraft far-distance terrain rendering mod.",
+      "config_notes": ["Increase settings gradually and watch memory use."],
+      "risk_notes": ["High settings can consume substantial CPU, RAM, disk, and GPU resources."]
+    },
+    {
+      "app_id": "modrinth_app",
+      "name": "Modrinth App",
+      "category": "Minecraft",
+      "official_source": "https://modrinth.com/app",
+      "install_methods": ["Manual install from official website"],
+      "description": "Minecraft mod and modpack manager.",
+      "config_notes": ["Use separate profiles for experiments."],
+      "risk_notes": ["Review mod permissions and sources."]
+    },
+    {
+      "app_id": "steam",
+      "name": "Steam",
+      "category": "Gaming",
+      "official_source": "https://store.steampowered.com/about/",
+      "install_methods": ["Manual install from official website"],
+      "description": "PC game store and library client.",
+      "config_notes": ["Place large game libraries on a disk with enough free space."],
+      "risk_notes": ["Downloads and shader caches can consume significant disk space."]
+    },
+    {
+      "app_id": "epic_games_launcher",
+      "name": "Epic Games Launcher",
+      "category": "Gaming",
+      "official_source": "https://store.epicgames.com/download",
+      "install_methods": ["Manual install from official website"],
+      "description": "PC game store and launcher.",
+      "config_notes": ["Choose library locations intentionally."],
+      "risk_notes": ["Background launchers can consume startup resources."]
+    },
+    {
+      "app_id": "nvidia_app",
+      "name": "NVIDIA App",
+      "category": "Gaming",
+      "official_source": "https://www.nvidia.com/software/nvidia-app/",
+      "install_methods": ["Manual install from NVIDIA official website"],
+      "description": "NVIDIA driver and settings companion app.",
+      "config_notes": ["Use official driver channels and avoid unnecessary overlays."],
+      "risk_notes": ["Driver updates should be reviewed for your hardware and games."]
+    },
+    {
+      "app_id": "msi_afterburner",
+      "name": "MSI Afterburner",
+      "category": "Gaming",
+      "official_source": "https://www.msi.com/Landing/afterburner/graphics-cards",
+      "install_methods": ["Manual install from official MSI source"],
+      "description": "GPU monitoring and tuning utility.",
+      "config_notes": ["Use monitoring features first; avoid overclocking unless experienced."],
+      "risk_notes": ["Incorrect tuning can reduce stability."]
+    },
+    {
+      "app_id": "capframex",
+      "name": "CapFrameX",
+      "category": "Gaming",
+      "official_source": "https://www.capframex.com/",
+      "install_methods": ["Manual install from official website"],
+      "description": "Frame-time capture and analysis tool.",
+      "config_notes": ["Use for repeatable benchmark comparisons."],
+      "risk_notes": ["Benchmark overlays can affect measurements if configured poorly."]
+    },
+    {
+      "app_id": "discord",
+      "name": "Discord",
+      "category": "Gaming",
+      "official_source": "https://discord.com/",
+      "install_methods": ["Manual install from official website"],
+      "description": "Voice and community chat client.",
+      "config_notes": ["Disable unnecessary startup and overlay options if performance is a concern."],
+      "risk_notes": ["Overlays and background activity can affect game performance."]
+    },
+    {
+      "app_id": "obs_studio",
+      "name": "OBS Studio",
+      "category": "Creator",
+      "official_source": "https://obsproject.com/",
+      "install_methods": ["Manual install from official website"],
+      "description": "Open-source recording and streaming software.",
+      "config_notes": ["Use hardware encoding when available and test bitrates before recording important work."],
+      "risk_notes": ["High-resolution recording can consume disk and GPU resources quickly."]
+    },
+    {
+      "app_id": "davinci_resolve",
+      "name": "DaVinci Resolve",
+      "category": "Creator",
+      "official_source": "https://www.blackmagicdesign.com/products/davinciresolve",
+      "install_methods": ["Manual install from official website"],
+      "description": "Video editing and color grading application.",
+      "config_notes": ["Place media cache on a fast disk with sufficient free space."],
+      "risk_notes": ["Low-RAM systems may struggle with high-resolution timelines."]
+    },
+    {
+      "app_id": "audacity",
+      "name": "Audacity",
+      "category": "Creator",
+      "official_source": "https://www.audacityteam.org/",
+      "install_methods": ["Manual install from official website"],
+      "description": "Audio recording and editing application.",
+      "config_notes": ["Set project sample rates intentionally for your workflow."],
+      "risk_notes": ["Always keep source audio backups before destructive edits."]
+    },
+    {
+      "app_id": "capcut_jianying",
+      "name": "CapCut / Jianying",
+      "category": "Creator",
+      "official_source": "https://www.capcut.com/",
+      "install_methods": ["Manual install from official source"],
+      "description": "Video editing application for quick creator workflows.",
+      "config_notes": ["Review export settings and cloud features before use."],
+      "risk_notes": ["Cloud and account features may have privacy implications."]
+    }
+  ]
+}

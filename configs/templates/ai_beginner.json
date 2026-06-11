@@ -1,0 +1,38 @@
+{
+  "template_id": "ai_beginner",
+  "name": "AI Beginner",
+  "category": "AI",
+  "description": "A beginner-friendly local AI blueprint focused on safe experimentation with small models and clear manual setup steps.",
+  "requirements": {
+    "min_ram_gb": 8,
+    "recommended_ram_gb": 16,
+    "min_vram_gb": 0,
+    "recommended_vram_gb": 8,
+    "min_disk_free_gb": 30,
+    "os": ["Windows 10", "Windows 11", "macOS", "Linux"]
+  },
+  "apps": [
+    {"app_id": "python", "required": true, "reason": "Required for many local AI tools and examples."},
+    {"app_id": "git", "required": true, "reason": "Used to review and clone open-source AI projects manually."},
+    {"app_id": "ollama", "required": false, "reason": "Useful for lightweight local LLM experiments."},
+    {"app_id": "lm_studio", "required": false, "reason": "Provides a desktop interface for trying local LLMs."},
+    {"app_id": "ffmpeg", "required": false, "reason": "Useful for media preprocessing in some AI workflows."}
+  ],
+  "config_recommendations": [
+    "Start with small models and confirm they fit available RAM or VRAM.",
+    "Keep AI projects in separate folders and use separate Python environments.",
+    "Reserve enough disk space for model files before downloading them manually."
+  ],
+  "risk_warnings": [
+    "StackPilot v0.1 does not download models or install AI tools automatically.",
+    "Low-memory systems can become slow when running local AI workloads."
+  ],
+  "not_recommended": [
+    "Running large local LLMs without checking RAM and VRAM requirements first."
+  ],
+  "next_steps": [
+    "Review the recommended apps.",
+    "Choose one small AI workflow to set up manually.",
+    "Run StackPilot again after installing tools to refresh the blueprint."
+  ]
+}
