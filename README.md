@@ -52,18 +52,6 @@ https://github.com/user-attachments/assets/5a50b36c-ec9f-494f-af9f-0c6ae95452f6
 
 ---
 
-## 📸 运行预览
-
-> 💡 *提示：为了完美的视觉效果，建议您在此处录制几张干净的 GIF 或截图放入 `assets/` 目录。*
-
-### 🖥️ 1. 检测电脑配置
-*(期待您的截图)*
-
-### 📦 2. 推荐应用组合与报告生成
-*(期待您的截图)*
-
----
-
 ## 📥 下载 / 安装
 
 ```bash
@@ -77,32 +65,19 @@ pip install -e .
 
 ---
 
-## 📘 用户指南
+## 🧩 核心工作流
 
-### 🔍 1. 环境扫描与模板查询
-```bash
-# 检测当前电脑的硬件与环境配置
-python -m stackpilot scan
+无需复杂配置，通过以下几个轻量命令，在本地安全、透明地完成全套体检与推荐：
 
-# 查看当前系统支持的所有推荐模板
-python -m stackpilot list-templates
-```
+- **🔍 1. 硬件环境扫描** (`python -m stackpilot scan`)
+  深度检测系统版本、CPU、GPU 型号与显存，以及本地 Python、Git、Docker 等环境的健康度。
+- **🗂️ 2. 探索内置蓝图** (`python -m stackpilot list-templates`)
+  一键列出本地当前所有支持的场景模板（如 AI 绘图入门、编程入门、游戏常用软件等）。
+- **🎯 3. 定向蓝图推荐** (`python -m stackpilot recommend --goal <模板名>`)
+  将本地硬件资产与你的目标自动匹配，在终端计算出最具参考价值的软件组合与必装/可选清单。
+- **📄 4. 导出专属避坑报告** (`python -m stackpilot doctor --goal <模板名>`)
+  [快捷组合命令] 一键完成检测与匹配，并在本地生成带有配置评分、风险预警和避坑指南的 Markdown 报告。
 
-### 🎯 2. 定向生成推荐
-```bash
-# 根据具体目标在终端查看推荐内容
-python -m stackpilot recommend --goal coding_starter
-python -m stackpilot recommend --goal comfyui_starter
-```
-
-### 📄 3. 导出完整报告 (推荐)
-```bash
-# 生成包含配置摘要、评分、风险提示的完整 Markdown 报告
-python -m stackpilot report --goal ai_beginner
-
-# [快捷键] 一步完成：检测 + 推荐 + 报告生成
-python -m stackpilot doctor --goal vibe_coding
-```
 
 ---
 
