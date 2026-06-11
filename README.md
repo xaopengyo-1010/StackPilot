@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/LOGO.png" alt="StackPilot Logo" width="140" />
+  <img src="assets/LOGO1.png" alt="StackPilot Logo" width="140" />
 
 # StackPilot
 
