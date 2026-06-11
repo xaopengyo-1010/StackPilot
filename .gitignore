@@ -1,10 +1,109 @@
+# =========================================================
+# StackPilot .gitignore
+# Keep official assets, ignore local/generated junk
+# =========================================================
+
+
+# Python cache
 __pycache__/
+*.py[cod]
+*$py.class
 .pytest_cache/
-.pytest_tmp/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+
+# Virtual environments
 .venv/
-dist/
+venv/
+env/
+ENV/
+
+
+# Build / packaging
 build/
+dist/
 *.egg-info/
-outputs/reports/*.json
+.eggs/
+pip-wheel-metadata/
+*.whl
+
+
+# Generated reports
 outputs/reports/*.md
+outputs/reports/*.json
+outputs/reports/*.html
+outputs/reports/*.log
 !outputs/reports/.gitkeep
+
+
+# Runtime outputs / temp
+outputs/tmp/
+outputs/cache/
+outputs/debug/
+*.log
+*.tmp
+*.bak
+
+
+# Local config / secrets
+.env
+.env.*
+*.env
+secrets.json
+local_config.json
+config.local.json
+*.secret
+*.key
+*.pem
+
+
+# IDE / editor
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+
+# Node / frontend future-proofing
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.next/
+out/
+
+
+# Tauri / desktop future-proofing
+src-tauri/target/
+target/
+
+
+# ---------------------------------------------------------
+# Assets
+# Official README assets SHOULD be committed:
+# - assets/stackpilot-logo.png
+# - assets/screenshots/*.png
+# - assets/demo/*.gif
+#
+# Only ignore raw drafts / temp design files.
+# ---------------------------------------------------------
+assets/raw/
+assets/drafts/
+assets/temp/
+assets/tmp/
+
+*.psd
+*.kra
+*.xcf
+*.afdesign
