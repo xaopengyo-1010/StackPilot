@@ -107,3 +107,5 @@ assets/tmp/
 *.kra
 *.xcf
 *.afdesign
+AGENTS.md
+.pytest_tmp/
