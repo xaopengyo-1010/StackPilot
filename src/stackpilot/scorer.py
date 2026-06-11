@@ -31,12 +31,16 @@ def score_template(profile: SystemProfile, template: TemplateDefinition) -> floa
             score -= 12
 
     vram = _effective_vram(profile)
-    if requirements.min_vram_gb is not None:
+    needs_vram = (
+        (requirements.min_vram_gb is not None and requirements.min_vram_gb > 0)
+        or (requirements.recommended_vram_gb is not None and requirements.recommended_vram_gb > 0)
+    )
+    if needs_vram:
         if not profile.gpu_names:
             score -= 30
         elif vram is None:
             score -= 12
-        elif vram < requirements.min_vram_gb:
+        elif requirements.min_vram_gb is not None and vram < requirements.min_vram_gb:
             score -= 35
         elif requirements.recommended_vram_gb and vram < requirements.recommended_vram_gb:
             score -= 14

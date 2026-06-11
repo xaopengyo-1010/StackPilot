@@ -1,8 +1,8 @@
 {
   "template_id": "comfyui_starter",
-  "name": "ComfyUI Starter",
+  "display_name": "AI 绘图入门",
   "category": "AI",
-  "description": "A starter blueprint for local AI image generation with ComfyUI.",
+  "description": "AI 绘图入门环境，围绕 ComfyUI、Python、Git 和基础媒体工具。",
   "requirements": {
     "min_ram_gb": 16,
     "recommended_ram_gb": 32,
@@ -12,26 +12,31 @@
     "os": ["Windows 10", "Windows 11", "Linux"]
   },
   "apps": [
-    {"app_id": "git", "required": true, "reason": "Used to clone and manage open-source AI projects manually."},
-    {"app_id": "python", "required": true, "reason": "Required for running Python-based AI tools."},
-    {"app_id": "comfyui", "required": true, "reason": "Core local AI image generation workflow tool."},
-    {"app_id": "ffmpeg", "required": false, "reason": "Useful for workflows that process image sequences or video."}
+    {"app_id": "git", "required": true, "reason": "用于获取和管理开源 AI 绘图项目。"},
+    {"app_id": "python", "required": true, "reason": "运行 ComfyUI 和相关节点的基础运行时。"},
+    {"app_id": "comfyui", "required": true, "reason": "核心本地 AI 绘图工作流工具。"},
+    {"app_id": "ffmpeg", "required": false, "reason": "处理图片序列、视频和部分节点依赖时有用。"},
+    {"app_id": "nvidia_app", "required": false, "reason": "NVIDIA 显卡用户用于驱动和设置管理。"},
+    {"app_id": "cuda_pytorch_note", "required": false, "reason": "仅提示 CUDA/PyTorch 版本兼容，不自动安装。"}
   ],
   "config_recommendations": [
-    "If VRAM is below 8GB, use lightweight workflows.",
-    "Place model files on an SSD with enough free space.",
-    "Avoid mixing multiple incompatible Python environments."
+    "显存低于 6GB 不推荐重型工作流。",
+    "模型文件建议放在剩余空间充足的 SSD。",
+    "不要随便运行来路不明的安装器。",
+    "custom nodes 要注意来源和版本兼容。"
   ],
   "risk_warnings": [
-    "Low-VRAM systems are not recommended for heavy image generation models.",
-    "StackPilot v0.1 does not install ComfyUI automatically; it only generates a blueprint."
+    "低显存设备可能生成很慢或爆显存。",
+    "ComfyUI 依赖较多，新手容易遇到节点缺失问题。",
+    "StackPilot v0.1 只推荐，不自动安装。"
   ],
   "not_recommended": [
-    "Heavy video generation workflows on GPUs with less than 8GB VRAM."
+    "显存低于 6GB 的设备运行重型工作流。",
+    "从不可信来源下载模型、节点或安装脚本。"
   ],
   "next_steps": [
-    "Review the recommended apps.",
-    "Install dependencies manually from official sources.",
-    "Run StackPilot again after installation to verify your environment."
+    "确认显卡、显存和剩余磁盘空间。",
+    "只从官方仓库和可信来源安装。",
+    "先运行一个基础工作流，再逐步添加 custom nodes。"
   ]
 }

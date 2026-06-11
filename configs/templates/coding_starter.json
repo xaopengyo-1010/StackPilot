@@ -1,40 +1,42 @@
 {
   "template_id": "coding_starter",
-  "name": "Coding Starter",
+  "display_name": "写代码入门",
   "category": "Coding",
-  "description": "A practical starter blueprint for Python, JavaScript, Git, editor, and optional container workflows.",
+  "description": "基础编程环境，适合从 VS Code、Git、Python、Node.js 和 pnpm 开始。",
   "requirements": {
     "min_ram_gb": 8,
     "recommended_ram_gb": 16,
     "min_vram_gb": 0,
     "recommended_vram_gb": 0,
     "min_disk_free_gb": 10,
-    "os": ["Windows 10", "Windows 11", "macOS", "Linux"]
+    "os": ["Windows 10", "Windows 11"]
   },
   "apps": [
-    {"app_id": "vscode", "required": true, "reason": "Primary editor for coding projects."},
-    {"app_id": "git", "required": true, "reason": "Required for source control and open-source project workflows."},
-    {"app_id": "python", "required": true, "reason": "Python runtime for scripting and backend development."},
-    {"app_id": "nodejs", "required": true, "reason": "JavaScript runtime for frontend and tooling workflows."},
-    {"app_id": "pnpm", "required": false, "reason": "Recommended package manager for modern JavaScript projects."},
-    {"app_id": "docker_desktop", "required": false, "reason": "Useful for containerized development when the PC has enough resources."},
-    {"app_id": "wsl2_ubuntu", "required": false, "reason": "Useful on Windows for Linux-native developer tooling."}
+    {"app_id": "vscode", "required": true, "reason": "主要代码编辑器，适合入门和长期项目。"},
+    {"app_id": "git", "required": true, "reason": "用于版本控制、回滚和协作。"},
+    {"app_id": "python", "required": true, "reason": "常用脚本、自动化和后端开发运行时。"},
+    {"app_id": "nodejs", "required": true, "reason": "前端、CLI 和工具链常用运行时。"},
+    {"app_id": "pnpm", "required": true, "reason": "现代 JavaScript 项目的高效包管理器。"},
+    {"app_id": "docker_desktop", "required": false, "reason": "容器开发可选，新手可后续需要再装。"},
+    {"app_id": "wsl2_ubuntu", "required": false, "reason": "Windows 上的 Linux 开发环境，可选。"},
+    {"app_id": "windows_terminal", "required": false, "reason": "更好的 Windows 命令行体验。"}
   ],
   "config_recommendations": [
-    "Use one project folder for source code and one virtual environment per Python project.",
-    "Prefer LTS Node.js for starter workflows.",
-    "Install Docker only if the workflow actually needs containers."
+    "Python 和 Node.js 安装后确认 PATH。",
+    "Git 配置用户名和邮箱。",
+    "初学者先不要同时装太多语言环境。",
+    "Docker/WSL2 对新手可选，后续需要再装。"
   ],
   "risk_warnings": [
-    "StackPilot v0.1 does not install developer tools automatically.",
-    "Docker can consume significant RAM and disk space on smaller PCs."
+    "StackPilot v0.1 只推荐工具，不自动安装。",
+    "Docker 和 WSL2 会占用额外内存与磁盘空间。"
   ],
   "not_recommended": [
-    "Running multiple heavy IDEs, containers, and dev servers at once on low-RAM systems."
+    "低内存电脑同时运行多个 IDE、容器和开发服务器。"
   ],
   "next_steps": [
-    "Install required tools manually from official sources.",
-    "Create a small test project.",
-    "Run StackPilot again after installation to verify detected tools."
+    "手动安装必装工具。",
+    "创建一个小项目并提交第一次 Git commit。",
+    "重新运行 StackPilot 检查工具识别情况。"
   ]
 }

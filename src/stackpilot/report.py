@@ -78,7 +78,7 @@ def _markdown(profile: SystemProfile, recommendation: TemplateRecommendation) ->
 ## 2. Selected Goal
 
 - Goal: `{recommendation.template_id}`
-- Name: {recommendation.name}
+- Display name: {recommendation.display_name}
 - Category: {recommendation.category}
 
 ## 3. Suitability Score

@@ -43,21 +43,26 @@ def _ram_notes(profile: SystemProfile, template_id: str, category: str) -> tuple
     risks: list[str] = []
     not_recommended: list[str] = []
     ram = profile.total_ram_gb
-    heavy_ai = category == "AI" or template_id in {"comfyui_starter", "local_llm"}
+    heavy_ai = template_id in {"comfyui_starter", "local_llm", "minecraft_realism"}
 
     if ram is None:
         risks.append("RAM could not be detected, so memory suitability is estimated conservatively.")
+    elif template_id == "office_productivity" and ram >= 4:
+        config.append("This RAM level is acceptable for basic office productivity workflows.")
     elif ram < 8:
         config.append("Use lightweight templates and close memory-heavy apps before setup work.")
         risks.append("This PC has less than 8GB RAM; AI, ComfyUI, local LLM, and creator workflows are likely constrained.")
         if heavy_ai:
-            not_recommended.append("Heavy AI or ComfyUI workflows on systems with less than 8GB RAM.")
+            risks.append("This goal is memory-sensitive; low RAM can cause slow generation, model load failures, or system stalls.")
+            not_recommended.append("Heavy AI, ComfyUI, Minecraft shader, or local LLM workflows on systems with less than 8GB RAM.")
     elif ram < 16:
         config.append("This RAM level is best suited for coding, light gaming, and lightweight AI experiments.")
         if heavy_ai:
-            risks.append("ComfyUI or local AI should use lightweight workflows at this RAM level.")
+            risks.append("ComfyUI, local LLM, or Minecraft realism workflows should stay lightweight at this RAM level.")
     elif ram < 32:
         config.append("This RAM level is suitable for coding, creator entry workflows, ComfyUI Starter, and local 7B model experiments.")
+        if template_id in {"comfyui_starter", "local_llm"}:
+            risks.append("For this goal, 32GB RAM is a safer baseline for larger models, higher resolutions, or longer contexts.")
     elif ram < 64:
         config.append("This RAM level can support more complete AI, coding, creator, and multitasking workflows.")
     else:
@@ -72,7 +77,7 @@ def _gpu_notes(profile: SystemProfile, template_id: str, category: str) -> tuple
     not_recommended: list[str] = []
     gpu_names = profile.gpu_names
     vram, inferred = _effective_vram(profile)
-    gpu_sensitive = category in {"AI", "Gaming"} or template_id == "minecraft_realism"
+    gpu_sensitive = category == "Gaming" or template_id in {"comfyui_starter", "local_llm", "minecraft_realism"}
 
     if not gpu_names and gpu_sensitive:
         risks.append("No discrete GPU was detected; recommendations are limited to lightweight or basic configurations.")
@@ -90,11 +95,11 @@ def _gpu_notes(profile: SystemProfile, template_id: str, category: str) -> tuple
     if any("nvidia" in name.casefold() for name in gpu_names) and not profile.nvidia_driver_version:
         risks.append("NVIDIA GPU detected, but the NVIDIA driver version could not be detected.")
 
-    if category == "AI" or template_id in {"comfyui_starter", "local_llm"}:
+    if template_id in {"comfyui_starter", "local_llm", "minecraft_realism"}:
         if vram is None:
             risks.append("AI suitability is uncertain because VRAM is unknown.")
         elif vram < 6:
-            risks.append("Less than 6GB VRAM is not recommended for heavy ComfyUI or local LLM workloads.")
+            risks.append("Less than 6GB VRAM is a strong warning for ComfyUI, local LLM, or other local AI workloads.")
             not_recommended.append("Heavy image generation, video generation, or larger local models.")
         elif vram < 8:
             config.append("Use lightweight ComfyUI workflows and smaller models.")
@@ -121,6 +126,29 @@ def _gpu_notes(profile: SystemProfile, template_id: str, category: str) -> tuple
     return config, risks, not_recommended
 
 
+def _disk_notes(profile: SystemProfile, template_id: str, min_disk_free_gb: float | None) -> tuple[list[str], list[str], list[str]]:
+    config: list[str] = []
+    risks: list[str] = []
+    not_recommended: list[str] = []
+    free_gb = profile.disk_free_gb
+
+    if free_gb is None:
+        risks.append("Disk free space could not be detected, so storage suitability is estimated conservatively.")
+        return config, risks, not_recommended
+
+    if min_disk_free_gb is not None and free_gb < min_disk_free_gb:
+        risks.append(f"Disk free space is below this template's minimum target of {min_disk_free_gb:g}GB.")
+        not_recommended.append("Starting this workflow before freeing disk space.")
+    elif template_id in {"comfyui_starter", "local_llm"} and free_gb < 100:
+        risks.append("Local AI models and outputs can quickly consume disk space; keep extra SSD space available.")
+    elif template_id == "creator_setup" and free_gb < 150:
+        risks.append("Creator workflows can fill disks quickly with recordings, caches, and exports.")
+    elif template_id == "office_productivity":
+        config.append("This goal has the lowest storage requirement among the bundled templates.")
+
+    return config, risks, not_recommended
+
+
 def _tool_notes(profile: SystemProfile, app_ids: list[str]) -> list[str]:
     risks: list[str] = []
     for app_id in app_ids:
@@ -135,6 +163,10 @@ def _tool_notes(profile: SystemProfile, app_ids: list[str]) -> list[str]:
     return risks
 
 
+def _is_nvidia_profile(profile: SystemProfile) -> bool:
+    return any("nvidia" in name.casefold() for name in profile.gpu_names)
+
+
 def recommend(goal: str, profile: SystemProfile | None = None) -> TemplateRecommendation:
     profile = profile or scan_system()
     template = load_template(goal)
@@ -144,15 +176,20 @@ def recommend(goal: str, profile: SystemProfile | None = None) -> TemplateRecomm
     app_ids: list[str] = []
     for template_app in template.apps:
         app_ids.append(template_app.app_id)
+        required = template_app.required
+        reason = template_app.reason
+        if template_app.app_id == "nvidia_app" and not _is_nvidia_profile(profile):
+            required = False
+            reason = f"{reason} No NVIDIA GPU was detected, so this can be skipped."
         catalog_item = catalog.get(template_app.app_id)
         if catalog_item is None:
             recommended_apps.append(
                 AppRecommendation(
                     app_id=template_app.app_id,
                     name=template_app.app_id,
-                    required=template_app.required,
+                    required=required,
                     category="Unknown",
-                    reason=template_app.reason,
+                    reason=reason,
                     install_method="Manual install from official source",
                     official_source="Unknown",
                     config_notes=[],
@@ -165,9 +202,9 @@ def recommend(goal: str, profile: SystemProfile | None = None) -> TemplateRecomm
             AppRecommendation(
                 app_id=catalog_item.app_id,
                 name=catalog_item.name,
-                required=template_app.required,
+                required=required,
                 category=catalog_item.category,
-                reason=template_app.reason,
+                reason=reason,
                 install_method=catalog_item.install_methods[0] if catalog_item.install_methods else "Manual install",
                 official_source=catalog_item.official_source,
                 config_notes=catalog_item.config_notes,
@@ -177,17 +214,23 @@ def recommend(goal: str, profile: SystemProfile | None = None) -> TemplateRecomm
 
     ram_config, ram_risks, ram_not_recommended = _ram_notes(profile, template.template_id, template.category)
     gpu_config, gpu_risks, gpu_not_recommended = _gpu_notes(profile, template.template_id, template.category)
+    disk_config, disk_risks, disk_not_recommended = _disk_notes(
+        profile,
+        template.template_id,
+        template.requirements.min_disk_free_gb,
+    )
     tool_risks = _tool_notes(profile, app_ids)
 
     return TemplateRecommendation(
         template_id=template.template_id,
-        name=template.name,
+        display_name=template.display_name,
+        name=template.display_name,
         category=template.category,
         suitability_score=score_template(profile, template),
         summary=template.description,
         recommended_apps=recommended_apps,
-        config_recommendations=_unique([*template.config_recommendations, *ram_config, *gpu_config]),
-        risk_warnings=_unique([*template.risk_warnings, *profile.warnings, *ram_risks, *gpu_risks, *tool_risks]),
-        not_recommended=_unique([*template.not_recommended, *ram_not_recommended, *gpu_not_recommended]),
+        config_recommendations=_unique([*template.config_recommendations, *ram_config, *gpu_config, *disk_config]),
+        risk_warnings=_unique([*template.risk_warnings, *profile.warnings, *ram_risks, *gpu_risks, *disk_risks, *tool_risks]),
+        not_recommended=_unique([*template.not_recommended, *ram_not_recommended, *gpu_not_recommended, *disk_not_recommended]),
         next_steps=_unique(template.next_steps),
     )

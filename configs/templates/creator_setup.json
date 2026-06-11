@@ -1,8 +1,8 @@
 {
   "template_id": "creator_setup",
-  "name": "Creator Setup",
+  "display_name": "视频/内容创作",
   "category": "Creator",
-  "description": "A starter creator workflow for recording, editing, audio cleanup, and media processing.",
+  "description": "视频和内容创作入门环境，覆盖录屏、转码、剪辑、音频和素材处理。",
   "requirements": {
     "min_ram_gb": 16,
     "recommended_ram_gb": 32,
@@ -12,27 +12,31 @@
     "os": ["Windows 10", "Windows 11", "macOS", "Linux"]
   },
   "apps": [
-    {"app_id": "obs_studio", "required": true, "reason": "Core screen recording and streaming tool."},
-    {"app_id": "ffmpeg", "required": true, "reason": "General media conversion and processing toolkit."},
-    {"app_id": "davinci_resolve", "required": false, "reason": "Recommended for more advanced video editing workflows."},
-    {"app_id": "audacity", "required": false, "reason": "Useful for audio recording and cleanup."},
-    {"app_id": "capcut_jianying", "required": false, "reason": "Useful for quick social video editing workflows."}
+    {"app_id": "obs_studio", "required": true, "reason": "录屏和直播的核心工具。"},
+    {"app_id": "ffmpeg", "required": true, "reason": "媒体转码、压缩和批处理基础工具。"},
+    {"app_id": "davinci_resolve", "required": false, "reason": "进阶视频剪辑和调色工具。"},
+    {"app_id": "audacity", "required": false, "reason": "音频录制、剪辑和清理工具。"},
+    {"app_id": "capcut_jianying", "required": false, "reason": "快速短视频和社媒内容剪辑。"},
+    {"app_id": "handbrake", "required": false, "reason": "图形界面视频转码工具。"},
+    {"app_id": "krita", "required": false, "reason": "绘画、封面和素材制作工具。"},
+    {"app_id": "blender", "required": false, "reason": "3D 建模、动画和进阶创作可选。"}
   ],
   "config_recommendations": [
-    "Keep recording output and editing cache on a disk with enough free space.",
-    "Use hardware encoding when available and stable.",
-    "Test one short recording before important capture sessions."
+    "录屏优先使用 OBS。",
+    "视频转码/批处理可以使用 FFmpeg 或 HandBrake。",
+    "音频清理可以使用 Audacity。",
+    "低配电脑不建议直接做重型 4K 视频剪辑。"
   ],
   "risk_warnings": [
-    "High-bitrate recording can fill disks quickly.",
-    "4K editing can be slow on systems with limited RAM or VRAM."
+    "高码率录屏会快速占用磁盘空间。",
+    "4K 多轨剪辑对 CPU、内存、显卡和磁盘都有压力。"
   ],
   "not_recommended": [
-    "4K multi-layer editing on systems below 16GB RAM."
+    "16GB 以下内存直接进行重型 4K 多轨剪辑。"
   ],
   "next_steps": [
-    "Pick a recording resolution and codec target.",
-    "Install creator tools manually from official sources.",
-    "Run a short recording and playback test."
+    "先确定录制分辨率、帧率和编码格式。",
+    "录制一段短视频并回放检查。",
+    "再按需要补充剪辑、音频和转码工具。"
   ]
 }

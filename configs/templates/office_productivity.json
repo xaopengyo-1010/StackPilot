@@ -1,0 +1,47 @@
+{
+  "template_id": "office_productivity",
+  "display_name": "办公生产力",
+  "category": "Office",
+  "description": "办公生产力基础环境，覆盖浏览器、办公套件、压缩、搜索、截图、PDF、笔记和资料管理。",
+  "requirements": {
+    "min_ram_gb": 4,
+    "recommended_ram_gb": 8,
+    "min_vram_gb": 0,
+    "recommended_vram_gb": 0,
+    "min_disk_free_gb": 5,
+    "os": ["Windows 10", "Windows 11"]
+  },
+  "apps": [
+    {"app_id": "browser", "required": true, "reason": "办公、搜索、网页应用和 AI 工具的基础入口。"},
+    {"app_id": "office_suite_note", "required": true, "reason": "选择 WPS Office 或 Microsoft Office，按授权和协作需求决定。"},
+    {"app_id": "seven_zip", "required": true, "reason": "处理常见压缩包和归档文件。"},
+    {"app_id": "everything", "required": true, "reason": "快速搜索本地文件。"},
+    {"app_id": "google_chrome", "required": false, "reason": "常用 Chromium 浏览器，可作为主浏览器。"},
+    {"app_id": "microsoft_edge", "required": false, "reason": "Windows 默认浏览器，适合办公账号和企业环境。"},
+    {"app_id": "obsidian", "required": false, "reason": "本地 Markdown 笔记和知识库。"},
+    {"app_id": "notion", "required": false, "reason": "在线协作、文档和项目管理。"},
+    {"app_id": "zotero", "required": false, "reason": "论文、资料和引用管理。"},
+    {"app_id": "snipaste", "required": false, "reason": "轻量截图和贴图工具。"},
+    {"app_id": "sharex", "required": false, "reason": "进阶截图、录屏和自动化分享工具。"},
+    {"app_id": "sumatrapdf", "required": false, "reason": "轻量 PDF 阅读器。"},
+    {"app_id": "powertoys", "required": false, "reason": "适合进阶 Windows 用户的效率工具集。"}
+  ],
+  "config_recommendations": [
+    "浏览器、压缩工具、PDF 阅读器、截图工具是基础。",
+    "Obsidian 适合本地笔记，Notion 适合在线协作。",
+    "Zotero 适合论文和资料管理。",
+    "PowerToys 适合进阶 Windows 用户。"
+  ],
+  "risk_warnings": [
+    "在线协作工具需要用户自行确认账号、同步和隐私设置。",
+    "不要从非官方来源下载安装办公套件或插件。"
+  ],
+  "not_recommended": [
+    "在工作资料目录中混用不可信同步工具。"
+  ],
+  "next_steps": [
+    "先确定主浏览器和办公套件。",
+    "安装压缩、搜索、截图和 PDF 工具。",
+    "按需要再补充笔记、资料管理和进阶效率工具。"
+  ]
+}

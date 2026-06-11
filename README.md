@@ -2,7 +2,7 @@
 
 StackPilot is an open-source environment blueprint generator.
 
-It scans public local system information and recommends transparent setup templates for coding, AI, gaming, Minecraft, ComfyUI, local LLMs, and creator workflows.
+It scans public local system information and recommends transparent setup templates for coding, AI-assisted coding, AI beginner workflows, ComfyUI, local LLMs, gaming, creator workflows, and office productivity.
 
 ## What StackPilot is not
 
@@ -13,12 +13,7 @@ StackPilot does not upload your data.
 
 It only generates an environment blueprint and recommendation report.
 
-StackPilot 不是软件管家。
-不会自动下载。
-不会自动安装。
-不会清理、优化或监控系统。
-不会上传你的数据。
-它只读取本地公开系统信息，并生成环境蓝图。
+StackPilot 不是软件管家，不会自动下载、安装、清理、优化或监控系统，也不会上传你的数据。它只读取本地公开系统信息，并生成环境蓝图。
 
 ## Current Features
 
@@ -49,7 +44,7 @@ python -m stackpilot scan
 python -m stackpilot list-templates
 python -m stackpilot recommend --goal coding_starter
 python -m stackpilot recommend --goal comfyui_starter
-python -m stackpilot recommend --goal minecraft_realism
+python -m stackpilot recommend --goal office_productivity
 python -m stackpilot report --goal ai_beginner
 python -m stackpilot doctor --goal vibe_coding
 ```
@@ -61,14 +56,16 @@ Reports are written to:
 
 ## Supported Templates
 
-- `coding_starter`
-- `vibe_coding`
-- `ai_beginner`
-- `comfyui_starter`
-- `local_llm`
-- `minecraft_realism`
-- `gaming_setup`
-- `creator_setup`
+| Goal | Display name |
+|---|---|
+| `coding_starter` | 写代码入门 |
+| `vibe_coding` | AI 辅助写代码 |
+| `ai_beginner` | AI 入门体验 |
+| `comfyui_starter` | AI 绘图入门 |
+| `local_llm` | 本地大模型 |
+| `gaming_setup` | 游戏玩家常用软件 |
+| `creator_setup` | 视频/内容创作 |
+| `office_productivity` | 办公生产力 |
 
 ## Safety Notes
 

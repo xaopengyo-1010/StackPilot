@@ -43,6 +43,7 @@ class AppRecommendation(BaseModel):
 
 class TemplateRecommendation(BaseModel):
     template_id: str
+    display_name: str
     name: str
     category: str
     suitability_score: float
@@ -82,7 +83,7 @@ class TemplateApp(BaseModel):
 
 class TemplateDefinition(BaseModel):
     template_id: str
-    name: str
+    display_name: str
     category: str
     description: str
     requirements: TemplateRequirements = Field(default_factory=TemplateRequirements)
@@ -91,3 +92,7 @@ class TemplateDefinition(BaseModel):
     risk_warnings: list[str] = Field(default_factory=list)
     not_recommended: list[str] = Field(default_factory=list)
     next_steps: list[str] = Field(default_factory=list)
+
+    @property
+    def name(self) -> str:
+        return self.display_name

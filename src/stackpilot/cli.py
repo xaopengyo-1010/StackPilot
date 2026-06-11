@@ -49,7 +49,7 @@ def _print_profile(profile: SystemProfile) -> None:
 
 
 def _print_recommendation(recommendation: TemplateRecommendation) -> None:
-    console.print(f"[bold]{recommendation.name}[/bold] ({recommendation.template_id})")
+    console.print(f"[bold]{recommendation.display_name}[/bold] ({recommendation.template_id})")
     console.print(f"Category: {recommendation.category}")
     console.print(f"Suitability score: {recommendation.suitability_score}/100")
     console.print(recommendation.summary)
@@ -93,11 +93,11 @@ def list_templates_command() -> None:
     """List available recommendation templates."""
     table = Table(title="StackPilot Templates")
     table.add_column("Goal")
-    table.add_column("Name")
+    table.add_column("Display name")
     table.add_column("Category")
     table.add_column("Description")
     for template in load_templates():
-        table.add_row(template.template_id, template.name, template.category, template.description)
+        table.add_row(template.template_id, template.display_name, template.category, template.description)
     console.print(table)
 
 

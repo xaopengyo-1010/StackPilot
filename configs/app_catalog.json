@@ -2,7 +2,7 @@
   "apps": [
     {
       "app_id": "vscode",
-      "name": "Visual Studio Code",
+      "name": "VS Code",
       "category": "Coding",
       "official_source": "https://code.visualstudio.com/",
       "install_methods": ["Manual install from official website or package manager"],
@@ -71,6 +71,16 @@
       "risk_notes": ["WSL setup changes Windows optional features and should be reviewed manually."]
     },
     {
+      "app_id": "windows_terminal",
+      "name": "Windows Terminal",
+      "category": "Coding",
+      "official_source": "https://github.com/microsoft/terminal",
+      "install_methods": ["Manual install from Microsoft Store or official GitHub releases"],
+      "description": "Modern terminal application for Windows shells.",
+      "config_notes": ["Pin commonly used shells such as PowerShell, Command Prompt, and WSL."],
+      "risk_notes": ["Shell profiles can run startup scripts; keep them simple and trusted."]
+    },
+    {
       "app_id": "cursor",
       "name": "Cursor",
       "category": "Vibe Coding",
@@ -111,6 +121,66 @@
       "risk_notes": ["Generated code must be reviewed and tested."]
     },
     {
+      "app_id": "browser",
+      "name": "Browser",
+      "category": "AI",
+      "official_source": "Use an official browser source such as Chrome, Edge, Firefox, or Safari.",
+      "install_methods": ["Use the system browser or install manually from an official source"],
+      "description": "General web browser for AI tools, office apps, documentation, and downloads.",
+      "config_notes": ["Keep the browser updated and use separate profiles for work and personal accounts when helpful."],
+      "risk_notes": ["Review account, sync, extension, and privacy settings."]
+    },
+    {
+      "app_id": "chatgpt",
+      "name": "ChatGPT",
+      "category": "AI",
+      "official_source": "https://chatgpt.com/",
+      "install_methods": ["Use the official web app or official desktop app"],
+      "description": "General AI assistant for conversation, writing, learning, and workflows.",
+      "config_notes": ["Review memory, privacy, and data controls before using sensitive content."],
+      "risk_notes": ["AI answers can be wrong; verify important outputs."]
+    },
+    {
+      "app_id": "claude",
+      "name": "Claude",
+      "category": "AI",
+      "official_source": "https://claude.ai/",
+      "install_methods": ["Use the official web app or official desktop app"],
+      "description": "AI assistant commonly used for long-form reading, writing, and analysis.",
+      "config_notes": ["Use project or chat organization to separate different work contexts."],
+      "risk_notes": ["Review privacy settings before uploading documents."]
+    },
+    {
+      "app_id": "gemini",
+      "name": "Gemini",
+      "category": "AI",
+      "official_source": "https://gemini.google.com/",
+      "install_methods": ["Use the official web app"],
+      "description": "Google AI assistant for web, productivity, and multimodal workflows.",
+      "config_notes": ["Check account and workspace data settings before use."],
+      "risk_notes": ["Generated content should be verified for accuracy."]
+    },
+    {
+      "app_id": "perplexity",
+      "name": "Perplexity",
+      "category": "AI",
+      "official_source": "https://www.perplexity.ai/",
+      "install_methods": ["Use the official web app"],
+      "description": "AI search and answer tool with cited sources.",
+      "config_notes": ["Open cited sources for important claims."],
+      "risk_notes": ["Citations can still be incomplete or misinterpreted."]
+    },
+    {
+      "app_id": "poe",
+      "name": "Poe",
+      "category": "AI",
+      "official_source": "https://poe.com/",
+      "install_methods": ["Use the official web app or official mobile app"],
+      "description": "Multi-model AI chat platform.",
+      "config_notes": ["Compare model behavior with simple test prompts before relying on it."],
+      "risk_notes": ["Review each model's data and usage terms."]
+    },
+    {
       "app_id": "comfyui",
       "name": "ComfyUI",
       "category": "AI",
@@ -119,6 +189,16 @@
       "description": "Node-based local AI image generation workflow tool.",
       "config_notes": ["Keep models on an SSD and separate Python environments per AI tool."],
       "risk_notes": ["Large model files consume significant disk space and VRAM."]
+    },
+    {
+      "app_id": "cuda_pytorch_note",
+      "name": "CUDA/PyTorch note",
+      "category": "AI",
+      "official_source": "https://pytorch.org/get-started/locally/",
+      "install_methods": ["Do not install automatically; review official CUDA/PyTorch compatibility guidance"],
+      "description": "Compatibility note for matching GPU driver, CUDA runtime, and PyTorch builds.",
+      "config_notes": ["Use the official PyTorch selector and ComfyUI documentation before installing packages."],
+      "risk_notes": ["Wrong CUDA/PyTorch combinations can break local AI environments."]
     },
     {
       "app_id": "ollama",
@@ -139,6 +219,36 @@
       "description": "Desktop application for local LLM experimentation.",
       "config_notes": ["Choose quantized models that fit available RAM and VRAM."],
       "risk_notes": ["Large models can make the system unresponsive on underpowered PCs."]
+    },
+    {
+      "app_id": "llama_cpp",
+      "name": "llama.cpp",
+      "category": "AI",
+      "official_source": "https://github.com/ggml-org/llama.cpp",
+      "install_methods": ["Manual setup from official repository releases or build instructions"],
+      "description": "Local inference project for GGUF language models.",
+      "config_notes": ["Use prebuilt binaries when available; build from source only when needed."],
+      "risk_notes": ["Build options and model formats can be confusing for beginners."]
+    },
+    {
+      "app_id": "open_webui",
+      "name": "Open WebUI",
+      "category": "AI",
+      "official_source": "https://github.com/open-webui/open-webui",
+      "install_methods": ["Manual setup from official documentation"],
+      "description": "Web interface for local model runners such as Ollama.",
+      "config_notes": ["Run only on trusted local networks unless you understand authentication and exposure risks."],
+      "risk_notes": ["Misconfigured services can expose local model endpoints."]
+    },
+    {
+      "app_id": "anythingllm",
+      "name": "AnythingLLM",
+      "category": "AI",
+      "official_source": "https://anythingllm.com/",
+      "install_methods": ["Manual install from official website or official repository"],
+      "description": "Local or self-hosted workspace-style LLM and knowledge base tool.",
+      "config_notes": ["Keep document workspaces scoped and review storage locations."],
+      "risk_notes": ["Sensitive documents should not be indexed without understanding storage and privacy settings."]
     },
     {
       "app_id": "ffmpeg",
@@ -281,6 +391,16 @@
       "risk_notes": ["Benchmark overlays can affect measurements if configured poorly."]
     },
     {
+      "app_id": "rtss",
+      "name": "RTSS",
+      "category": "Gaming",
+      "official_source": "https://www.guru3d.com/download/rtss-rivatuner-statistics-server-download/",
+      "install_methods": ["Manual install, commonly bundled with MSI Afterburner"],
+      "description": "RivaTuner Statistics Server overlay and frame limiter.",
+      "config_notes": ["Pair with MSI Afterburner for monitoring overlays; keep overlay minimal."],
+      "risk_notes": ["Overlays can conflict with some games or anti-cheat systems."]
+    },
+    {
       "app_id": "discord",
       "name": "Discord",
       "category": "Gaming",
@@ -289,6 +409,16 @@
       "description": "Voice and community chat client.",
       "config_notes": ["Disable unnecessary startup and overlay options if performance is a concern."],
       "risk_notes": ["Overlays and background activity can affect game performance."]
+    },
+    {
+      "app_id": "seven_zip",
+      "name": "7-Zip",
+      "category": "Utility",
+      "official_source": "https://www.7-zip.org/",
+      "install_methods": ["Manual install from official website or package manager"],
+      "description": "File archiver for common compressed formats.",
+      "config_notes": ["Use for trusted archives and keep extracted files organized."],
+      "risk_notes": ["Do not run executables from unknown archives without checking the source."]
     },
     {
       "app_id": "obs_studio",
@@ -322,13 +452,153 @@
     },
     {
       "app_id": "capcut_jianying",
-      "name": "CapCut / Jianying",
+      "name": "CapCut/Jianying",
       "category": "Creator",
       "official_source": "https://www.capcut.com/",
       "install_methods": ["Manual install from official source"],
       "description": "Video editing application for quick creator workflows.",
       "config_notes": ["Review export settings and cloud features before use."],
       "risk_notes": ["Cloud and account features may have privacy implications."]
+    },
+    {
+      "app_id": "handbrake",
+      "name": "HandBrake",
+      "category": "Creator",
+      "official_source": "https://handbrake.fr/",
+      "install_methods": ["Manual install from official website"],
+      "description": "Graphical video transcoding tool.",
+      "config_notes": ["Use presets first, then adjust bitrate and codec settings carefully."],
+      "risk_notes": ["Aggressive compression can reduce output quality."]
+    },
+    {
+      "app_id": "krita",
+      "name": "Krita",
+      "category": "Creator",
+      "official_source": "https://krita.org/",
+      "install_methods": ["Manual install from official website or store"],
+      "description": "Digital painting and image creation application.",
+      "config_notes": ["Configure tablet input and brush presets for your workflow."],
+      "risk_notes": ["Large canvases can use substantial RAM."]
+    },
+    {
+      "app_id": "blender",
+      "name": "Blender",
+      "category": "Creator",
+      "official_source": "https://www.blender.org/",
+      "install_methods": ["Manual install from official website or package manager"],
+      "description": "3D modeling, animation, rendering, and compositing suite.",
+      "config_notes": ["Check GPU rendering settings and cache locations before large projects."],
+      "risk_notes": ["Rendering can consume significant CPU, GPU, RAM, and disk resources."]
+    },
+    {
+      "app_id": "google_chrome",
+      "name": "Google Chrome",
+      "category": "Office",
+      "official_source": "https://www.google.com/chrome/",
+      "install_methods": ["Manual install from official website"],
+      "description": "Chromium-based browser commonly used for web apps and office workflows.",
+      "config_notes": ["Review sync, profile, extension, and privacy settings."],
+      "risk_notes": ["Too many extensions can affect security and performance."]
+    },
+    {
+      "app_id": "microsoft_edge",
+      "name": "Microsoft Edge",
+      "category": "Office",
+      "official_source": "https://www.microsoft.com/edge",
+      "install_methods": ["Usually included with Windows or manual install from Microsoft"],
+      "description": "Microsoft browser integrated with Windows and Microsoft accounts.",
+      "config_notes": ["Review sync, sidebar, extension, and account settings."],
+      "risk_notes": ["Enterprise or school accounts may apply policies."]
+    },
+    {
+      "app_id": "office_suite_note",
+      "name": "WPS Office or Microsoft Office note",
+      "category": "Office",
+      "official_source": "Use official WPS Office or Microsoft Office sources based on your license.",
+      "install_methods": ["Manual install only after choosing the licensed office suite"],
+      "description": "Reminder to choose an office suite based on license, compatibility, and collaboration needs.",
+      "config_notes": ["Confirm file compatibility and account requirements before standardizing on one suite."],
+      "risk_notes": ["Avoid unofficial installers and cracked office suites."]
+    },
+    {
+      "app_id": "obsidian",
+      "name": "Obsidian",
+      "category": "Office",
+      "official_source": "https://obsidian.md/",
+      "install_methods": ["Manual install from official website"],
+      "description": "Local Markdown note-taking and knowledge base application.",
+      "config_notes": ["Keep vaults backed up and review community plugins before enabling them."],
+      "risk_notes": ["Untrusted plugins can affect local files."]
+    },
+    {
+      "app_id": "notion",
+      "name": "Notion",
+      "category": "Office",
+      "official_source": "https://www.notion.so/",
+      "install_methods": ["Use official web app or desktop app"],
+      "description": "Online workspace for notes, docs, databases, and collaboration.",
+      "config_notes": ["Use workspaces and permissions deliberately."],
+      "risk_notes": ["Sensitive documents depend on cloud account and sharing settings."]
+    },
+    {
+      "app_id": "zotero",
+      "name": "Zotero",
+      "category": "Office",
+      "official_source": "https://www.zotero.org/",
+      "install_methods": ["Manual install from official website"],
+      "description": "Reference manager for papers, citations, and research materials.",
+      "config_notes": ["Configure browser connector and storage/sync settings intentionally."],
+      "risk_notes": ["Large libraries and PDFs can consume sync storage."]
+    },
+    {
+      "app_id": "snipaste",
+      "name": "Snipaste",
+      "category": "Office",
+      "official_source": "https://www.snipaste.com/",
+      "install_methods": ["Manual install from official website or store"],
+      "description": "Screenshot and pin-to-screen utility.",
+      "config_notes": ["Configure hotkeys to avoid conflicts with other screenshot tools."],
+      "risk_notes": ["Screenshots can contain sensitive information."]
+    },
+    {
+      "app_id": "sharex",
+      "name": "ShareX",
+      "category": "Office",
+      "official_source": "https://getsharex.com/",
+      "install_methods": ["Manual install from official website or store"],
+      "description": "Advanced screenshot, screen recording, and workflow automation tool.",
+      "config_notes": ["Review upload destinations and automation actions before use."],
+      "risk_notes": ["Misconfigured upload actions can share sensitive screenshots."]
+    },
+    {
+      "app_id": "sumatrapdf",
+      "name": "SumatraPDF",
+      "category": "Office",
+      "official_source": "https://www.sumatrapdfreader.org/",
+      "install_methods": ["Manual install from official website"],
+      "description": "Lightweight PDF and document reader for Windows.",
+      "config_notes": ["Use as a fast reader alongside a full PDF editor if needed."],
+      "risk_notes": ["Use current versions for safer document handling."]
+    },
+    {
+      "app_id": "everything",
+      "name": "Everything",
+      "category": "Office",
+      "official_source": "https://www.voidtools.com/",
+      "install_methods": ["Manual install from official website"],
+      "description": "Fast local file search utility for Windows.",
+      "config_notes": ["Limit indexes if privacy or performance requirements demand it."],
+      "risk_notes": ["Search indexes can reveal filenames on shared machines."]
+    },
+    {
+      "app_id": "powertoys",
+      "name": "PowerToys",
+      "category": "Office",
+      "official_source": "https://learn.microsoft.com/windows/powertoys/",
+      "install_methods": ["Manual install from Microsoft Store, GitHub, or winget"],
+      "description": "Microsoft utility suite for advanced Windows productivity.",
+      "config_notes": ["Enable only modules you actually use, such as FancyZones or PowerToys Run."],
+      "risk_notes": ["Global hotkeys can conflict with existing workflows."]
     }
   ]
 }

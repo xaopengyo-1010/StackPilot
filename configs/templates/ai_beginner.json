@@ -1,38 +1,42 @@
 {
   "template_id": "ai_beginner",
-  "name": "AI Beginner",
+  "display_name": "AI 入门体验",
   "category": "AI",
-  "description": "A beginner-friendly local AI blueprint focused on safe experimentation with small models and clear manual setup steps.",
+  "description": "面向普通用户的 AI 入门体验，优先使用网页工具，再按配置尝试本地模型。",
   "requirements": {
-    "min_ram_gb": 8,
-    "recommended_ram_gb": 16,
+    "min_ram_gb": 4,
+    "recommended_ram_gb": 8,
     "min_vram_gb": 0,
-    "recommended_vram_gb": 8,
-    "min_disk_free_gb": 30,
-    "os": ["Windows 10", "Windows 11", "macOS", "Linux"]
+    "recommended_vram_gb": 0,
+    "min_disk_free_gb": 5,
+    "os": ["Windows 10", "Windows 11"]
   },
   "apps": [
-    {"app_id": "python", "required": true, "reason": "Required for many local AI tools and examples."},
-    {"app_id": "git", "required": true, "reason": "Used to review and clone open-source AI projects manually."},
-    {"app_id": "ollama", "required": false, "reason": "Useful for lightweight local LLM experiments."},
-    {"app_id": "lm_studio", "required": false, "reason": "Provides a desktop interface for trying local LLMs."},
-    {"app_id": "ffmpeg", "required": false, "reason": "Useful for media preprocessing in some AI workflows."}
+    {"app_id": "browser", "required": true, "reason": "网页 AI 工具的基础入口。"},
+    {"app_id": "chatgpt", "required": true, "reason": "通用 AI 对话、写作和学习工具。"},
+    {"app_id": "claude", "required": true, "reason": "适合长文本阅读、写作和分析。"},
+    {"app_id": "gemini", "required": true, "reason": "Google AI 工具，适合搜索、文档和多模态体验。"},
+    {"app_id": "perplexity", "required": false, "reason": "带来源的 AI 搜索工具。"},
+    {"app_id": "poe", "required": false, "reason": "聚合多种模型的体验入口。"},
+    {"app_id": "ollama", "required": false, "reason": "配置足够时可尝试本地模型。"},
+    {"app_id": "lm_studio", "required": false, "reason": "配置足够时可用桌面界面尝试本地模型。"}
   ],
   "config_recommendations": [
-    "Start with small models and confirm they fit available RAM or VRAM.",
-    "Keep AI projects in separate folders and use separate Python environments.",
-    "Reserve enough disk space for model files before downloading them manually."
+    "普通用户优先使用网页 AI。",
+    "本地模型需要看内存和显存。",
+    "如果电脑配置较低，不建议直接跑大模型。",
+    "先从网页工具学习提示词和工作流。"
   ],
   "risk_warnings": [
-    "StackPilot v0.1 does not download models or install AI tools automatically.",
-    "Low-memory systems can become slow when running local AI workloads."
+    "网页 AI 账号和隐私设置需要用户自行确认。",
+    "本地模型文件可能占用大量磁盘空间。"
   ],
   "not_recommended": [
-    "Running large local LLMs without checking RAM and VRAM requirements first."
+    "低配电脑直接运行大参数本地模型。"
   ],
   "next_steps": [
-    "Review the recommended apps.",
-    "Choose one small AI workflow to set up manually.",
-    "Run StackPilot again after installing tools to refresh the blueprint."
+    "先选择一个网页 AI 工具开始使用。",
+    "整理常用提示词和工作流。",
+    "确认电脑配置后再考虑本地模型。"
   ]
 }

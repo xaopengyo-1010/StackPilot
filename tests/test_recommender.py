@@ -35,6 +35,16 @@ def test_recommender_returns_template_recommendation():
 
     assert isinstance(recommendation, TemplateRecommendation)
     assert recommendation.template_id == "comfyui_starter"
+    assert recommendation.display_name == "AI 绘图入门"
     assert recommendation.suitability_score > 0
     assert any(app.app_id == "comfyui" for app in recommendation.recommended_apps)
     assert recommendation.config_recommendations
+
+
+def test_office_productivity_recommendation_succeeds():
+    recommendation = recommend("office_productivity", profile=sample_profile())
+
+    assert recommendation.template_id == "office_productivity"
+    assert recommendation.display_name == "办公生产力"
+    assert recommendation.suitability_score > 0
+    assert any(app.app_id == "everything" for app in recommendation.recommended_apps)

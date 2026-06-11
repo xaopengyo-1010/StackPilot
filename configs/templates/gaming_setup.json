@@ -1,8 +1,8 @@
 {
   "template_id": "gaming_setup",
-  "name": "Gaming Setup",
+  "display_name": "游戏玩家常用软件",
   "category": "Gaming",
-  "description": "A basic gaming environment blueprint with launchers, GPU companion tools, monitoring, and communication apps.",
+  "description": "游戏玩家常用软件环境，包含游戏平台、驱动工具、语音和性能监控。",
   "requirements": {
     "min_ram_gb": 8,
     "recommended_ram_gb": 16,
@@ -12,28 +12,31 @@
     "os": ["Windows 10", "Windows 11", "Linux"]
   },
   "apps": [
-    {"app_id": "steam", "required": true, "reason": "Primary PC game library and launcher."},
-    {"app_id": "epic_games_launcher", "required": false, "reason": "Optional launcher for Epic game library."},
-    {"app_id": "nvidia_app", "required": false, "reason": "Useful for NVIDIA driver and settings workflows."},
-    {"app_id": "msi_afterburner", "required": false, "reason": "Optional monitoring and tuning utility."},
-    {"app_id": "capframex", "required": false, "reason": "Optional frame-time capture and analysis tool."},
-    {"app_id": "discord", "required": false, "reason": "Common voice chat and community app."}
+    {"app_id": "steam", "required": true, "reason": "主要 PC 游戏平台和游戏库。"},
+    {"app_id": "nvidia_app", "required": true, "reason": "NVIDIA GPU 用户用于驱动和设置管理；非 NVIDIA 可跳过。"},
+    {"app_id": "discord", "required": true, "reason": "常用语音和社区沟通工具。"},
+    {"app_id": "epic_games_launcher", "required": false, "reason": "Epic 游戏库可选启动器。"},
+    {"app_id": "msi_afterburner", "required": false, "reason": "帧率、温度和硬件监控工具。"},
+    {"app_id": "rtss", "required": false, "reason": "与 MSI Afterburner 搭配显示游戏内监控 overlay。"},
+    {"app_id": "capframex", "required": false, "reason": "分析帧时间和性能波动。"},
+    {"app_id": "seven_zip", "required": false, "reason": "处理压缩包、补丁包和备份文件。"}
   ],
   "config_recommendations": [
-    "Keep game libraries on a disk with enough free space.",
-    "Disable unnecessary overlays if performance or stability is poor.",
-    "Use monitoring tools first before attempting any tuning."
+    "NVIDIA 用户先保证驱动正常。",
+    "需要监控帧率可以使用 MSI Afterburner + RTSS。",
+    "想分析帧时间可以使用 CapFrameX。",
+    "不建议新手乱改 BIOS/超频设置。"
   ],
   "risk_warnings": [
-    "Launchers and overlays can consume background resources.",
-    "Overclocking or undervolting should be done manually and carefully."
+    "多个启动器和 overlay 会占用后台资源。",
+    "超频、降压和 BIOS 设置需要用户自行承担风险。"
   ],
   "not_recommended": [
-    "Running many launchers at startup on low-RAM systems."
+    "新手在不了解硬件的情况下修改 BIOS 或超频参数。"
   ],
   "next_steps": [
-    "Install only the launchers you actually use.",
-    "Check GPU driver status manually from official sources.",
-    "Benchmark one game before and after major settings changes."
+    "只安装实际使用的游戏平台。",
+    "确认显卡驱动版本。",
+    "先记录一个游戏的帧率和帧时间基线。"
   ]
 }

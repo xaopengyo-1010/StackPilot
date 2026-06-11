@@ -1,37 +1,42 @@
 {
   "template_id": "local_llm",
-  "name": "Local LLM",
+  "display_name": "本地大模型",
   "category": "AI",
-  "description": "A local language model blueprint focused on Ollama, LM Studio, and conservative model sizing.",
+  "description": "本地大模型入门环境，优先选择 Ollama 或 LM Studio，并按内存/显存选择模型。",
   "requirements": {
     "min_ram_gb": 16,
     "recommended_ram_gb": 32,
     "min_vram_gb": 0,
     "recommended_vram_gb": 12,
     "min_disk_free_gb": 60,
-    "os": ["Windows 10", "Windows 11", "macOS", "Linux"]
+    "os": ["Windows 10", "Windows 11"]
   },
   "apps": [
-    {"app_id": "ollama", "required": true, "reason": "Simple local LLM runtime for supported models."},
-    {"app_id": "lm_studio", "required": false, "reason": "Desktop interface for trying and comparing local models."},
-    {"app_id": "git", "required": false, "reason": "Useful for reviewing open-source model tooling manually."},
-    {"app_id": "python", "required": false, "reason": "Useful for local AI scripting and examples."}
+    {"app_id": "ollama", "required": true, "reason": "简单的本地大模型运行工具，可与 LM Studio 二选一入门。"},
+    {"app_id": "lm_studio", "required": false, "reason": "桌面化本地模型体验工具，适合新手。"},
+    {"app_id": "llama_cpp", "required": false, "reason": "进阶本地推理工具。"},
+    {"app_id": "open_webui", "required": false, "reason": "为本地模型提供网页界面。"},
+    {"app_id": "anythingllm", "required": false, "reason": "本地知识库和工作区式 LLM 工具。"},
+    {"app_id": "python", "required": false, "reason": "本地 AI 脚本和工具链可选。"},
+    {"app_id": "git", "required": false, "reason": "获取开源工具和示例项目时有用。"}
   ],
   "config_recommendations": [
-    "Start with small quantized models before trying larger models.",
-    "Keep model storage on a disk with enough free space.",
-    "Avoid running multiple large local models at the same time."
+    "16GB 内存建议 7B Q4/Q5 量化模型。",
+    "32GB 内存可以尝试更大上下文或更大模型。",
+    "显存越大，本地模型体验越好。",
+    "新手优先 LM Studio 或 Ollama。"
   ],
   "risk_warnings": [
-    "Large local models can consume substantial RAM, VRAM, and disk space.",
-    "StackPilot v0.1 does not download models automatically."
+    "不建议低内存电脑直接跑 32B/70B 模型。",
+    "长上下文会显著增加内存/显存压力。"
   ],
   "not_recommended": [
-    "Large 30B+ models on systems with limited RAM or unknown VRAM."
+    "16GB 以下内存运行大模型或长上下文。",
+    "在系统盘空间不足时下载多个大型模型。"
   ],
   "next_steps": [
-    "Choose a small model target.",
-    "Install one local LLM tool manually.",
-    "Run StackPilot again after setup to check detected tools."
+    "先选择 Ollama 或 LM Studio 其中一个。",
+    "从小模型和低上下文开始测试。",
+    "观察内存、显存和磁盘占用后再升级模型。"
   ]
 }
