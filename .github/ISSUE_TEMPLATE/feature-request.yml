@@ -1,0 +1,48 @@
+name: Feature request
+description: 提议新的模板、规则、检测能力或文档改进
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: 想解决的问题
+      description: 请描述用户遇到的实际问题，而不只是功能名称。
+      placeholder: 我想让 StackPilot 更好地判断低显存电脑是否适合某个工作流。
+    validations:
+      required: true
+  - type: textarea
+    id: proposed_solution
+    attributes:
+      label: 建议方案
+      description: 你希望 StackPilot 增加什么模板、规则、检测字段、文档或输出？
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: 影响范围
+      options:
+        - 硬件检测
+        - 规则引擎
+        - 推荐模板
+        - 安装计划 / 审计 / dry-run
+        - CLI 输出
+        - 文档 / 示例
+        - 其他
+    validations:
+      required: true
+  - type: textarea
+    id: examples
+    attributes:
+      label: 示例或参考
+      description: 可以提供命令输出、硬件场景或期望文案。请打码隐私信息。
+  - type: checkboxes
+    id: boundaries
+    attributes:
+      label: 边界确认
+      options:
+        - label: 这个请求不要求 StackPilot 默认自动安装软件。
+          required: true
+        - label: 这个请求不要求上传本机数据或调用真实 LLM API。
+          required: true

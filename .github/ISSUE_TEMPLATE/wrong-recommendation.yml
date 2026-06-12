@@ -1,0 +1,60 @@
+name: Wrong recommendation
+description: 反馈推荐结果不符合当前硬件或使用目标
+title: "[Recommendation] "
+labels: ["recommendation", "feedback"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        请描述推荐结果为什么不合适。不要提交账号、密钥、私人路径或私人文档内容。
+  - type: input
+    id: goal
+    attributes:
+      label: 使用的目标模板
+      placeholder: comfyui_starter
+    validations:
+      required: true
+  - type: textarea
+    id: hardware_summary
+    attributes:
+      label: 硬件摘要
+      description: 请填写 OS、CPU、RAM、GPU、显存、磁盘剩余空间等关键内容。
+      placeholder: |
+        OS:
+        CPU:
+        RAM:
+        GPU:
+        磁盘剩余空间:
+    validations:
+      required: true
+  - type: textarea
+    id: command_output
+    attributes:
+      label: 实际推荐输出
+      description: 粘贴 `python -m stackpilot recommend --goal ...` 的关键输出。
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: wrong_part
+    attributes:
+      label: 你认为哪里不对
+      description: 例如推荐过重、漏掉必要工具、CUDA/NVIDIA 判断不合理、风险提示不清楚。
+    validations:
+      required: true
+  - type: textarea
+    id: expected_recommendation
+    attributes:
+      label: 你期望的推荐
+      description: 描述你认为更合理的推荐或提示。
+    validations:
+      required: true
+  - type: checkboxes
+    id: boundaries
+    attributes:
+      label: 安全边界确认
+      options:
+        - label: 我理解 StackPilot 当前只生成建议和计划，不会自动安装软件。
+          required: true
+        - label: 我已经打码可能包含隐私的信息。
+          required: true

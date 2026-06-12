@@ -1,0 +1,96 @@
+name: Hardware detection feedback
+description: 反馈系统、CPU、内存、GPU 或显存检测结果
+title: "[Hardware] "
+labels: ["hardware", "feedback"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢帮助测试 StackPilot 的硬件检测。
+
+        请不要提交隐私信息。你可以打码用户名、个人路径、设备序列号、账号、密钥和私人文档内容。
+  - type: input
+    id: os
+    attributes:
+      label: OS
+      description: 例如 Windows 11 24H2、Windows 10、Ubuntu 24.04。
+      placeholder: Windows 11 24H2
+    validations:
+      required: true
+  - type: input
+    id: cpu
+    attributes:
+      label: CPU
+      description: 填写系统里显示的 CPU 名称即可。
+      placeholder: AMD Ryzen 7 7840HS
+    validations:
+      required: true
+  - type: input
+    id: ram
+    attributes:
+      label: RAM
+      description: 填写内存容量。
+      placeholder: 32 GB
+    validations:
+      required: true
+  - type: textarea
+    id: gpu_list
+    attributes:
+      label: GPU 列表
+      description: 填写你知道的显卡 / 显示设备列表。
+      placeholder: |
+        - AMD Radeon 780M
+        - NVIDIA GeForce RTX 4060 Laptop GPU
+    validations:
+      required: true
+  - type: checkboxes
+    id: gpu_types
+    attributes:
+      label: GPU 类型
+      description: 勾选这台机器上实际存在的类型。
+      options:
+        - label: 有核显 / 集成 GPU
+        - label: 有独显 / 独立 GPU
+        - label: 有虚拟显卡 / 远程显示设备
+        - label: 不确定
+  - type: textarea
+    id: scan_output
+    attributes:
+      label: "`python -m stackpilot scan` 输出"
+      description: 请粘贴关键输出，并打码用户名、路径、序列号等隐私信息。
+      render: text
+      placeholder: 粘贴电脑配置摘要中的关键内容。
+    validations:
+      required: true
+  - type: textarea
+    id: expected_result
+    attributes:
+      label: 期望识别结果
+      description: 你认为 StackPilot 应该怎样识别这些硬件？
+      placeholder: 应该把 RTX 4060 识别为独显，并作为主要性能判断 GPU。
+    validations:
+      required: true
+  - type: textarea
+    id: actual_result
+    attributes:
+      label: 实际识别结果
+      description: StackPilot 实际输出了什么？
+      placeholder: 实际把虚拟显示设备选成了 primary GPU。
+    validations:
+      required: true
+  - type: dropdown
+    id: can_provide_more
+    attributes:
+      label: 是否愿意提供更多信息
+      description: 如果维护者需要你补充命令输出或截图，你是否愿意继续协助？
+      options:
+        - 可以
+        - 不确定
+        - 不方便
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: 其他说明
+      description: 例如笔记本型号、外接显卡、远程桌面、虚拟机、云电脑等会影响识别的情况。

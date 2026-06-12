@@ -1,0 +1,62 @@
+name: Bug report
+description: 报告命令失败、异常输出或生成文件错误
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        请提供可复现信息。不要提交账号、密钥、私人路径或私人文档内容。
+  - type: input
+    id: version
+    attributes:
+      label: StackPilot 版本或提交
+      placeholder: v0.4.0-alpha / commit hash
+    validations:
+      required: false
+  - type: input
+    id: os
+    attributes:
+      label: OS
+      placeholder: Windows 11 24H2
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: 运行的命令
+      render: bash
+      placeholder: python -m stackpilot scan
+    validations:
+      required: true
+  - type: textarea
+    id: actual_output
+    attributes:
+      label: 实际输出或报错
+      render: text
+      description: 粘贴关键输出即可，注意打码隐私信息。
+    validations:
+      required: true
+  - type: textarea
+    id: expected_output
+    attributes:
+      label: 期望行为
+      description: 你认为命令应该怎样运行或输出？
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: 环境信息
+      description: Python 版本、终端、安装方式、是否在虚拟环境中运行等。
+      placeholder: |
+        Python:
+        安装方式:
+        终端:
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: 隐私确认
+      options:
+        - label: 我已经打码用户名、个人路径、设备序列号、账号和密钥。
+          required: true
