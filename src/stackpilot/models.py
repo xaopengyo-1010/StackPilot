@@ -177,6 +177,15 @@ class AppCatalogItem(BaseModel):
     description: str
     config_notes: list[str] = Field(default_factory=list)
     risk_notes: list[str] = Field(default_factory=list)
+    winget_id: str | None = None
+    official_url: str | None = None
+    install_source: str | None = None
+    verify_commands: list[str] = Field(default_factory=list)
+    rollback_command: str | None = None
+    requires_admin: bool = False
+    estimated_disk_mb: int | None = None
+    risk_note: str | None = None
+    notes: list[str] = Field(default_factory=list)
 
 
 class TemplateRequirements(BaseModel):

@@ -1,16 +1,26 @@
 from __future__ import annotations
 
+import json
+from pathlib import Path
 from typing import Optional
 
 import typer
 from rich.console import Console
 from rich.table import Table
 
+from .executors.dry_run import DryRunExecutor
 from .models import HardwareProfile, RecommendationResult
+from .plans.audit import audit_install_plan
+from .plans.models import InstallPlan
+from .plans.planner import build_install_plan
+from .plans.renderer import render_dry_run_json, render_dry_run_markdown, write_plan_artifacts
 from .recommender import recommend
 from .report import generate_report
+from .rollbacks.planner import build_rollback_plan
 from .scanner import scan_system
+from .snapshots.planner import build_snapshot_plan
 from .templates import UnknownTemplateError, load_template, load_templates, template_audience
+from .utils import parse_model
 
 
 app = typer.Typer(help="StackPilot：给小白用的电脑应用推荐助手。")
@@ -185,6 +195,90 @@ def doctor_command(goal: Optional[str] = typer.Option(None, "--goal", "-g", help
     console.print("报告已生成：")
     console.print(str(md_path))
     console.print(str(json_path))
+
+
+@app.command("plan")
+def plan_command(
+    goal: Optional[str] = typer.Option(None, "--goal", "-g", help="Template ID."),
+    output_dir: Optional[Path] = typer.Option(None, "--output-dir", help="Plan output directory."),
+) -> None:
+    """Generate auditable install-plan artifacts without installing anything."""
+
+    if not goal:
+        _missing_goal()
+        raise typer.Exit(code=1)
+    try:
+        template = load_template(goal)
+    except UnknownTemplateError as exc:
+        console.print(f"[red]{exc}[/red]")
+        raise typer.Exit(code=1) from exc
+
+    console.print("正在检测电脑配置...")
+    profile = scan_system()
+    console.print(f"正在生成推荐：{template.display_name}...")
+    try:
+        recommendation = recommend(goal, profile=profile)
+    except UnknownTemplateError as exc:
+        console.print(f"[red]{exc}[/red]")
+        raise typer.Exit(code=1) from exc
+
+    console.print("正在生成可审查安装计划...")
+    install_plan = build_install_plan(profile, recommendation)
+    audit_report = audit_install_plan(install_plan)
+    snapshot_plan = build_snapshot_plan(install_plan)
+    rollback_plan = build_rollback_plan(install_plan)
+    dry_run_result = DryRunExecutor().run(install_plan)
+    paths = write_plan_artifacts(
+        output_dir,
+        install_plan,
+        audit_report,
+        snapshot_plan,
+        rollback_plan,
+        dry_run_result,
+    )
+
+    console.print("安装计划已生成：")
+    console.print(str(paths["install_plan_md"]))
+    console.print(str(paths["install_plan_json"]))
+    console.print("")
+    console.print("审计报告已生成：")
+    console.print(str(paths["install_audit_md"]))
+    console.print(str(paths["install_audit_json"]))
+    console.print("")
+    console.print("备份、回滚和 dry-run 预览已生成：")
+    console.print(str(paths["snapshot_plan_md"]))
+    console.print(str(paths["rollback_plan_md"]))
+    console.print(str(paths["dry_run_md"]))
+    console.print("")
+    console.print("当前版本只生成计划，不会自动安装软件或修改系统设置。")
+
+
+@app.command("dry-run")
+def dry_run_command(
+    plan: Path = typer.Option(..., "--plan", help="Path to install-plan.json."),
+) -> None:
+    """Regenerate dry-run preview files from an InstallPlan JSON file."""
+
+    if not plan.exists():
+        console.print(f"[red]未找到安装计划：{plan}[/red]")
+        raise typer.Exit(code=1)
+
+    payload = json.loads(plan.read_text(encoding="utf-8"))
+    install_plan = parse_model(InstallPlan, payload)
+    dry_run_result = DryRunExecutor().run(install_plan)
+
+    dry_run_md = plan.parent / "dry-run.md"
+    dry_run_json = plan.parent / "dry-run.json"
+    dry_run_md.write_text(render_dry_run_markdown(dry_run_result), encoding="utf-8")
+    dry_run_json.write_text(
+        json.dumps(render_dry_run_json(dry_run_result), ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
+
+    console.print("dry-run 预览已生成：")
+    console.print(str(dry_run_md))
+    console.print(str(dry_run_json))
+    console.print("当前版本只生成预览，不会执行安装命令。")
 
 
 def main() -> None:
