@@ -136,6 +136,50 @@ def test_gaming_virtual_gpu_generates_warning():
     assert any(finding.id == "gaming_gpu_unreliable" and finding.level == "warning" for finding in findings)
 
 
+def test_gaming_integrated_gpu_generates_clear_info():
+    integrated = GpuDevice(name="Intel Iris Xe Graphics", vendor="Intel", gpu_type="integrated", vram_confidence="shared")
+    profile = profile_with(gpus=[integrated], primary_gpu=integrated, vram_gb=None, gpu_vram_gb=None)
+    findings = evaluate_rules(profile, load_template("gaming_setup"))
+
+    assert any(finding.id == "gaming_integrated_gpu" and finding.level == "info" for finding in findings)
+
+
+def test_local_llm_integrated_gpu_uses_cpu_and_memory_path():
+    integrated = GpuDevice(name="AMD Radeon 780M", vendor="AMD", gpu_type="integrated", vram_confidence="shared")
+    profile = profile_with(gpus=[integrated], primary_gpu=integrated, vram_gb=None, gpu_vram_gb=None)
+    findings = evaluate_rules(profile, load_template("local_llm"))
+
+    assert any(
+        finding.id == "local_llm_integrated_gpu"
+        and finding.level == "info"
+        and "不要把 GPU 加速作为主要路径" in finding.message
+        for finding in findings
+    )
+
+
+def test_local_llm_unknown_gpu_and_vram_are_conservative():
+    unknown = GpuDevice(name="Example Future Graphics Device", vendor="Unknown", gpu_type="unknown")
+    profile = profile_with(gpus=[unknown], primary_gpu=unknown, gpu_names=[], vram_gb=None, gpu_vram_gb=None)
+    findings = evaluate_rules(profile, load_template("local_llm"))
+    ids = {finding.id for finding in findings}
+
+    assert "local_llm_gpu_unknown" in ids
+    assert "vram_unknown" in ids
+
+
+def test_creator_setup_missing_gpu_generates_warning():
+    profile = profile_with(gpus=[], primary_gpu=None, gpu_names=[], vram_gb=None, gpu_vram_gb=None)
+    findings = evaluate_rules(profile, load_template("creator_setup"))
+
+    assert any(finding.id == "gpu_missing" and finding.level == "warning" for finding in findings)
+
+
+def test_vibe_coding_does_not_emit_gpu_missing_for_non_gpu_goal():
+    profile = profile_with(gpus=[], primary_gpu=None, gpu_names=[], vram_gb=None, gpu_vram_gb=None)
+
+    assert "gpu_missing" not in finding_ids("vibe_coding", profile)
+
+
 def test_old_vram_only_profile_remains_compatible_for_comfyui():
     profile = profile_with(gpus=[], primary_gpu=None, gpu_names=["NVIDIA GeForce RTX 4070"], vram_gb=4, gpu_vram_gb=4)
     findings = evaluate_rules(profile, load_template("comfyui_starter"))
