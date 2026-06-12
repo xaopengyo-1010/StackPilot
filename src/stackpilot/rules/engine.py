@@ -3,7 +3,10 @@ from __future__ import annotations
 from collections.abc import Iterable
 
 from stackpilot import detector
-from stackpilot.models import HardwareProfile, RuleFinding, TemplateDefinition
+from stackpilot.hardware.gpu_classifier import classify_gpu_type, classify_gpu_vendor, classify_vram_confidence
+from stackpilot.hardware.gpu_selector import select_primary_gpu
+from stackpilot.hardware.vram import estimate_dedicated_vram_from_name
+from stackpilot.models import GpuDevice, HardwareProfile, RuleFinding, TemplateDefinition
 
 
 CODING_GOALS = {"coding_starter", "vibe_coding"}
@@ -12,7 +15,52 @@ LOCAL_AI_GOALS = {"comfyui_starter", "local_llm"}
 GPU_SENSITIVE_GOALS = {"comfyui_starter", "local_llm", "gaming_setup", "creator_setup"}
 
 
+def _legacy_gpus(profile: HardwareProfile) -> list[GpuDevice]:
+    devices: list[GpuDevice] = []
+    for name in profile.gpu_names:
+        vendor = classify_gpu_vendor(name)
+        gpu_type = classify_gpu_type(name, vendor)
+        estimated_vram = estimate_dedicated_vram_from_name(name) if gpu_type == "dedicated" else None
+        adapter_vram = profile.vram_gb if gpu_type == "dedicated" else None
+        confidence = classify_vram_confidence(
+            name=name,
+            gpu_type=gpu_type,
+            adapter_ram_gb=adapter_vram,
+            estimated_vram_gb=estimated_vram,
+        )
+        devices.append(
+            GpuDevice(
+                name=name,
+                vendor=vendor,
+                gpu_type=gpu_type,
+                dedicated_vram_gb=(adapter_vram or estimated_vram) if confidence in {"detected", "estimated"} else None,
+                vram_confidence=confidence,
+                source="unknown",
+            )
+        )
+    return devices
+
+
+def _profile_gpus(profile: HardwareProfile) -> list[GpuDevice]:
+    return profile.gpus or _legacy_gpus(profile)
+
+
+def _primary_gpu(profile: HardwareProfile) -> tuple[GpuDevice | None, str | None]:
+    if profile.primary_gpu is not None:
+        return profile.primary_gpu, profile.gpu_selection_reason
+    gpus = _profile_gpus(profile)
+    if not gpus:
+        return None, None
+    return select_primary_gpu(gpus)
+
+
 def _effective_vram(profile: HardwareProfile) -> tuple[float | None, bool]:
+    primary_gpu, _ = _primary_gpu(profile)
+    if primary_gpu is not None and primary_gpu.gpu_type == "dedicated":
+        if primary_gpu.dedicated_vram_gb is not None:
+            return primary_gpu.dedicated_vram_gb, primary_gpu.vram_confidence == "estimated"
+    if profile.gpus or profile.primary_gpu is not None:
+        return None, False
     if profile.vram_gb is not None:
         return profile.vram_gb, False
     if profile.gpu_vram_gb is not None:
@@ -62,6 +110,8 @@ def evaluate_rules(profile: HardwareProfile, template: TemplateDefinition) -> li
     ram_gb = profile.ram_gb
     vram_gb, vram_inferred = _effective_vram(profile)
     disk_free_gb = profile.disk_free_gb
+    gpus = _profile_gpus(profile)
+    primary_gpu, gpu_selection_reason = _primary_gpu(profile)
 
     for index, warning in enumerate(profile.warnings):
         _append_unique(
@@ -104,6 +154,91 @@ def evaluate_rules(profile: HardwareProfile, template: TemplateDefinition) -> li
                 evidence={"vram_gb": vram_gb, "threshold_gb": 6},
             ),
         )
+
+    if goal_id == "comfyui_starter":
+        if primary_gpu is None:
+            level = "warning"
+            title = "GPU 性能无法确认"
+            message = "未能可靠确认真实 GPU 信息，AI 绘图性能需要用户补充确认。"
+            if gpus:
+                title = "仅检测到虚拟/基础显示设备"
+                message = "仅检测到虚拟或基础显示设备，无法可靠评估本地 AI 绘图性能。"
+            _append_unique(
+                findings,
+                _finding(
+                    id="comfyui_gpu_unreliable",
+                    level=level,
+                    title=title,
+                    message=message,
+                    goal_id=goal_id,
+                    component="gpu",
+                    evidence={"gpu_selection_reason": gpu_selection_reason},
+                ),
+            )
+        elif primary_gpu.gpu_type == "integrated":
+            _append_unique(
+                findings,
+                _finding(
+                    id="comfyui_integrated_gpu",
+                    level="warning",
+                    title="当前主要 GPU 是核显",
+                    message="当前主要性能判断基于集成显卡和共享内存，不推荐用于较重的本地 AI 绘图工作流。",
+                    goal_id=goal_id,
+                    component="gpu",
+                    evidence={
+                        "primary_gpu": primary_gpu.name,
+                        "gpu_type": primary_gpu.gpu_type,
+                        "vram_confidence": primary_gpu.vram_confidence,
+                    },
+                ),
+            )
+        elif primary_gpu.gpu_type == "unknown":
+            _append_unique(
+                findings,
+                _finding(
+                    id="comfyui_gpu_unknown",
+                    level="warning",
+                    title="GPU 类型未知",
+                    message="当前 GPU 类型无法确认，ComfyUI 适配性需要用户补充设备信息后再判断。",
+                    goal_id=goal_id,
+                    component="gpu",
+                    evidence={"primary_gpu": primary_gpu.name, "gpu_type": primary_gpu.gpu_type},
+                ),
+            )
+        elif (
+            primary_gpu.vendor == "NVIDIA"
+            and primary_gpu.gpu_type == "dedicated"
+            and primary_gpu.dedicated_vram_gb is not None
+            and primary_gpu.vram_confidence == "detected"
+        ):
+            if primary_gpu.dedicated_vram_gb >= 12:
+                title = "NVIDIA 独显适合 AI 绘图"
+                message = "检测到 NVIDIA 独立显卡且独立显存不少于 12GB，适合从 ComfyUI 入门并尝试较复杂工作流。"
+            elif primary_gpu.dedicated_vram_gb >= 8:
+                title = "NVIDIA 独显可用于 AI 绘图"
+                message = "检测到 NVIDIA 独立显卡且独立显存不少于 8GB，适合从 ComfyUI 入门。"
+            elif primary_gpu.dedicated_vram_gb >= 6:
+                title = "NVIDIA 独显显存偏紧"
+                message = "检测到 NVIDIA 独立显卡，但显存约 6GB，建议只尝试轻量 ComfyUI 工作流。"
+            else:
+                title = "NVIDIA 独显显存不足"
+                message = "检测到 NVIDIA 独立显卡，但独立显存低于 6GB，不适合较重 ComfyUI 工作流。"
+            _append_unique(
+                findings,
+                _finding(
+                    id="comfyui_nvidia_dedicated_vram",
+                    level="info" if primary_gpu.dedicated_vram_gb >= 8 else "warning",
+                    title=title,
+                    message=message,
+                    goal_id=goal_id,
+                    component="gpu",
+                    evidence={
+                        "primary_gpu": primary_gpu.name,
+                        "dedicated_vram_gb": primary_gpu.dedicated_vram_gb,
+                        "vram_confidence": primary_gpu.vram_confidence,
+                    },
+                ),
+            )
 
     if goal_id == "local_llm" and ram_gb is not None and ram_gb < 16:
         _append_unique(
@@ -175,21 +310,126 @@ def evaluate_rules(profile: HardwareProfile, template: TemplateDefinition) -> li
             ),
         )
 
-    if goal_id in GPU_SENSITIVE_GOALS and not profile.gpu_names:
+    if goal_id == "local_llm" and primary_gpu is not None:
+        if primary_gpu.gpu_type == "integrated":
+            _append_unique(
+                findings,
+                _finding(
+                    id="local_llm_integrated_gpu",
+                    level="info",
+                    title="本地大模型不应主要依赖核显",
+                    message="当前主要 GPU 是集成显卡，本地大模型建议优先按内存和 CPU 路径规划，不要把 GPU 加速作为主要路径。",
+                    goal_id=goal_id,
+                    component="gpu",
+                    evidence={"primary_gpu": primary_gpu.name, "gpu_type": primary_gpu.gpu_type},
+                ),
+            )
+        elif primary_gpu.vendor == "NVIDIA" and primary_gpu.gpu_type == "dedicated":
+            _append_unique(
+                findings,
+                _finding(
+                    id="local_llm_nvidia_gpu_available",
+                    level="info",
+                    title="检测到 NVIDIA 独显",
+                    message="检测到 NVIDIA 独立显卡，未来可考虑 GPU 加速，但仍取决于独立显存容量和模型大小。",
+                    goal_id=goal_id,
+                    component="gpu",
+                    evidence={
+                        "primary_gpu": primary_gpu.name,
+                        "dedicated_vram_gb": primary_gpu.dedicated_vram_gb,
+                        "vram_confidence": primary_gpu.vram_confidence,
+                    },
+                ),
+            )
+        elif primary_gpu.gpu_type == "unknown":
+            _append_unique(
+                findings,
+                _finding(
+                    id="local_llm_gpu_unknown",
+                    level="warning",
+                    title="GPU 类型未知",
+                    message="当前 GPU 类型无法确认，本地大模型推荐不会假设可用 GPU 加速。",
+                    goal_id=goal_id,
+                    component="gpu",
+                    evidence={"primary_gpu": primary_gpu.name},
+                ),
+            )
+
+    if goal_id == "gaming_setup":
+        if primary_gpu is None:
+            _append_unique(
+                findings,
+                _finding(
+                    id="gaming_gpu_unreliable",
+                    level="warning",
+                    title="图形性能无法确认",
+                    message="未能可靠确认真实 GPU，游戏性能和画质建议需要保守判断。",
+                    goal_id=goal_id,
+                    component="gpu",
+                    evidence={"gpu_selection_reason": gpu_selection_reason},
+                ),
+            )
+        elif primary_gpu.gpu_type == "integrated":
+            _append_unique(
+                findings,
+                _finding(
+                    id="gaming_integrated_gpu",
+                    level="info",
+                    title="当前主要 GPU 是核显",
+                    message="当前主要 GPU 是集成显卡，更适合轻量游戏、云游戏或低画质设置。",
+                    goal_id=goal_id,
+                    component="gpu",
+                    evidence={"primary_gpu": primary_gpu.name, "gpu_type": primary_gpu.gpu_type},
+                ),
+            )
+        elif primary_gpu.gpu_type == "dedicated":
+            _append_unique(
+                findings,
+                _finding(
+                    id="gaming_dedicated_gpu",
+                    level="info",
+                    title="检测到独立显卡",
+                    message="检测到独立显卡，可以安装游戏平台和性能监控工具，但具体画质仍取决于显卡型号和显存。",
+                    goal_id=goal_id,
+                    component="gpu",
+                    evidence={
+                        "primary_gpu": primary_gpu.name,
+                        "dedicated_vram_gb": primary_gpu.dedicated_vram_gb,
+                        "vram_confidence": primary_gpu.vram_confidence,
+                    },
+                ),
+            )
+        elif primary_gpu.gpu_type == "unknown":
+            _append_unique(
+                findings,
+                _finding(
+                    id="gaming_gpu_unknown",
+                    level="warning",
+                    title="GPU 类型未知",
+                    message="当前 GPU 类型无法确认，游戏性能建议需要用户补充设备信息。",
+                    goal_id=goal_id,
+                    component="gpu",
+                    evidence={"primary_gpu": primary_gpu.name},
+                ),
+            )
+
+    if goal_id in GPU_SENSITIVE_GOALS and not gpus:
         _append_unique(
             findings,
             _finding(
                 id="gpu_missing",
                 level="warning",
-                title="未检测到独立显卡",
-                message="未检测到独立显卡，游戏光影和本地 AI 生成体验可能受限。",
+                title="未检测到 GPU 信息",
+                message="未检测到 GPU 信息，游戏光影和本地 AI 生成体验需要保守判断。",
                 goal_id=goal_id,
                 component="gpu",
                 evidence={"gpu_names": profile.gpu_names},
             ),
         )
 
-    if goal_id in LOCAL_AI_GOALS and profile.gpu_names and vram_gb is None:
+    if goal_id in LOCAL_AI_GOALS and gpus and vram_gb is None and (
+        primary_gpu is None or primary_gpu.gpu_type in {"dedicated", "unknown"}
+    ):
         _append_unique(
             findings,
             _finding(

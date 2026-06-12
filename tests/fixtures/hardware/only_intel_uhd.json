@@ -1,0 +1,29 @@
+{
+  "platform": "windows",
+  "raw_windows_video_controllers": [
+    {
+      "Name": "Intel(R) UHD Graphics 770",
+      "AdapterRAM": 2147483648,
+      "DriverVersion": "31.0.101.5333",
+      "PNPDeviceID": "PCI\\VEN_8086&DEV_4680"
+    }
+  ],
+  "expected_gpus": [
+    {
+      "name": "Intel(R) UHD Graphics 770",
+      "vendor": "Intel",
+      "gpu_type": "integrated",
+      "vram_confidence": "shared",
+      "dedicated_vram_gb": null,
+      "shared_memory_gb": 2.0
+    }
+  ],
+  "expected_primary_gpu": {
+    "name": "Intel(R) UHD Graphics 770",
+    "gpu_type": "integrated"
+  },
+  "expected_gpu_selection_reason_contains": "集成显卡",
+  "expected_findings": [
+    "shared_memory"
+  ]
+}

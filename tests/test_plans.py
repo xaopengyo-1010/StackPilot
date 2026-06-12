@@ -151,6 +151,12 @@ def test_renderers_avoid_none_and_include_required_safety_sections():
     combined_md = "\n".join([install_md, audit_md, snapshot_md, rollback_md, dry_run_md])
 
     assert "None" not in install_md
+    assert "检测到的 GPU" in install_md
+    assert "主要性能判断 GPU" in install_md
+    assert "NVIDIA GeForce RTX 4070" in install_md
+    assert "显存置信度：detected" in install_md
+    assert "平台类型" in install_md
+    assert "默认安装后端" in install_md
     assert "当前版本只生成可审查安装计划" in install_md
     assert "阻止执行的步骤" in audit_md
     assert "PATH 环境变量" in snapshot_md

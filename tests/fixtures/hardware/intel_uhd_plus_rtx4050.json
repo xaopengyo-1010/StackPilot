@@ -1,0 +1,43 @@
+{
+  "platform": "windows",
+  "raw_windows_video_controllers": [
+    {
+      "Name": "Intel(R) UHD Graphics",
+      "AdapterRAM": 2147483648,
+      "DriverVersion": "31.0.101.5333",
+      "PNPDeviceID": "PCI\\VEN_8086&DEV_46A8"
+    },
+    {
+      "Name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "AdapterRAM": 6442450944,
+      "DriverVersion": "555.85",
+      "PNPDeviceID": "PCI\\VEN_10DE&DEV_28E1"
+    }
+  ],
+  "expected_gpus": [
+    {
+      "name": "Intel(R) UHD Graphics",
+      "vendor": "Intel",
+      "gpu_type": "integrated",
+      "vram_confidence": "shared",
+      "dedicated_vram_gb": null,
+      "shared_memory_gb": 2.0
+    },
+    {
+      "name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+      "vendor": "NVIDIA",
+      "gpu_type": "dedicated",
+      "vram_confidence": "detected",
+      "dedicated_vram_gb": 6.0,
+      "shared_memory_gb": null
+    }
+  ],
+  "expected_primary_gpu": {
+    "name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "gpu_type": "dedicated"
+  },
+  "expected_gpu_selection_reason_contains": "独立显卡",
+  "expected_findings": [
+    "dedicated_primary"
+  ]
+}

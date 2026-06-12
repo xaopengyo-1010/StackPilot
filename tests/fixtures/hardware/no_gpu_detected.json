@@ -1,0 +1,10 @@
+{
+  "platform": "windows",
+  "raw_windows_video_controllers": [],
+  "expected_gpus": [],
+  "expected_primary_gpu": null,
+  "expected_gpu_selection_reason_contains": "未检测到 GPU",
+  "expected_findings": [
+    "gpu_missing"
+  ]
+}

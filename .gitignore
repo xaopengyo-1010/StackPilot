@@ -109,3 +109,19 @@ assets/tmp/
 *.afdesign
 AGENTS.md
 .pytest_tmp/
+
+
+# Local AI agent skills / workspace config
+.agents/
+skills-lock.json
+
+# Generated StackPilot outputs
+outputs/plans/
+outputs/reports/
+
+# Local drafts / temporary files
+goal.md
+example/
+assets/LOGO/
+
+README.local.bak.md

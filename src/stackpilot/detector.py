@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import platform
 import re
+import json
 import shutil
 import subprocess
 
@@ -116,6 +117,28 @@ def detect_gpu_names() -> list[str]:
                     names.append(line.split(":", 2)[-1].strip())
 
     return unique_preserve_order(names)
+
+
+def detect_windows_gpu_controllers() -> list[dict[str, object]]:
+    if platform.system() != "Windows":
+        return []
+
+    output = _powershell_command(
+        "Get-CimInstance Win32_VideoController | "
+        "Select-Object Name,VideoProcessor,AdapterRAM,DriverVersion,PNPDeviceID | "
+        "ConvertTo-Json -Depth 3"
+    )
+    if not output:
+        return []
+    try:
+        payload = json.loads(output)
+    except json.JSONDecodeError:
+        return []
+    if isinstance(payload, dict):
+        return [payload]
+    if isinstance(payload, list):
+        return [item for item in payload if isinstance(item, dict)]
+    return []
 
 
 def detect_gpu_vram_gb() -> float | None:

@@ -1,8 +1,25 @@
-from stackpilot.models import HardwareProfile, RecommendationResult
+from stackpilot.models import GpuDevice, HardwareProfile, PlatformProfile, RecommendationResult
 from stackpilot.recommender import recommend
 
 
 def sample_profile() -> HardwareProfile:
+    dedicated_gpu = GpuDevice(
+        name="NVIDIA GeForce RTX 4070",
+        vendor="NVIDIA",
+        gpu_type="dedicated",
+        dedicated_vram_gb=12,
+        vram_confidence="detected",
+        driver_version="555.85",
+        source="fixture",
+    )
+    platform_profile = PlatformProfile(
+        os_family="windows",
+        os_name="Windows",
+        os_version="11",
+        architecture="x86_64",
+        package_managers=["winget"],
+        default_installer_backend="winget",
+    )
     return HardwareProfile(
         os_name="Windows",
         os_version="Windows 11",
@@ -11,7 +28,11 @@ def sample_profile() -> HardwareProfile:
         cpu_cores=12,
         ram_gb=32,
         gpu_names=["NVIDIA GeForce RTX 4070"],
+        gpus=[dedicated_gpu],
+        primary_gpu=dedicated_gpu,
+        gpu_selection_reason="检测到独立显卡，因此优先使用 NVIDIA GeForce RTX 4070 作为主要性能判断 GPU。",
         vram_gb=12,
+        platform_profile=platform_profile,
         disk_total_gb=1000,
         disk_free_gb=300,
         python_installed=True,

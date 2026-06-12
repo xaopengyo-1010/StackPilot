@@ -1,0 +1,29 @@
+{
+  "platform": "windows",
+  "raw_windows_video_controllers": [
+    {
+      "Name": "Example Future Graphics Device",
+      "AdapterRAM": null,
+      "DriverVersion": "1.0.0",
+      "PNPDeviceID": "PCI\\VEN_9999&DEV_0001"
+    }
+  ],
+  "expected_gpus": [
+    {
+      "name": "Example Future Graphics Device",
+      "vendor": "Unknown",
+      "gpu_type": "unknown",
+      "vram_confidence": "unknown",
+      "dedicated_vram_gb": null,
+      "shared_memory_gb": null
+    }
+  ],
+  "expected_primary_gpu": {
+    "name": "Example Future Graphics Device",
+    "gpu_type": "unknown"
+  },
+  "expected_gpu_selection_reason_contains": "无法确认",
+  "expected_findings": [
+    "unknown_gpu"
+  ]
+}

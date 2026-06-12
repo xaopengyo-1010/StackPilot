@@ -97,6 +97,40 @@ StackPilot 当前不接受以下改动：
 
 规则必须可以单独测试。不要把硬件判断写到 CLI、report renderer 或 scanner 中。
 
+## 新增 GPU 检测逻辑
+
+GPU 是总称，不等于独立显卡。新增或修改 GPU 检测时必须保持以下边界：
+
+- 核显使用 `gpu_type="integrated"`。
+- 独显使用 `gpu_type="dedicated"`。
+- 远程、虚拟、基础显示设备使用 `gpu_type="virtual"` 或保守的 `unknown`。
+- 共享内存使用 `vram_confidence="shared"`，不能写成独立显存。
+- 估算值使用 `vram_confidence="estimated"`，报告必须说明可能不准确。
+- 无法确认时使用 `vram_confidence="unknown"`。
+
+Windows parser 必须通过 `parse_windows_gpu_controllers(raw_controllers)` 测试，不要让测试依赖真实开发机。
+
+## 新增硬件 fixtures
+
+硬件 fixtures 位于 `tests/fixtures/hardware/`。新增 GPU 名称、修复误判或调整 primary GPU 选择时，请添加或更新 fixture，并包含：
+
+- `raw_windows_video_controllers`
+- `expected_gpus`
+- `expected_primary_gpu`
+- `expected_gpu_selection_reason_contains`
+- `expected_findings`
+
+fixtures 应覆盖核显、独显、核显+独显、虚拟显卡、unknown、no GPU，以及 `detected`、`shared`、`estimated`、`unknown` 显存置信度。
+
+## 新增平台支持
+
+平台抽象集中在 `src/stackpilot/platform/`。当前 Windows-first，macOS/Linux 为 experimental。新增平台逻辑时：
+
+- 只采集事实，不执行安装。
+- 不把 `winget` 写死为唯一 backend。
+- 为 `PlatformProfile` 补测试。
+- 不在平台 detector 中下载软件、修改系统或调用真实安装器。
+
 ## 提交 Issue
 
 提交 bug、模板请求或错误推荐时，请尽量提供：

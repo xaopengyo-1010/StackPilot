@@ -1,0 +1,29 @@
+{
+  "platform": "windows",
+  "raw_windows_video_controllers": [
+    {
+      "Name": "NVIDIA GeForce RTX 4090",
+      "AdapterRAM": 25769803776,
+      "DriverVersion": "555.85",
+      "PNPDeviceID": "PCI\\VEN_10DE&DEV_2684"
+    }
+  ],
+  "expected_gpus": [
+    {
+      "name": "NVIDIA GeForce RTX 4090",
+      "vendor": "NVIDIA",
+      "gpu_type": "dedicated",
+      "vram_confidence": "detected",
+      "dedicated_vram_gb": 24.0,
+      "shared_memory_gb": null
+    }
+  ],
+  "expected_primary_gpu": {
+    "name": "NVIDIA GeForce RTX 4090",
+    "gpu_type": "dedicated"
+  },
+  "expected_gpu_selection_reason_contains": "独立显卡",
+  "expected_findings": [
+    "dedicated_primary"
+  ]
+}

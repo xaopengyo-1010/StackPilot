@@ -1,4 +1,4 @@
-from stackpilot.models import HardwareProfile
+from stackpilot.models import GpuDevice, HardwareProfile
 from stackpilot.rules.engine import evaluate_rules
 from stackpilot.templates import load_template
 
@@ -88,3 +88,56 @@ def test_coding_starter_missing_python_generates_warning():
     profile = profile_with(python_installed=False, python_version=None)
 
     assert "python_missing" in finding_ids("coding_starter", profile)
+
+
+def test_comfyui_integrated_gpu_generates_warning():
+    integrated = GpuDevice(name="AMD Radeon 780M", vendor="AMD", gpu_type="integrated", vram_confidence="shared")
+    profile = profile_with(gpus=[integrated], primary_gpu=integrated, vram_gb=None, gpu_vram_gb=None)
+    findings = evaluate_rules(profile, load_template("comfyui_starter"))
+
+    assert any(finding.id == "comfyui_integrated_gpu" and finding.level == "warning" for finding in findings)
+    assert "vram_inferred" not in {finding.id for finding in findings}
+
+
+def test_comfyui_nvidia_dedicated_8gb_generates_info():
+    dedicated = GpuDevice(
+        name="NVIDIA GeForce RTX 4060 Laptop GPU",
+        vendor="NVIDIA",
+        gpu_type="dedicated",
+        dedicated_vram_gb=8,
+        vram_confidence="detected",
+    )
+    profile = profile_with(gpus=[dedicated], primary_gpu=dedicated, vram_gb=None, gpu_vram_gb=None)
+    findings = evaluate_rules(profile, load_template("comfyui_starter"))
+
+    assert any(finding.id == "comfyui_nvidia_dedicated_vram" and finding.level == "info" for finding in findings)
+
+
+def test_comfyui_unknown_gpu_generates_warning():
+    unknown = GpuDevice(name="Example Future Graphics Device", vendor="Unknown", gpu_type="unknown")
+    profile = profile_with(gpus=[unknown], primary_gpu=unknown, gpu_names=[], vram_gb=None, gpu_vram_gb=None)
+    findings = evaluate_rules(profile, load_template("comfyui_starter"))
+
+    assert any(finding.id == "comfyui_gpu_unknown" and finding.level == "warning" for finding in findings)
+
+
+def test_gaming_virtual_gpu_generates_warning():
+    virtual = GpuDevice(name="Microsoft Basic Display Adapter", vendor="Microsoft", gpu_type="virtual")
+    profile = profile_with(
+        gpus=[virtual],
+        primary_gpu=None,
+        gpu_selection_reason="仅检测到虚拟/基础显示设备，无法可靠判断图形性能。",
+        gpu_names=[],
+        vram_gb=None,
+        gpu_vram_gb=None,
+    )
+    findings = evaluate_rules(profile, load_template("gaming_setup"))
+
+    assert any(finding.id == "gaming_gpu_unreliable" and finding.level == "warning" for finding in findings)
+
+
+def test_old_vram_only_profile_remains_compatible_for_comfyui():
+    profile = profile_with(gpus=[], primary_gpu=None, gpu_names=["NVIDIA GeForce RTX 4070"], vram_gb=4, gpu_vram_gb=4)
+    findings = evaluate_rules(profile, load_template("comfyui_starter"))
+
+    assert any(finding.id == "comfyui_vram_low" and finding.level == "warning" for finding in findings)

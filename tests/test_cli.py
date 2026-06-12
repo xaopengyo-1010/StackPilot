@@ -2,6 +2,7 @@ from typer.testing import CliRunner
 
 from stackpilot import cli
 from stackpilot.cli import app
+from stackpilot.models import GpuDevice, HardwareProfile
 from tests.test_recommender import sample_profile
 
 
@@ -31,6 +32,43 @@ def test_recommend_command_still_runs(monkeypatch):
     assert result.exit_code == 0
     assert "推荐结果：AI 绘图入门" in result.output
     assert "规则判断与风险提示" in result.output
+
+
+def test_scan_command_shows_gpu_list_and_primary_gpu(monkeypatch):
+    integrated = GpuDevice(name="AMD Radeon 780M", vendor="AMD", gpu_type="integrated", vram_confidence="shared")
+    dedicated = GpuDevice(
+        name="NVIDIA GeForce RTX 4060 Laptop GPU",
+        vendor="NVIDIA",
+        gpu_type="dedicated",
+        dedicated_vram_gb=8,
+        vram_confidence="detected",
+    )
+    profile = HardwareProfile(
+        os_name="Windows",
+        os_version="Windows 11",
+        architecture="AMD64",
+        ram_gb=32,
+        gpus=[integrated, dedicated],
+        primary_gpu=dedicated,
+        gpu_selection_reason="检测到独立显卡，因此优先使用 NVIDIA GeForce RTX 4060 Laptop GPU 作为主要性能判断 GPU。",
+        platform_profile={
+            "os_family": "windows",
+            "default_installer_backend": "winget",
+        },
+        python_installed=True,
+        python_version="3.11.9",
+    )
+    monkeypatch.setattr(cli, "scan_system", lambda: profile)
+
+    result = CliRunner().invoke(app, ["scan"])
+
+    assert result.exit_code == 0
+    assert "检测到的 GPU" in result.output
+    assert "主要性能判断 GPU" in result.output
+    assert "平台类型" in result.output
+    assert "默认安装后端" in result.output
+    assert "NVIDIA GeForce RTX 4060 Laptop GPU" in result.output
+    assert "显存置信度：detected" in result.output
 
 
 def test_doctor_command_generates_markdown_and_json(tmp_path, monkeypatch):

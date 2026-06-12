@@ -45,6 +45,26 @@ def _format_score(score: float) -> str:
     return f"{score:g}"
 
 
+def _format_gpu_list(profile: HardwareProfile) -> str:
+    if profile.gpus:
+        return "\n".join(f"- {gpu.markdown_summary()}" for gpu in profile.gpus)
+    if profile.gpu_names:
+        return "、".join(profile.gpu_names)
+    return "未检测到"
+
+
+def _format_primary_gpu(profile: HardwareProfile) -> str:
+    if profile.primary_gpu is None:
+        return "未能可靠确认"
+    return profile.primary_gpu.name
+
+
+def _format_platform_value(profile: HardwareProfile, field: str) -> str:
+    if profile.platform_profile is None:
+        return "未检测到"
+    return _missing(getattr(profile.platform_profile, field))
+
+
 def _print_profile(profile: HardwareProfile) -> None:
     table = Table(title="电脑配置摘要")
     table.add_column("项目")
@@ -52,11 +72,15 @@ def _print_profile(profile: HardwareProfile) -> None:
     values = {
         "系统": f"{_missing(profile.os_name)} {_missing(profile.os_version)}".strip(),
         "架构": _missing(profile.architecture),
+        "平台类型": _format_platform_value(profile, "os_family"),
+        "默认安装后端": _format_platform_value(profile, "default_installer_backend"),
         "CPU": _missing(profile.cpu_name),
         "CPU 核心数": _missing(profile.cpu_cores),
         "内存": _format_gb(profile.ram_gb),
-        "显卡": "、".join(profile.gpu_names) if profile.gpu_names else "未检测到",
-        "显存": _format_gb(profile.vram_gb),
+        "检测到的 GPU": _format_gpu_list(profile),
+        "主要性能判断 GPU": _format_primary_gpu(profile),
+        "GPU 选择原因": profile.gpu_selection_reason or "未能可靠确认 GPU 选择原因",
+        "兼容显存字段": _format_gb(profile.vram_gb),
         "磁盘总容量": _format_gb(profile.disk_total_gb),
         "磁盘剩余空间": _format_gb(profile.disk_free_gb),
         "Python": profile.python_version if profile.python_installed and profile.python_version else "未检测到",

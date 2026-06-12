@@ -62,15 +62,17 @@ def _format_list(values: list[str], empty_text: str) -> str:
 
 
 def _format_profile(profile: HardwareProfile) -> str:
-    gpu_names = "、".join(profile.gpu_names) if profile.gpu_names else "未检测到"
+    gpu_list = _format_gpu_list(profile)
     rows = {
         "系统": f"{_missing(profile.os_name)} {_missing(profile.os_version)}".strip(),
         "架构": _missing(profile.architecture),
         "CPU": _missing(profile.cpu_name),
         "CPU 核心数": _missing(profile.cpu_cores),
         "内存": _format_gb(profile.ram_gb),
-        "显卡": gpu_names,
-        "显存": _format_gb(profile.vram_gb),
+        "检测到的 GPU": gpu_list,
+        "主要性能判断 GPU": profile.primary_gpu.name if profile.primary_gpu else "未能可靠确认",
+        "GPU 选择原因": profile.gpu_selection_reason or "未能可靠确认 GPU 选择原因",
+        "兼容显存字段": _format_gb(profile.vram_gb),
         "磁盘总容量": _format_gb(profile.disk_total_gb),
         "磁盘剩余空间": _format_gb(profile.disk_free_gb),
         "Python": profile.python_version if profile.python_installed and profile.python_version else "未检测到",
@@ -81,7 +83,22 @@ def _format_profile(profile: HardwareProfile) -> str:
         "WSL": "已检测到" if profile.wsl_installed else "未检测到",
         "NVIDIA 驱动": profile.nvidia_driver_version or "未检测到",
     }
-    return "\n".join(f"- {key}：{value}" for key, value in rows.items())
+    lines: list[str] = []
+    for key, value in rows.items():
+        if "\n" in value:
+            lines.append(f"- {key}：")
+            lines.append(value)
+        else:
+            lines.append(f"- {key}：{value}")
+    return "\n".join(lines)
+
+
+def _format_gpu_list(profile: HardwareProfile) -> str:
+    if profile.gpus:
+        return "\n".join(f"  - {gpu.markdown_summary()}" for gpu in profile.gpus)
+    if profile.gpu_names:
+        return "、".join(profile.gpu_names)
+    return "未检测到"
 
 
 def _format_apps(apps: list[AppRecommendation]) -> str:

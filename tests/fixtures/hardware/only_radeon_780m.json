@@ -1,0 +1,29 @@
+{
+  "platform": "windows",
+  "raw_windows_video_controllers": [
+    {
+      "Name": "AMD Radeon 780M Graphics",
+      "AdapterRAM": 4294967296,
+      "DriverVersion": "31.0.24033.1003",
+      "PNPDeviceID": "PCI\\VEN_1002&DEV_15BF"
+    }
+  ],
+  "expected_gpus": [
+    {
+      "name": "AMD Radeon 780M Graphics",
+      "vendor": "AMD",
+      "gpu_type": "integrated",
+      "vram_confidence": "shared",
+      "dedicated_vram_gb": null,
+      "shared_memory_gb": 4.0
+    }
+  ],
+  "expected_primary_gpu": {
+    "name": "AMD Radeon 780M Graphics",
+    "gpu_type": "integrated"
+  },
+  "expected_gpu_selection_reason_contains": "集成显卡",
+  "expected_findings": [
+    "shared_memory"
+  ]
+}

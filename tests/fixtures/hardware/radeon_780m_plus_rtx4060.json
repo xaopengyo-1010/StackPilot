@@ -1,0 +1,43 @@
+{
+  "platform": "windows",
+  "raw_windows_video_controllers": [
+    {
+      "Name": "AMD Radeon 780M Graphics",
+      "AdapterRAM": 4294967296,
+      "DriverVersion": "31.0.24033.1003",
+      "PNPDeviceID": "PCI\\VEN_1002&DEV_15BF"
+    },
+    {
+      "Name": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "AdapterRAM": 8589934592,
+      "DriverVersion": "555.85",
+      "PNPDeviceID": "PCI\\VEN_10DE&DEV_28A0"
+    }
+  ],
+  "expected_gpus": [
+    {
+      "name": "AMD Radeon 780M Graphics",
+      "vendor": "AMD",
+      "gpu_type": "integrated",
+      "vram_confidence": "shared",
+      "dedicated_vram_gb": null,
+      "shared_memory_gb": 4.0
+    },
+    {
+      "name": "NVIDIA GeForce RTX 4060 Laptop GPU",
+      "vendor": "NVIDIA",
+      "gpu_type": "dedicated",
+      "vram_confidence": "detected",
+      "dedicated_vram_gb": 8.0,
+      "shared_memory_gb": null
+    }
+  ],
+  "expected_primary_gpu": {
+    "name": "NVIDIA GeForce RTX 4060 Laptop GPU",
+    "gpu_type": "dedicated"
+  },
+  "expected_gpu_selection_reason_contains": "独立显卡",
+  "expected_findings": [
+    "dedicated_primary"
+  ]
+}

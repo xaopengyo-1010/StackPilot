@@ -1,0 +1,29 @@
+{
+  "platform": "windows",
+  "raw_windows_video_controllers": [
+    {
+      "Name": "NVIDIA GeForce RTX 5090",
+      "AdapterRAM": null,
+      "DriverVersion": "560.00",
+      "PNPDeviceID": "PCI\\VEN_10DE&DEV_2B85"
+    }
+  ],
+  "expected_gpus": [
+    {
+      "name": "NVIDIA GeForce RTX 5090",
+      "vendor": "NVIDIA",
+      "gpu_type": "dedicated",
+      "vram_confidence": "estimated",
+      "dedicated_vram_gb": 32.0,
+      "shared_memory_gb": null
+    }
+  ],
+  "expected_primary_gpu": {
+    "name": "NVIDIA GeForce RTX 5090",
+    "gpu_type": "dedicated"
+  },
+  "expected_gpu_selection_reason_contains": "独立显卡",
+  "expected_findings": [
+    "estimated_vram"
+  ]
+}

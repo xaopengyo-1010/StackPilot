@@ -1,0 +1,26 @@
+{
+  "platform": "windows",
+  "raw_windows_video_controllers": [
+    {
+      "Name": "Microsoft Basic Display Adapter",
+      "AdapterRAM": 8589934592,
+      "DriverVersion": "10.0.22621.1",
+      "PNPDeviceID": "ROOT\\BASICDISPLAY"
+    }
+  ],
+  "expected_gpus": [
+    {
+      "name": "Microsoft Basic Display Adapter",
+      "vendor": "Microsoft",
+      "gpu_type": "virtual",
+      "vram_confidence": "unknown",
+      "dedicated_vram_gb": null,
+      "shared_memory_gb": null
+    }
+  ],
+  "expected_primary_gpu": null,
+  "expected_gpu_selection_reason_contains": "虚拟",
+  "expected_findings": [
+    "virtual_gpu"
+  ]
+}

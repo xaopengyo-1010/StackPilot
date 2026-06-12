@@ -18,6 +18,39 @@ def _safe(value: object | None) -> str:
     return str(value)
 
 
+def _gpu_summary(profile: HardwareProfile) -> str:
+    if profile.gpus:
+        return "; ".join(gpu.markdown_summary() for gpu in profile.gpus)
+    if profile.gpu_names:
+        return "、".join(profile.gpu_names)
+    return "未检测到"
+
+
+def _primary_gpu_summary(profile: HardwareProfile) -> str:
+    if profile.primary_gpu is None:
+        return "未能可靠确认"
+    return profile.primary_gpu.name
+
+
+def _platform_summary(profile: HardwareProfile) -> dict[str, object]:
+    if profile.platform_profile is None:
+        return {
+            "平台类型": "unknown",
+            "包管理器": "未检测到",
+            "默认安装后端": "unknown",
+        }
+    package_managers = (
+        "、".join(profile.platform_profile.package_managers)
+        if profile.platform_profile.package_managers
+        else "未检测到"
+    )
+    return {
+        "平台类型": profile.platform_profile.os_family,
+        "包管理器": package_managers,
+        "默认安装后端": profile.platform_profile.default_installer_backend,
+    }
+
+
 def _slug(value: str) -> str:
     slug = re.sub(r"[^a-zA-Z0-9_]+", "-", value.strip().lower()).strip("-")
     return slug or "unknown"
@@ -27,11 +60,14 @@ def _hardware_summary(profile: HardwareProfile) -> dict[str, object]:
     return {
         "操作系统": f"{_safe(profile.os_name)} {_safe(profile.os_version)}".strip(),
         "系统架构": _safe(profile.architecture),
+        **_platform_summary(profile),
         "CPU": _safe(profile.cpu_name),
         "CPU 核心数": _safe(profile.cpu_cores),
         "内存 GB": _safe(profile.ram_gb),
-        "显卡": "、".join(profile.gpu_names) if profile.gpu_names else "未检测到",
-        "显存 GB": _safe(profile.vram_gb),
+        "检测到的 GPU": _gpu_summary(profile),
+        "主要性能判断 GPU": _primary_gpu_summary(profile),
+        "GPU 选择原因": profile.gpu_selection_reason or "未能可靠确认 GPU 选择原因",
+        "兼容显存 GB": _safe(profile.vram_gb),
         "剩余磁盘 GB": _safe(profile.disk_free_gb),
         "Python": profile.python_version if profile.python_installed and profile.python_version else "未检测到",
         "Node.js": profile.node_version if profile.node_installed and profile.node_version else "未检测到",

@@ -1,6 +1,6 @@
 # StackPilot 架构说明
 
-StackPilot v0.3 Alpha Plan System 在 v0.2 推荐报告能力上新增了可审查安装计划系统。项目仍然保持兼容式分层，不推倒原有 CLI、模板、扫描器、推荐器和报告生成器。
+StackPilot v0.4 Alpha 在 v0.3 可审查安装计划系统上新增 GPU Detection Hardening、平台抽象和硬件 fixtures。项目仍然保持兼容式分层，不推倒原有 CLI、模板、扫描器、推荐器和报告生成器。
 
 核心链路现在是：
 
@@ -23,7 +23,7 @@ scanner -> rules -> recommender -> plan generator -> audit -> snapshot plan -> r
 
 ## 现有核心层
 
-`src/stackpilot/scanner.py` 只采集本地公开系统事实，例如系统版本、CPU、内存、显卡、显存、磁盘空间，以及 Python、Node.js、Git、Docker、WSL 等工具状态。Scanner 不推荐应用，不写报告，也不修改系统。
+`src/stackpilot/scanner.py` 只采集本地公开系统事实，例如系统版本、CPU、内存、GPU 设备、显存置信度、磁盘空间，以及 Python、Node.js、Git、Docker、WSL 等工具状态。Scanner 不推荐应用，不写报告，也不修改系统。
 
 `src/stackpilot/rules/engine.py` 集中处理规则判断。规则输入是硬件事实和目标模板，输出是结构化 `RuleFinding` 列表。规则层不渲染 Markdown，不打印 CLI，也不执行命令。
 
@@ -32,6 +32,52 @@ scanner -> rules -> recommender -> plan generator -> audit -> snapshot plan -> r
 `src/stackpilot/report.py` 负责把 `ReportData` 渲染为 Markdown 和 JSON 推荐报告。报告层不重新判断硬件，也不覆盖规则级别。
 
 `src/stackpilot/llm/prompt_builder.py` 只生成可审查 prompt，不调用真实 LLM API，不要求 API Key，也不联网。
+
+## v0.4 GPU 检测基础
+
+GPU 是图形处理器总称，不等于独立显卡。StackPilot 在模型层严格区分：
+
+- `integrated`: 核显 / 集成 GPU，通常使用共享内存。
+- `dedicated`: 独显 / 独立 GPU，可能有独立显存。
+- `virtual`: 远程、虚拟或基础显示设备，不作为真实性能判断 GPU。
+- `unknown`: 无法确认类型的 GPU，必须保守处理。
+
+`src/stackpilot/models.py` 中的 `GpuDevice` 表示单个 GPU 设备，字段包含 `vendor`、`gpu_type`、`dedicated_vram_gb`、`shared_memory_gb`、`vram_confidence`、`driver_version`、`device_id`、`source` 和与类型一致的布尔 flag。
+
+`vram_confidence` 是信任特性，不是单纯数值：
+
+- `detected`: 相对可靠地检测到独立显存。
+- `shared`: 共享内存，不等于独立显存。
+- `estimated`: 根据设备名或规则估算，可能不准确。
+- `unknown`: 未能确认显存。
+
+`src/stackpilot/hardware/gpu_classifier.py` 负责厂商、类型和显存置信度分类。`src/stackpilot/hardware/windows_gpu.py` 提供 `parse_windows_gpu_controllers(raw_controllers)`，接收 Win32_VideoController 风格的原始字典，返回 `GpuDevice` 列表。parser 是纯函数，测试不依赖真实机器。
+
+`src/stackpilot/hardware/gpu_selector.py` 提供 `select_primary_gpu(gpus)`。选择顺序是 dedicated > integrated > unknown，virtual-only 返回 `None` 并给出保守原因。多独显时优先选择更高 `vram_confidence` 和更高独立显存的设备。
+
+报告和安装计划必须显示 GPU 列表、primary GPU、选择原因和显存置信度。旧字段 `gpu_name`、`gpu_names`、`vram_gb`、`gpu_vram_gb` 只作为兼容字段保留，不能继续作为未来主要推荐判断来源。
+
+## v0.4 硬件 fixtures
+
+GPU 检测质量由 `tests/fixtures/hardware/` 维护。新增 GPU 规则或修复误判时，应优先添加 fixture，至少包含：
+
+- `raw_windows_video_controllers`
+- `expected_gpus`
+- `expected_primary_gpu`
+- `expected_gpu_selection_reason_contains`
+- `expected_findings`
+
+fixtures 覆盖核显、独显、核显+独显、虚拟显卡、unknown、no GPU、shared/detected/estimated/unknown 显存置信度。这样可以避免只在当前开发机上“看起来正确”。
+
+## v0.4 平台抽象
+
+`src/stackpilot/platform/detector.py` 生成 `PlatformProfile`，包含 `os_family`、`architecture`、`package_managers` 和 `default_installer_backend`。当前实现 Windows-first；macOS 和 Linux 只保留 experimental 基础结构，不做深度安装支持。
+
+Installer backend 预留值包括 `winget`、`brew`、`apt`、`manual` 和 `unknown`。StackPilot 不把 winget 写死为唯一未来路径。
+
+## LLM 边界
+
+LLM 未来只能做解释层，不能参与硬件事实判断。硬件事实必须来自 scanner、parser、classifier、selector 和可测试规则。架构原则是：别让 LLM 给错误硬件诊断写诗。
 
 ## v0.3 计划系统
 
