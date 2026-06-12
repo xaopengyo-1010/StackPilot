@@ -79,3 +79,40 @@ def test_recommendation_result_splits_required_and_optional_apps():
     assert recommendation.optional_apps
     assert all(app.required for app in recommendation.required_apps)
     assert all(not app.required for app in recommendation.optional_apps)
+
+
+def test_recommendation_uses_structured_gpus_for_nvidia_detection():
+    profile = sample_profile()
+    profile.gpu_names = []
+
+    recommendation = recommend("comfyui_starter", profile=profile)
+
+    nvidia_app = next(app for app in recommendation.recommended_apps if app.app_id == "nvidia_app")
+    assert "可以跳过" not in nvidia_app.reason
+
+
+def test_recommendation_keeps_cuda_optional_without_nvidia_gpu():
+    integrated_gpu = GpuDevice(
+        name="AMD Radeon 780M Graphics",
+        vendor="AMD",
+        gpu_type="integrated",
+        shared_memory_gb=4,
+        vram_confidence="shared",
+        source="fixture",
+    )
+    profile = sample_profile()
+    profile.gpu_names = [integrated_gpu.name]
+    profile.gpus = [integrated_gpu]
+    profile.primary_gpu = integrated_gpu
+    profile.gpu_selection_reason = "未检测到独立显卡，当前主要性能判断基于集成显卡 AMD Radeon 780M Graphics。"
+    profile.vram_gb = None
+    profile.nvidia_driver_version = None
+
+    recommendation = recommend("comfyui_starter", profile=profile)
+
+    cuda_note = next(app for app in recommendation.recommended_apps if app.app_id == "cuda_pytorch_note")
+    nvidia_app = next(app for app in recommendation.recommended_apps if app.app_id == "nvidia_app")
+    assert cuda_note.required is False
+    assert "不要按 CUDA 必装路径处理" in cuda_note.reason
+    assert nvidia_app.required is False
+    assert "可以跳过" in nvidia_app.reason

@@ -23,7 +23,9 @@ def _unique(values: list[str]) -> list[str]:
 
 
 def _is_nvidia_profile(profile: HardwareProfile) -> bool:
-    return any("nvidia" in name.casefold() for name in profile.gpu_names)
+    return any(gpu.vendor == "NVIDIA" for gpu in profile.gpus) or any(
+        "nvidia" in name.casefold() for name in profile.gpu_names
+    )
 
 
 def recommend(goal: str, profile: HardwareProfile | None = None) -> RecommendationResult:
@@ -46,6 +48,9 @@ def recommend(goal: str, profile: HardwareProfile | None = None) -> Recommendati
         if template_app.app_id == "nvidia_app" and not _is_nvidia_profile(profile):
             required = False
             reason = f"{reason} 未检测到 NVIDIA 显卡，因此这个项目可以跳过。"
+        elif template_app.app_id == "cuda_pytorch_note" and not _is_nvidia_profile(profile):
+            required = False
+            reason = f"{reason} 未检测到 NVIDIA 显卡，因此不要按 CUDA 必装路径处理。"
 
         catalog_item = catalog.get(template_app.app_id)
         if catalog_item is None:

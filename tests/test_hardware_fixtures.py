@@ -83,3 +83,13 @@ def test_fixture_coverage_for_required_gpu_cases():
         for fixture in fixtures.values()
         for expected in fixture["expected_gpus"]
     )
+    assert any(
+        expected["vram_confidence"] == "estimated"
+        for fixture in fixtures.values()
+        for expected in fixture["expected_gpus"]
+    )
+    assert any(
+        expected["vram_confidence"] == "detected"
+        for fixture in fixtures.values()
+        for expected in fixture["expected_gpus"]
+    )
