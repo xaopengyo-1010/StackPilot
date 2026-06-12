@@ -1,157 +1,179 @@
+# StackPilot v0.4.0-alpha is out
+
 <div align="center">
-  <img src="assets/LOGO1.png" alt="StackPilot Logo" width="160" />
+  <img src="assets/stackpilot-logo.png" alt="StackPilot logo" width="152" />
   <h1>StackPilot</h1>
-  <p><strong>💻 给小白用的电脑应用推荐助手</strong></p>
-  <p>不知道新电脑该装什么？告诉 StackPilot 你的目标，它会根据你的硬件配置，定制专属的应用组合与避坑指南。</p>
+  <p><strong>开源、透明、可审计的电脑环境推荐与部署计划助手</strong></p>
+  <p>检测你的电脑配置，生成应用推荐报告、风险提示和可审查安装计划。</p>
+  <p>
+    <img alt="Version" src="https://img.shields.io/badge/version-v0.4.0--alpha-2f6fef?style=flat-square" />
+    <img alt="Python" src="https://img.shields.io/badge/python-%3E%3D3.11-2f6fef?style=flat-square" />
+    <img alt="License" src="https://img.shields.io/badge/license-MIT-2f6fef?style=flat-square" />
+    <img alt="Status" src="https://img.shields.io/badge/status-alpha-6b7280?style=flat-square" />
+  </p>
+  <p><sub>看得见每一步，装得明白，撤得回来。</sub></p>
 </div>
 
-## 🎬 快速演示
+## 快速演示 Demo
+
+15 秒看懂 StackPilot 如何检测电脑配置，并生成推荐报告与可审查安装计划。
 
 https://github.com/user-attachments/assets/5a50b36c-ec9f-494f-af9f-0c6ae95452f6
 
-## 🚀 简介
+## StackPilot 是什么？
 
-拿到新电脑后不知道该装什么软件？StackPilot 通过智能检测本地配置，一键生成最具参考价值的应用推荐报告。
+StackPilot 是一个本地优先的 CLI 工具。它会读取电脑的公开硬件与环境信息，再用规则引擎和场景模板生成适合当前目标的建议。
 
-**💡 告诉它你的目标：**
-* 基础编程 / AI 辅助编程（Cursor、Copilot 等）
-* 运行本地大模型 / AI 绘图入门（ComfyUI 等）
-* 游戏玩家常用环境 / 视频内容创作 / 办公生产力
+它关注三件事：先看清电脑配置，再判断适配风险，最后输出可以人工审查的安装计划。当前版本只生成报告和计划，不会自动安装软件，也不会直接修改系统。
 
-**📦 它将为你解答：**
-* 哪些软件是必装，哪些是可选？
-* 你的电脑配置是否带得动这个目标？
-* 有哪些配置建议以及需要提前避开的坑？
+## Highlights
 
----
+- 本地硬件 / 环境检测：识别系统、CPU、内存、磁盘、GPU、Python、Git、Docker、WSL 等状态。
+- 规则引擎推荐：根据目标模板和检测结果生成必装、可选与不推荐事项。
+- GPU 检测增强：区分核显、独显、虚拟显卡和未知显卡，保留判断依据。
+- 可审查安装计划：输出安装步骤、来源、风险等级、审计提示和验证命令。
+- 安全审计：标记未知来源、高风险步骤、缺少回滚信息和需要人工确认的动作。
+- 备份 / 回滚计划：给出操作前建议和可回退路径，但不承诺完全恢复。
+- dry-run 预览：展示计划会考虑哪些命令，不真实执行安装。
+- Markdown / JSON 输出：方便阅读、归档、复查和继续集成。
 
-## ✨ 特点
+## GPU Detection Hardening
 
-- 🖥️ **配置自适应**：深度读取本地系统信息（系统版本、CPU、内存、显卡、硬盘空间）及常用环境状态（Python、Git、Docker、WSL 等）。
-- 🔰 **零概念门槛**：用户无需提前了解高级技术词汇，只需选择使用场景，即可获得直观报告。
-- 🧩 **多模板覆盖**：内置支持全场景蓝图模板，全面覆盖办公、编程、AI、游戏和创作。
-- 🔒 **纯净且透明**：当前版本仅生成本地报告，不会自动下载、静默安装或修改系统设置。
-- 🤝 **完全开源**：项目代码与推荐逻辑全透明，任何人都可以查看、修改或贡献新模板。
+`v0.4.0-alpha` 的重点是更诚实地识别 GPU。
 
----
+在 StackPilot 里，GPU 是总称。核显、独显、虚拟显卡和未知显卡都是不同类型的 GPU。推荐逻辑不会只看一个模糊的显卡名字，而是尽量保留检测列表、主要判断对象和选择原因。
 
-## 🧩 模板示例
+`vram_confidence` 用来描述显存信息的可靠程度。StackPilot 不会把共享内存直接当成独立显存。如果无法确认显存来源，它会明确标记为 `unknown`、`shared` 或 `estimated`，而不是假装已经知道准确答案。
 
-| 模板 | 适合场景 / 用户群 | 核心推荐方向 |
-| :--- | :--- | :--- |
-| **写代码入门** | 想搭建基础编程环境的初学者 | 基础编辑器、Git、常用运行时环境 |
-| **AI 入门体验** | 想先体验 ChatGPT、Claude、Gemini 等 AI 工具的小白 | 在线 AI 工具、提示词入门、本地 AI 选择建议 |
-| **AI 辅助写代码** | 想要体验现代 AI 编程效率的开发者 | Cursor、Codex、Copilot 等工具链 |
-| **AI 绘图入门** | 想要本地生成图片的设计师/爱好者 | 显卡适配分析、ComfyUI 基础依赖环境 |
-| **本地大模型** | 想在本地运行私有模型的用户 | Ollama、LM Studio 等本地工具 |
-| **游戏玩家软件** | 刚装好系统的纯粹游戏玩家 | 必备游戏平台、驱动检测、性能监控工具 |
-| **视频/内容创作** | 独立自媒体或音视频创作者 | 轻量录屏、主流剪辑与音频处理工具 |
-| **办公生产力** | 基础日常办公与文档处理 | 现代浏览器、优质笔记、高效率截图与 PDF 工具 |
+这不是为了显得复杂，而是为了让推荐报告更可审查：你能看到 StackPilot 为什么这么判断，也能发现它哪里还不确定。
 
----
+## 可审查安装计划
 
-## 📥 下载 / 安装
+生成计划：
 
 ```bash
-# 克隆仓库
-git clone https://github.com/xaopengyo-1010/StackPilot.git
+python -m stackpilot plan --goal comfyui_starter
+```
 
-# 进入目录并以可编辑模式安装
+该命令会输出：
+
+- 安装计划；
+- 安装审计报告；
+- 备份 / 回滚计划；
+- dry-run 预览；
+- Markdown / JSON 文件。
+
+当前版本不会真实执行安装。计划里的命令是供你审查的文本，不会由 StackPilot 自动运行。
+
+## Quick Start
+
+```bash
+git clone https://github.com/xaopengyo-1010/StackPilot.git
 cd StackPilot
 pip install -e .
+python -m stackpilot scan
+python -m stackpilot doctor --goal comfyui_starter
+python -m stackpilot plan --goal comfyui_starter
 ```
 
----
+当前版本适合开发者、硬件爱好者，以及愿意试用 CLI 的普通用户。你可以先运行 `scan` 看看 StackPilot 能读到哪些本机信息，再用具体目标生成推荐和计划。
 
-## 🧩 核心工作流
+## 支持的模板
 
-无需复杂配置，通过以下几个轻量命令，在本地安全、透明地完成全套体检与推荐：
+| 模板                  | 说明               |
+| --------------------- | ------------------ |
+| `coding_starter`      | 写代码入门         |
+| `vibe_coding`         | AI 辅助写代码      |
+| `ai_beginner`         | AI 入门体验        |
+| `comfyui_starter`     | AI 绘图入门        |
+| `local_llm`           | 本地大模型环境规划 |
+| `gaming_setup`        | 游戏玩家常用软件   |
+| `creator_setup`       | 视频 / 内容创作    |
+| `office_productivity` | 办公生产力         |
 
-- 🔍 1. 硬件环境扫描
-  
-  ```bash
-  python -m stackpilot scan
-  ```
-  
-  深度检测系统版本、CPU、GPU 型号与显存，以及本地 Python、Git、Docker 等环境的健康度。
-- **🗂️ 2. 探索内置蓝图**
-  
-  ```bash
-  python -m stackpilot list-templates
-  ```
-  
-  一键列出本地当前所有支持的场景模板（如 AI 绘图入门、编程入门、游戏常用软件等）。
-- **🎯 3. 定向蓝图推荐**
-  
-  ```bash
-  python -m stackpilot recommend --goal <模板ID>
-  ```
-  
-  将本地硬件资产与你的目标自动匹配，在终端计算出最具参考价值的软件组合与必装/可选清单。
-- **📄 4. 导出专属避坑报告**
+## 使用指南
 
-  ```bash
-  python -m stackpilot doctor --goal <模板ID>
-  ```
-  
-   一键完成检测与匹配，并在本地生成带有配置评分、风险预警和避坑指南的 Markdown 报告。
+检测本机公开系统信息：
 
-
----
-
-## 📋 报告核心模块说明
-
-StackPilot 生成的报告不只是软件清单，还会包含配置分析、适配评分、风险提示和下一步建议：
-
-- ⚙️ **配置摘要**：客观呈现当前本地硬件的真实战斗力。
-- 📊 **适配度评分**：直观告诉你这个配置做这件事“卡不卡”。
-- 🛠️ **精选工具链**：区分“必装”与“可选”，附带推荐原因。
-- ⚠️ **风险与避坑**：提前提示当前配置不建议运行的操作，提前避开卡顿、性能不足或环境冲突等问题。
-
----
-
-## 🛠️ 开发者指南
-
-### 运行单元测试
 ```bash
-pytest
+python -m stackpilot scan
 ```
 
-### 项目目录结构
-```text
-configs/              # 预设模板与应用逻辑目录
-src/stackpilot/       # StackPilot 核心业务代码
-outputs/reports/      # 扫描后生成的本地报告输出点
-tests/                # 单元测试用例
-assets/               # Logo、静态截图及演示 GIF
+查看当前可用模板：
+
+```bash
+python -m stackpilot list-templates
 ```
 
----
+在终端生成推荐结果：
 
-## 🤝 反馈与贡献
+```bash
+python -m stackpilot recommend --goal comfyui_starter
+```
 
-欢迎提交 Issue 或 Pull Request，一起让 StackPilot 变得更好。
+检测配置并生成 Markdown / JSON 推荐报告：
 
-你可以通过 Issue 反馈：
+```bash
+python -m stackpilot doctor --goal comfyui_starter
+```
 
-* 💡 希望增加新的应用推荐模板，例如剪辑、设计、AI编程等；
-* 🐛 电脑配置检测不准确，或某些硬件信息识别异常；
-* 🧩 推荐结果不合理，例如推荐的软件不适合当前目标；
-* ✍️ README、文档或示例报告中有不清楚的地方；
-* 🧪 提供真实电脑配置和测试结果，帮助改进推荐逻辑。
+生成可审查安装计划、审计报告、备份 / 回滚计划和 dry-run 预览：
 
-如果你愿意直接参与开发，也欢迎提交 Pull Request，改进模板、推荐规则、文档或测试用例。
+```bash
+python -m stackpilot plan --goal comfyui_starter
+```
 
+## 安全边界
 
----
+StackPilot 的边界应该清楚可见。
 
-## ⭐ 支持我们
+当前版本不会：
 
-如果您觉得 StackPilot 帮到了您，请为我们点亮一颗 **Star** 🌟。您的支持是我们持续更新的最佳动力！
+- 自动安装软件；
+- 下载安装包；
+- 执行 `winget install`；
+- 执行 PowerShell 安装脚本；
+- 修改 PATH 或环境变量；
+- 修改注册表或系统设置；
+- 创建真实系统还原点；
+- 删除用户文件；
+- 调用真实 LLM API。
 
----
+StackPilot 会尽量给出可审查、可解释、可回退的计划，但它不承诺 100% 安全，也不承诺 100% 回滚。
 
-## 📄 版权与致谢
+## 开发
 
-- 本项目基于 **MIT License** 开源。
-- 感谢所有为项目提供模板建议与测试数据的社区伙伴。
+安装开发依赖并运行测试：
+
+```bash
+python -m pip install -e ".[dev]"
+python -m pytest
+```
+
+常用验证命令：
+
+```bash
+python -m stackpilot scan
+python -m stackpilot list-templates
+python -m stackpilot recommend --goal comfyui_starter
+python -m stackpilot doctor --goal comfyui_starter
+python -m stackpilot plan --goal comfyui_starter
+```
+
+## 反馈与贡献
+
+欢迎通过 Issue 或 Pull Request 参与改进。
+
+适合反馈的内容包括：
+
+- 硬件检测不准确；
+- GPU / 核显 / 独显 / 虚拟显卡识别异常；
+- 推荐结果不符合实际使用目标；
+- 安装计划里有来源、风险或回滚信息需要补充；
+- 模板、规则、文档或测试可以继续改进。
+
+v0.4 尤其欢迎不同电脑的 GPU / 核显 / 独显 / 虚拟显卡检测反馈。
+
+## License
+
+StackPilot is released under the [MIT License](LICENSE).
