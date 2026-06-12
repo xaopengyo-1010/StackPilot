@@ -5,18 +5,17 @@
   <h1>StackPilot</h1>
   <p><strong>开源、透明、可审计的电脑环境推荐与部署计划助手</strong></p>
   <p>检测你的电脑配置，生成应用推荐报告、风险提示和可审查安装计划。</p>
+  <p><code>GPU Detection Hardening</code> / <code>Auditable Setup Plans</code> / <code>Dry-run First</code></p>
   <p>
     <img alt="Version" src="https://img.shields.io/badge/version-v0.4.0--alpha-2f6fef?style=flat-square" />
     <img alt="Python" src="https://img.shields.io/badge/python-%3E%3D3.11-2f6fef?style=flat-square" />
     <img alt="License" src="https://img.shields.io/badge/license-MIT-2f6fef?style=flat-square" />
     <img alt="Status" src="https://img.shields.io/badge/status-alpha-6b7280?style=flat-square" />
   </p>
-  <p><sub>看得见每一步，装得明白，撤得回来。</sub></p>
+  <h3>看得见每一步，装得明白，撤得回来。</h3>
 </div>
 
-## 快速演示 Demo
-
-15 秒看懂 StackPilot 如何检测电脑配置，并生成推荐报告与可审查安装计划。
+<p align="center"><strong>15 秒看懂 StackPilot 如何检测电脑配置，并生成推荐报告与可审查安装计划。</strong></p>
 
 https://github.com/user-attachments/assets/5a50b36c-ec9f-494f-af9f-0c6ae95452f6
 
@@ -24,28 +23,32 @@ https://github.com/user-attachments/assets/5a50b36c-ec9f-494f-af9f-0c6ae95452f6
 
 StackPilot 是一个本地优先的 CLI 工具。它会读取电脑的公开硬件与环境信息，再用规则引擎和场景模板生成适合当前目标的建议。
 
-它关注三件事：先看清电脑配置，再判断适配风险，最后输出可以人工审查的安装计划。当前版本只生成报告和计划，不会自动安装软件，也不会直接修改系统。
+它的产品边界很明确：先看清电脑配置，再判断适配风险，最后输出可以人工审查的安装计划。当前版本只生成报告和计划，不会自动安装软件，也不会直接修改系统。
+
+## 产品预览
+
+| 硬件扫描                                                                    | 推荐报告                                                                              | 安装计划                                                                            |
+| --------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| ![StackPilot GPU detection scan](assets/screenshots/scan-gpu-detection.png) | ![StackPilot ComfyUI recommendation report](assets/screenshots/recommend-comfyui.png) | ![StackPilot generated install plan](assets/screenshots/install-plan-generated.png) |
 
 ## Highlights
 
-- 本地硬件 / 环境检测：识别系统、CPU、内存、磁盘、GPU、Python、Git、Docker、WSL 等状态。
-- 规则引擎推荐：根据目标模板和检测结果生成必装、可选与不推荐事项。
-- GPU 检测增强：区分核显、独显、虚拟显卡和未知显卡，保留判断依据。
-- 可审查安装计划：输出安装步骤、来源、风险等级、审计提示和验证命令。
-- 安全审计：标记未知来源、高风险步骤、缺少回滚信息和需要人工确认的动作。
-- 备份 / 回滚计划：给出操作前建议和可回退路径，但不承诺完全恢复。
-- dry-run 预览：展示计划会考虑哪些命令，不真实执行安装。
-- Markdown / JSON 输出：方便阅读、归档、复查和继续集成。
+| Step          | What StackPilot does                                                          |
+| ------------- | ----------------------------------------------------------------------------- |
+| **Detect**    | 读取系统、CPU、内存、磁盘、GPU，以及 Python、Git、Docker、WSL 等环境状态。    |
+| **Recommend** | 基于规则引擎和场景模板生成应用推荐、适配评分和风险提示。                      |
+| **Plan**      | 输出可审查安装计划、审计报告、备份 / 回滚计划和 dry-run 预览。                |
+| **Trust**     | 区分核显、独显、虚拟显卡和未知显卡，并通过 `vram_confidence` 标记显存可信度。 |
 
-## GPU Detection Hardening
+## 新版本更新
 
-`v0.4.0-alpha` 的重点是更诚实地识别 GPU。
+### v0.4.0-alpha · 更准确地识别 GPU
 
-在 StackPilot 里，GPU 是总称。核显、独显、虚拟显卡和未知显卡都是不同类型的 GPU。推荐逻辑不会只看一个模糊的显卡名字，而是尽量保留检测列表、主要判断对象和选择原因。
+v0.4 增强了 GPU 检测链路，可以区分核显、独显、虚拟显卡和未知显卡。
 
-`vram_confidence` 用来描述显存信息的可靠程度。StackPilot 不会把共享内存直接当成独立显存。如果无法确认显存来源，它会明确标记为 `unknown`、`shared` 或 `estimated`，而不是假装已经知道准确答案。
+推荐报告会保留 `primary_gpu`、`gpu_selection_reason` 和 `vram_confidence`，帮助你理解 StackPilot 为什么这样判断显卡能力。
 
-这不是为了显得复杂，而是为了让推荐报告更可审查：你能看到 StackPilot 为什么这么判断，也能发现它哪里还不确定。
+它不会把共享内存误当成独立显存。如果无法确认显存来源，就明确告诉你不确定，而不是假装知道。
 
 ![GPU Detection Preview](assets/screenshots/scan-gpu-detection.png)
 
@@ -131,21 +134,19 @@ python -m stackpilot plan --goal comfyui_starter
 
 ## 安全边界
 
-StackPilot 的边界应该清楚可见。
+| 当前版本会做         | 当前版本不会做                   |
+| -------------------- | -------------------------------- |
+| 生成推荐报告         | 自动安装软件                     |
+| 生成可审查安装计划   | 下载安装包                       |
+| 生成安装审计说明     | 执行 `winget install`            |
+| 生成 dry-run 预览    | 执行 PowerShell 安装脚本         |
+| 生成备份 / 回滚计划  | 修改 PATH / 环境变量 / 注册表    |
+| 标记风险和不确定信息 | 创建真实系统还原点或删除用户文件 |
+| 保持本地 CLI 工作流  | 调用真实 LLM API                 |
 
-当前版本不会：
+StackPilot 的目标是降低风险，而不是假装风险不存在。
 
-- 自动安装软件；
-- 下载安装包；
-- 执行 `winget install`；
-- 执行 PowerShell 安装脚本；
-- 修改 PATH 或环境变量；
-- 修改注册表或系统设置；
-- 创建真实系统还原点；
-- 删除用户文件；
-- 调用真实 LLM API。
-
-StackPilot 会尽量给出可审查、可解释、可回退的计划，但它不承诺 100% 安全，也不承诺 100% 回滚。
+它会尽量给出可审查、可解释、可回退的计划，但不承诺 100% 安全，也不承诺 100% 回滚。
 
 ## 开发
 
