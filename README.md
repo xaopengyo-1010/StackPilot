@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="assets/branding/stackpilot-logo.svg" alt="StackPilot logo" width="112" />
+  <img src="assets/branding/stackpilot-logo.svg" alt="StackPilot logo" width="140" />
   <h1>StackPilot</h1>
   <p><strong>本地优先的电脑环境推荐与规划助手。</strong></p>
   <p>先检测电脑配置，再生成应用推荐、风险提示和可审查安装计划。</p>
@@ -40,6 +40,8 @@ StackPilot 现在主要做四件事：
 它不会自动安装软件，也不会替你修改系统。当前版本更像一个“先看清楚，再决定怎么装”的本地 CLI 工具。
 
 **15 秒看看它怎么跑：**
+
+（当前录屏展示的是早期 CLI 流程，新版演示会后续替换。）
 
 https://github.com/user-attachments/assets/5a50b36c-ec9f-494f-af9f-0c6ae95452f6
 
