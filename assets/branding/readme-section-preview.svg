@@ -1,0 +1,19 @@
+<svg width="1200" height="96" viewBox="0 0 1200 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">真实截图预览</title>
+  <desc id="desc">StackPilot README section title for real CLI output preview.</desc>
+  <defs>
+    <linearGradient id="bg" x1="20" y1="10" x2="1180" y2="96" gradientUnits="userSpaceOnUse"><stop stop-color="#061120"/><stop offset="0.54" stop-color="#0b1834"/><stop offset="1" stop-color="#211544"/></linearGradient>
+    <linearGradient id="beam" x1="68" y1="66" x2="1132" y2="66" gradientUnits="userSpaceOnUse"><stop stop-color="#22d3ee"/><stop offset="0.46" stop-color="#60a5fa"/><stop offset="0.8" stop-color="#f472b6"/><stop offset="1" stop-color="#34d399"/></linearGradient>
+    <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M28 0H0V28" stroke="#7dd3fc" stroke-opacity=".075"/></pattern>
+  </defs>
+  <rect width="1200" height="96" rx="22" fill="url(#bg)"/>
+  <rect x="10" y="10" width="1180" height="76" rx="18" fill="url(#grid)" opacity=".7"/>
+  <rect x="10" y="10" width="1180" height="76" rx="18" stroke="#7dd3fc" stroke-opacity=".16"/>
+  <path d="M68 66H1132" stroke="url(#beam)" stroke-width="2.3" stroke-linecap="round"/>
+  <g font-family="ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+    <text x="68" y="46" fill="#f8fafc" font-size="27" font-weight="820">真实截图预览</text>
+    <text x="292" y="46" fill="#8ee9f6" font-size="13" font-weight="760" letter-spacing="2.8">REAL CLI OUTPUT</text>
+    <rect x="1016" y="28" width="116" height="24" rx="9" fill="#08283f" stroke="#67e8f9" stroke-opacity=".34"/>
+    <text x="1074" y="45" fill="#dffafe" font-size="11" font-weight="760" text-anchor="middle">NO FAKE UI</text>
+  </g>
+</svg>

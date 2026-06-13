@@ -1,0 +1,17 @@
+<svg width="1200" height="96" viewBox="0 0 1200 96" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">支持的模板</title>
+  <desc id="desc">StackPilot README section title for supported templates.</desc>
+  <defs>
+    <linearGradient id="bg" x1="20" y1="10" x2="1180" y2="96" gradientUnits="userSpaceOnUse"><stop stop-color="#061120"/><stop offset="0.52" stop-color="#071a31"/><stop offset="1" stop-color="#1c1239"/></linearGradient>
+    <linearGradient id="beam" x1="68" y1="66" x2="1132" y2="66" gradientUnits="userSpaceOnUse"><stop stop-color="#22d3ee"/><stop offset="0.45" stop-color="#a78bfa"/><stop offset="1" stop-color="#f472b6"/></linearGradient>
+    <pattern id="grid" width="28" height="28" patternUnits="userSpaceOnUse"><path d="M28 0H0V28" stroke="#7dd3fc" stroke-opacity=".075"/></pattern>
+  </defs>
+  <rect width="1200" height="96" rx="22" fill="url(#bg)"/>
+  <rect x="10" y="10" width="1180" height="76" rx="18" fill="url(#grid)" opacity=".7"/>
+  <rect x="10" y="10" width="1180" height="76" rx="18" stroke="#7dd3fc" stroke-opacity=".16"/>
+  <path d="M68 66H1132" stroke="url(#beam)" stroke-width="2.3" stroke-linecap="round"/>
+  <g font-family="ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+    <text x="68" y="46" fill="#f8fafc" font-size="27" font-weight="820">支持的模板</text>
+    <text x="252" y="46" fill="#f5d0fe" font-size="13" font-weight="760" letter-spacing="2.8">TEMPLATE SIGNALS</text>
+  </g>
+</svg>

@@ -1,0 +1,97 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">StackPilot logo</title>
+  <desc id="desc">A hand-written StackPilot logo mark combining a hardware radar ring, scan needle, blueprint grid, and layered software stack.</desc>
+  <defs>
+    <linearGradient id="frameStroke" x1="74" y1="62" x2="438" y2="452" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22d3ee" />
+      <stop offset="0.46" stop-color="#60a5fa" />
+      <stop offset="0.78" stop-color="#a78bfa" />
+      <stop offset="1" stop-color="#f472b6" />
+    </linearGradient>
+    <linearGradient id="radarStroke" x1="140" y1="74" x2="380" y2="314" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#67e8f9" />
+      <stop offset="0.5" stop-color="#60a5fa" />
+      <stop offset="1" stop-color="#c084fc" />
+    </linearGradient>
+    <linearGradient id="sweepFill" x1="252" y1="190" x2="392" y2="104" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22d3ee" stop-opacity="0.08" />
+      <stop offset="0.62" stop-color="#8b5cf6" stop-opacity="0.34" />
+      <stop offset="1" stop-color="#f472b6" stop-opacity="0.46" />
+    </linearGradient>
+    <linearGradient id="needleStroke" x1="250" y1="206" x2="376" y2="104" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#e0f2fe" />
+      <stop offset="0.52" stop-color="#67e8f9" />
+      <stop offset="1" stop-color="#f472b6" />
+    </linearGradient>
+    <linearGradient id="topLayer" x1="114" y1="262" x2="398" y2="392" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0d3b5c" />
+      <stop offset="0.52" stop-color="#123476" />
+      <stop offset="1" stop-color="#27165e" />
+    </linearGradient>
+    <linearGradient id="midLayer" x1="106" y1="310" x2="406" y2="430" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#08283f" />
+      <stop offset="0.55" stop-color="#0f2b63" />
+      <stop offset="1" stop-color="#1d1748" />
+    </linearGradient>
+    <linearGradient id="lowLayer" x1="98" y1="350" x2="414" y2="470" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#061a31" />
+      <stop offset="0.56" stop-color="#0c2253" />
+      <stop offset="1" stop-color="#121a3f" />
+    </linearGradient>
+    <radialGradient id="coreGlow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(256 205) rotate(90) scale(142)">
+      <stop stop-color="#22d3ee" stop-opacity="0.42" />
+      <stop offset="0.6" stop-color="#8b5cf6" stop-opacity="0.18" />
+      <stop offset="1" stop-color="#22d3ee" stop-opacity="0" />
+    </radialGradient>
+    <filter id="softGlow" x="-35%" y="-35%" width="170%" height="170%">
+      <feGaussianBlur stdDeviation="5" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <filter id="nodeGlow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+
+  <rect x="56" y="56" width="400" height="400" rx="104" fill="#061120" fill-opacity="0.06" />
+  <rect x="70" y="70" width="372" height="372" rx="92" stroke="url(#frameStroke)" stroke-opacity="0.3" stroke-width="8" />
+
+  <g opacity="0.62">
+    <path d="M110 150H156M356 150H402M110 362H156M356 362H402" stroke="#a5f3fc" stroke-opacity="0.42" stroke-width="5" stroke-linecap="round" />
+    <path d="M150 110V156M362 110V156M150 402V356M362 402V356" stroke="#a5f3fc" stroke-opacity="0.42" stroke-width="5" stroke-linecap="round" />
+  </g>
+
+  <path d="M96 386L232 316C247 308 265 308 280 316L416 386C428 392 428 407 416 413L280 482C265 490 247 490 232 482L96 413C84 407 84 392 96 386Z" fill="url(#lowLayer)" stroke="#60a5fa" stroke-opacity="0.2" stroke-width="4" />
+  <path d="M108 342L233 278C247 271 265 271 279 278L404 342C416 348 416 362 404 368L279 432C265 440 247 440 233 432L108 368C96 362 96 348 108 342Z" fill="url(#midLayer)" stroke="#7dd3fc" stroke-opacity="0.24" stroke-width="4" />
+  <path d="M120 298L234 239C248 232 264 232 278 239L392 298C404 304 404 318 392 324L278 383C264 390 248 390 234 383L120 324C108 318 108 304 120 298Z" fill="url(#topLayer)" stroke="#8bdcff" stroke-opacity="0.34" stroke-width="4" />
+
+  <g opacity="0.7" stroke-linecap="round">
+    <path d="M188 302L256 268L324 302L256 336L188 302Z" stroke="#bae6fd" stroke-opacity="0.42" stroke-width="5" stroke-dasharray="14 13" />
+    <path d="M164 314L207 292M305 292L348 314" stroke="#67e8f9" stroke-opacity="0.32" stroke-width="5" />
+    <path d="M190 362H224M288 362H322" stroke="#a78bfa" stroke-opacity="0.36" stroke-width="5" />
+  </g>
+
+  <circle cx="256" cy="205" r="134" fill="url(#coreGlow)" />
+  <path d="M256 205L366 118A140 140 0 0 1 390 240Z" fill="url(#sweepFill)" />
+  <circle cx="256" cy="205" r="128" stroke="url(#radarStroke)" stroke-opacity="0.48" stroke-width="8" />
+  <circle cx="256" cy="205" r="84" stroke="#67e8f9" stroke-opacity="0.32" stroke-width="6" />
+  <circle cx="256" cy="205" r="42" stroke="#c084fc" stroke-opacity="0.36" stroke-width="6" />
+
+  <path d="M256 205L366 118" stroke="url(#needleStroke)" stroke-width="10" stroke-linecap="round" filter="url(#softGlow)" />
+  <circle cx="256" cy="205" r="15" fill="#e0f2fe" />
+  <circle cx="256" cy="205" r="7" fill="#22d3ee" filter="url(#nodeGlow)" />
+  <circle cx="366" cy="118" r="12" fill="#f472b6" filter="url(#nodeGlow)" />
+  <circle cx="184" cy="238" r="9" fill="#34d399" filter="url(#nodeGlow)" />
+  <circle cx="320" cy="276" r="8" fill="#f59e0b" filter="url(#nodeGlow)" />
+
+  <g opacity="0.62">
+    <path d="M256 77V118M256 292V334M127 205H168M344 205H385" stroke="#7dd3fc" stroke-opacity="0.34" stroke-width="5" stroke-linecap="round" />
+    <path d="M169 118L198 147M343 118L314 147M169 292L198 263M343 292L314 263" stroke="#a78bfa" stroke-opacity="0.28" stroke-width="5" stroke-linecap="round" />
+  </g>
+</svg>

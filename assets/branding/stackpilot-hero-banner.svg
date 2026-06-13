@@ -1,0 +1,171 @@
+<svg width="1200" height="360" viewBox="0 0 1200 360" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
+  <title id="title">StackPilot hero banner</title>
+  <desc id="desc">StackPilot 彩色科幻横幅，展示硬件雷达和“扫描 → 推荐 → 计划 → 审计”流程。</desc>
+  <defs>
+    <linearGradient id="bg" x1="70" y1="18" x2="1128" y2="389" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#061120" />
+      <stop offset="0.44" stop-color="#071a31" />
+      <stop offset="1" stop-color="#24114a" />
+    </linearGradient>
+    <linearGradient id="deck" x1="58" y1="52" x2="1140" y2="314" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0b2b53" stop-opacity="0.72" />
+      <stop offset="0.5" stop-color="#0a2639" stop-opacity="0.45" />
+      <stop offset="1" stop-color="#3a1763" stop-opacity="0.64" />
+    </linearGradient>
+    <linearGradient id="route" x1="552" y1="254" x2="1094" y2="78" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22d3ee" />
+      <stop offset="0.4" stop-color="#60a5fa" />
+      <stop offset="0.74" stop-color="#a78bfa" />
+      <stop offset="1" stop-color="#f472b6" />
+    </linearGradient>
+    <linearGradient id="chipLine" x1="96" y1="276" x2="468" y2="276" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22d3ee" />
+      <stop offset="0.44" stop-color="#a78bfa" />
+      <stop offset="0.74" stop-color="#34d399" />
+      <stop offset="1" stop-color="#f59e0b" />
+    </linearGradient>
+    <linearGradient id="signalPulse" x1="142" y1="42" x2="1056" y2="316" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#22d3ee" stop-opacity="0" />
+      <stop offset="0.26" stop-color="#22d3ee" stop-opacity="0.48" />
+      <stop offset="0.6" stop-color="#a78bfa" stop-opacity="0.38" />
+      <stop offset="1" stop-color="#f472b6" stop-opacity="0" />
+    </linearGradient>
+    <linearGradient id="radarSweep" x1="882" y1="191" x2="1070" y2="116" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#67e8f9" stop-opacity="0.06" />
+      <stop offset="0.72" stop-color="#8b5cf6" stop-opacity="0.28" />
+      <stop offset="1" stop-color="#f472b6" stop-opacity="0.58" />
+    </linearGradient>
+    <radialGradient id="auraCyan" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(800 98) rotate(145) scale(330 190)">
+      <stop stop-color="#22d3ee" stop-opacity="0.32" />
+      <stop offset="1" stop-color="#22d3ee" stop-opacity="0" />
+    </radialGradient>
+    <radialGradient id="auraViolet" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(338 282) rotate(-12) scale(420 155)">
+      <stop stop-color="#a855f7" stop-opacity="0.34" />
+      <stop offset="1" stop-color="#a855f7" stop-opacity="0" />
+    </radialGradient>
+    <filter id="routeGlow" x="-35%" y="-35%" width="170%" height="170%">
+      <feGaussianBlur stdDeviation="3.2" result="blur" />
+      <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.24 0 0 0 0 0.78 0 0 0 0 1 0 0 0 0.56 0" result="glow" />
+      <feMerge>
+        <feMergeNode in="glow" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <filter id="softNode" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2.2" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0 0L10 5L0 10Z" fill="#a5f3fc" />
+    </marker>
+    <pattern id="grid" width="36" height="36" patternUnits="userSpaceOnUse">
+      <path d="M36 0H0V36" stroke="#7dd3fc" stroke-opacity="0.09" />
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="360" rx="30" fill="url(#bg)" />
+  <rect x="12" y="12" width="1176" height="336" rx="26" fill="url(#deck)" stroke="#7dd3fc" stroke-opacity="0.16" />
+  <rect x="12" y="12" width="1176" height="336" rx="26" fill="url(#grid)" opacity="0.62" />
+  <rect x="12" y="12" width="1176" height="336" rx="26" fill="url(#auraCyan)" />
+  <rect x="12" y="12" width="1176" height="336" rx="26" fill="url(#auraViolet)" />
+  <path d="M132 45C284 84 412 112 588 108C786 104 902 146 1064 208" stroke="url(#signalPulse)" stroke-width="2" stroke-linecap="round" opacity="0.7" />
+  <path d="M164 318C326 282 452 254 610 260C802 266 932 236 1096 176" stroke="url(#signalPulse)" stroke-width="1.6" stroke-linecap="round" opacity="0.42" />
+
+  <g opacity="0.56">
+    <path d="M70 70H218M982 70H1130M70 292H220M982 292H1130" stroke="#a5f3fc" stroke-opacity="0.35" stroke-width="1.4" />
+    <path d="M70 70V122M1130 70V122M70 292V240M1130 292V240" stroke="#a5f3fc" stroke-opacity="0.35" stroke-width="1.4" />
+    <path d="M600 20V54M600 306V340" stroke="#67e8f9" stroke-opacity="0.18" />
+  </g>
+
+  <g font-family="ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">
+    <g transform="translate(76 52)">
+      <rect width="512" height="256" rx="22" fill="#061424" fill-opacity="0.66" stroke="#8bdcff" stroke-opacity="0.16" />
+      <rect x="10" y="10" width="492" height="236" rx="17" fill="#07192b" fill-opacity="0.62" stroke="#ffffff" stroke-opacity="0.06" />
+      <path d="M31 104H402" stroke="#38bdf8" stroke-opacity="0.18" />
+      <path d="M31 204H432" stroke="#38bdf8" stroke-opacity="0.13" />
+
+      <text x="29" y="75" fill="#eef8ff" font-size="55" font-weight="820">StackPilot</text>
+      <text x="32" y="119" fill="#8ee9f6" font-size="18" font-weight="640">先理解你的电脑，再规划环境。</text>
+      <text x="32" y="161" fill="#f8fafc" font-size="26" font-weight="780">扫描 → 推荐 → 计划 → 审计</text>
+
+      <g transform="translate(31 212)">
+        <path d="M0 0H390" stroke="url(#chipLine)" stroke-opacity="0.46" />
+        <g transform="translate(0 16)">
+          <circle cx="7" cy="7" r="4" fill="#22d3ee" filter="url(#softNode)" />
+          <text x="22" y="12" fill="#dffafe" font-size="13" font-weight="740">检测</text>
+        </g>
+        <g transform="translate(120 16)">
+          <circle cx="7" cy="7" r="4" fill="#a78bfa" filter="url(#softNode)" />
+          <text x="22" y="12" fill="#ede9fe" font-size="13" font-weight="740">推荐</text>
+        </g>
+        <g transform="translate(240 16)">
+          <circle cx="7" cy="7" r="4" fill="#34d399" filter="url(#softNode)" />
+          <text x="22" y="12" fill="#dcfce7" font-size="13" font-weight="740">计划</text>
+        </g>
+        <g transform="translate(360 16)">
+          <circle cx="7" cy="7" r="4" fill="#f59e0b" filter="url(#softNode)" />
+          <text x="22" y="12" fill="#fde68a" font-size="13" font-weight="740">审计</text>
+        </g>
+      </g>
+    </g>
+
+    <g transform="translate(638 44)">
+      <rect x="0" y="0" width="488" height="268" rx="24" fill="#061424" fill-opacity="0.34" stroke="#7dd3fc" stroke-opacity="0.12" />
+      <text x="32" y="40" fill="#bfdbfe" font-size="14" font-weight="780" letter-spacing="2.2">硬件雷达</text>
+
+      <g transform="translate(112 34)" opacity="0.92">
+        <circle cx="224" cy="145" r="118" stroke="#67e8f9" stroke-opacity="0.16" stroke-width="1.4" />
+        <circle cx="224" cy="145" r="82" stroke="#67e8f9" stroke-opacity="0.22" stroke-width="1.4" />
+        <circle cx="224" cy="145" r="46" stroke="#c084fc" stroke-opacity="0.28" stroke-width="1.4" />
+        <path d="M224 27V263M106 145H342" stroke="#7dd3fc" stroke-opacity="0.13" />
+        <path d="M224 145L326 94" stroke="url(#radarSweep)" stroke-width="30" stroke-linecap="round" opacity="0.7" />
+        <path d="M224 145L326 94" stroke="#f472b6" stroke-opacity="0.78" stroke-width="3" stroke-linecap="round" filter="url(#softNode)" />
+        <circle cx="224" cy="145" r="4.5" fill="#e0f2fe" />
+        <circle cx="326" cy="94" r="6.4" fill="#f472b6" filter="url(#softNode)" />
+        <circle cx="172" cy="205" r="4.2" fill="#34d399" filter="url(#softNode)" />
+        <circle cx="274" cy="72" r="3.8" fill="#f59e0b" filter="url(#softNode)" />
+      </g>
+
+      <g stroke="#7dd3fc" stroke-opacity="0.3" stroke-width="1.4">
+        <path d="M206 154H164L132 154" />
+        <path d="M364 154H410" />
+        <path d="M206 224H164L132 224" />
+        <path d="M364 224H410" />
+      </g>
+
+      <g font-size="14" font-weight="780">
+        <g transform="translate(78 133)">
+          <rect width="108" height="42" rx="13" fill="#071827" fill-opacity="0.86" stroke="#67e8f9" stroke-opacity="0.34" />
+          <path d="M17 13H31M17 21H42M17 29H34" stroke="#67e8f9" stroke-opacity="0.45" stroke-width="1.4" stroke-linecap="round" />
+          <text x="74" y="27" fill="#e0f2fe" text-anchor="middle">CPU</text>
+        </g>
+        <g transform="translate(356 133)">
+          <rect width="108" height="42" rx="13" fill="#071827" fill-opacity="0.86" stroke="#f0abfc" stroke-opacity="0.35" />
+          <path d="M17 13H31M17 21H42M17 29H34" stroke="#f0abfc" stroke-opacity="0.42" stroke-width="1.4" stroke-linecap="round" />
+          <text x="74" y="27" fill="#fae8ff" text-anchor="middle">GPU</text>
+        </g>
+        <g transform="translate(78 203)">
+          <rect width="108" height="42" rx="13" fill="#071827" fill-opacity="0.86" stroke="#5eead4" stroke-opacity="0.34" />
+          <path d="M17 13H31M17 21H42M17 29H34" stroke="#5eead4" stroke-opacity="0.42" stroke-width="1.4" stroke-linecap="round" />
+          <text x="74" y="27" fill="#ccfbf1" text-anchor="middle">RAM</text>
+        </g>
+        <g transform="translate(356 203)">
+          <rect width="108" height="42" rx="13" fill="#071827" fill-opacity="0.86" stroke="#f59e0b" stroke-opacity="0.33" />
+          <path d="M17 13H31M17 21H42M17 29H34" stroke="#fbbf24" stroke-opacity="0.42" stroke-width="1.4" stroke-linecap="round" />
+          <text x="74" y="27" fill="#fde68a" text-anchor="middle">磁盘</text>
+        </g>
+      </g>
+    </g>
+
+    <g filter="url(#routeGlow)">
+      <path d="M552 256C638 203 696 174 790 170C910 164 972 119 1088 78" stroke="url(#route)" stroke-width="4" stroke-linecap="round" marker-end="url(#arrow)" />
+      <path d="M552 256C638 203 696 174 790 170C910 164 972 119 1088 78" stroke="#eff6ff" stroke-opacity="0.28" stroke-width="1" stroke-dasharray="9 17" stroke-linecap="round" />
+      <circle cx="552" cy="256" r="8" fill="#22d3ee" />
+      <circle cx="790" cy="170" r="7" fill="#60a5fa" />
+      <circle cx="1088" cy="78" r="8" fill="#f472b6" />
+    </g>
+  </g>
+</svg>
