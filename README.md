@@ -5,7 +5,7 @@
   <p>本地优先的电脑环境蓝图生成器：先扫描公开硬件和已有环境，再生成应用推荐、风险提示和可审查安装计划。</p>
   <p>
     <img src="https://img.shields.io/github/stars/xaopengyo-1010/StackPilot?style=flat&logo=github" alt="GitHub Repo stars" />
-    <img src="https://img.shields.io/github/license/xaopengyo-1010/StackPilot" alt="License" />
+    <img src="https://img.shields.io/badge/License-MIT-blue" alt="License" />
     <img src="https://img.shields.io/badge/Python-%3E%3D%203.11-3776AB?logo=python&logoColor=white" alt="Python >= 3.11" />
     <img src="https://img.shields.io/badge/Windows-supported-0078D4?logo=windows&logoColor=white" alt="Windows supported" />
     <img src="https://img.shields.io/badge/Alpha_CLI-v0.4.0--alpha-7c3aed" alt="Alpha CLI v0.4.0 alpha" />
