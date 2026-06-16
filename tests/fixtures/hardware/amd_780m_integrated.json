@@ -1,0 +1,61 @@
+{
+  "platform": "windows",
+  "machine_profile": {
+    "os": "Windows 11",
+    "cpu": "AMD Ryzen 7 7840U",
+    "ram_gb": 32,
+    "disk": {
+      "total_gb": 1024,
+      "free_gb": 512
+    }
+  },
+  "environment_tools": {
+    "python": {
+      "installed": true,
+      "version": "3.11.x"
+    },
+    "git": {
+      "installed": true,
+      "version": "2.x"
+    },
+    "docker": {
+      "installed": false,
+      "version": null
+    },
+    "wsl": {
+      "installed": false,
+      "version": null
+    }
+  },
+  "gpu_type_hints": [
+    "integrated",
+    "shared_memory"
+  ],
+  "raw_windows_video_controllers": [
+    {
+      "Name": "AMD Radeon 780M Graphics",
+      "AdapterRAM": 4294967296,
+      "DriverVersion": "31.0.24033.1003",
+      "PNPDeviceID": "PCI\\VEN_1002&DEV_15BF"
+    }
+  ],
+  "expected_gpus": [
+    {
+      "name": "AMD Radeon 780M Graphics",
+      "vendor": "AMD",
+      "gpu_type": "integrated",
+      "vram_confidence": "shared",
+      "dedicated_vram_gb": null,
+      "shared_memory_gb": 4.0
+    }
+  ],
+  "expected_primary_gpu": {
+    "name": "AMD Radeon 780M Graphics",
+    "gpu_type": "integrated"
+  },
+  "expected_gpu_selection_reason_contains": "集成显卡",
+  "expected_findings": [
+    "integrated_primary",
+    "shared_memory"
+  ]
+}

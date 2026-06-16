@@ -1,0 +1,72 @@
+{
+  "platform": "windows",
+  "machine_profile": {
+    "os": "Windows 11",
+    "cpu": "Virtual CPU",
+    "ram_gb": 8,
+    "disk": {
+      "total_gb": 256,
+      "free_gb": 80
+    }
+  },
+  "environment_tools": {
+    "python": {
+      "installed": true,
+      "version": "3.11.x"
+    },
+    "git": {
+      "installed": true,
+      "version": "2.x"
+    },
+    "docker": {
+      "installed": false,
+      "version": null
+    },
+    "wsl": {
+      "installed": false,
+      "version": null
+    }
+  },
+  "gpu_type_hints": [
+    "virtual",
+    "no_primary_gpu"
+  ],
+  "raw_windows_video_controllers": [
+    {
+      "Name": "Microsoft Basic Display Adapter",
+      "AdapterRAM": 0,
+      "DriverVersion": "10.0.22621.1",
+      "PNPDeviceID": "ROOT\\BASICDISPLAY"
+    },
+    {
+      "Name": "Remote Display Adapter",
+      "AdapterRAM": 1073741824,
+      "DriverVersion": "10.0.22621.1",
+      "PNPDeviceID": "ROOT\\RDPDISPLAY"
+    }
+  ],
+  "expected_gpus": [
+    {
+      "name": "Microsoft Basic Display Adapter",
+      "vendor": "Microsoft",
+      "gpu_type": "virtual",
+      "vram_confidence": "unknown",
+      "dedicated_vram_gb": null,
+      "shared_memory_gb": null
+    },
+    {
+      "name": "Remote Display Adapter",
+      "vendor": "Unknown",
+      "gpu_type": "virtual",
+      "vram_confidence": "unknown",
+      "dedicated_vram_gb": null,
+      "shared_memory_gb": null
+    }
+  ],
+  "expected_primary_gpu": null,
+  "expected_gpu_selection_reason_contains": "虚拟",
+  "expected_findings": [
+    "virtual_only",
+    "no_primary_gpu"
+  ]
+}

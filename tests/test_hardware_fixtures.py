@@ -19,6 +19,11 @@ REQUIRED_FIXTURES = {
     "unknown_gpu_name.json",
     "no_gpu_detected.json",
     "low_disk_space.json",
+    "amd_780m_integrated.json",
+    "nvidia_rtx_dedicated.json",
+    "intel_arc_or_iris_integrated.json",
+    "virtual_display_adapters.json",
+    "mixed_integrated_dedicated.json",
 }
 
 
@@ -30,7 +35,7 @@ def test_required_hardware_fixtures_exist():
     existing = {path.name for path in FIXTURE_DIR.glob("*.json")}
 
     assert REQUIRED_FIXTURES.issubset(existing)
-    assert len(existing) >= 12
+    assert len(existing) >= 17
 
 
 def test_hardware_fixtures_validate_parser_and_primary_selection():

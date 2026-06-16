@@ -1,0 +1,62 @@
+{
+  "platform": "windows",
+  "machine_profile": {
+    "os": "Windows 11",
+    "cpu": "Intel Core Ultra 7 155H",
+    "ram_gb": 16,
+    "disk": {
+      "total_gb": 1024,
+      "free_gb": 420
+    }
+  },
+  "environment_tools": {
+    "python": {
+      "installed": true,
+      "version": "3.11.x"
+    },
+    "git": {
+      "installed": false,
+      "version": null
+    },
+    "docker": {
+      "installed": false,
+      "version": null
+    },
+    "wsl": {
+      "installed": false,
+      "version": null
+    }
+  },
+  "gpu_type_hints": [
+    "integrated",
+    "intel",
+    "shared_memory"
+  ],
+  "raw_windows_video_controllers": [
+    {
+      "Name": "Intel(R) Iris(R) Xe Graphics",
+      "AdapterRAM": 2147483648,
+      "DriverVersion": "31.0.101.5333",
+      "PNPDeviceID": "PCI\\VEN_8086&DEV_9A49"
+    }
+  ],
+  "expected_gpus": [
+    {
+      "name": "Intel(R) Iris(R) Xe Graphics",
+      "vendor": "Intel",
+      "gpu_type": "integrated",
+      "vram_confidence": "shared",
+      "dedicated_vram_gb": null,
+      "shared_memory_gb": 2.0
+    }
+  ],
+  "expected_primary_gpu": {
+    "name": "Intel(R) Iris(R) Xe Graphics",
+    "gpu_type": "integrated"
+  },
+  "expected_gpu_selection_reason_contains": "集成显卡",
+  "expected_findings": [
+    "integrated_primary",
+    "shared_memory"
+  ]
+}

@@ -40,6 +40,13 @@ def test_classify_intel_iris_xe_as_integrated():
     assert classify_gpu_type(name, "Intel") == "integrated"
 
 
+def test_classify_intel_arc_a_series_as_dedicated():
+    name = "Intel Arc A770 Graphics"
+
+    assert classify_gpu_vendor(name) == "Intel"
+    assert classify_gpu_type(name, "Intel") == "dedicated"
+
+
 def test_classify_microsoft_basic_display_as_virtual():
     name = "Microsoft Basic Display Adapter"
 

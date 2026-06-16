@@ -1,0 +1,61 @@
+{
+  "platform": "windows",
+  "machine_profile": {
+    "os": "Windows 11",
+    "cpu": "Intel Core i7-13700H",
+    "ram_gb": 32,
+    "disk": {
+      "total_gb": 2048,
+      "free_gb": 768
+    }
+  },
+  "environment_tools": {
+    "python": {
+      "installed": true,
+      "version": "3.12.x"
+    },
+    "git": {
+      "installed": true,
+      "version": "2.x"
+    },
+    "docker": {
+      "installed": true,
+      "version": "24.x"
+    },
+    "wsl": {
+      "installed": true,
+      "version": "2"
+    }
+  },
+  "gpu_type_hints": [
+    "dedicated",
+    "detected_vram"
+  ],
+  "raw_windows_video_controllers": [
+    {
+      "Name": "NVIDIA GeForce RTX 4070 Laptop GPU",
+      "AdapterRAM": 8589934592,
+      "DriverVersion": "555.85",
+      "PNPDeviceID": "PCI\\VEN_10DE&DEV_2820"
+    }
+  ],
+  "expected_gpus": [
+    {
+      "name": "NVIDIA GeForce RTX 4070 Laptop GPU",
+      "vendor": "NVIDIA",
+      "gpu_type": "dedicated",
+      "vram_confidence": "detected",
+      "dedicated_vram_gb": 8.0,
+      "shared_memory_gb": null
+    }
+  ],
+  "expected_primary_gpu": {
+    "name": "NVIDIA GeForce RTX 4070 Laptop GPU",
+    "gpu_type": "dedicated"
+  },
+  "expected_gpu_selection_reason_contains": "独立显卡",
+  "expected_findings": [
+    "dedicated_primary",
+    "detected_vram"
+  ]
+}
