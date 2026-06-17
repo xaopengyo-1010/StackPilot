@@ -25,10 +25,6 @@
 
 StackPilot 现在要做的事很直接：先把这台电脑看清楚，再给出一份能被人检查的推荐和计划。
 
-## 为什么做 StackPilot
-
-<a id="why"></a>
-
 <p align="center">
   <img src="assets/branding/readme-section-why.svg" alt="为什么做 StackPilot？ · Why it exists" />
 </p>
@@ -47,10 +43,6 @@ StackPilot 现在要做的事很直接：先把这台电脑看清楚，再给出
 - 小白真正缺的不是又一个安装脚本，而是一份先看清电脑状态后的推荐和计划。
 
 StackPilot 当前强调的是透明、可审查、无广告、无捆绑、不偷偷改系统。它先看清电脑状态，再告诉你当前机器更适合装什么、哪里有风险、哪些步骤需要人工确认。
-
-## 先说清楚：它到底干什么？
-
-<a id="what-it-does"></a>
 
 <p align="center">
   <img src="assets/branding/readme-section-capabilities.svg" alt="当前能做什么？ · Capability Matrix" />
@@ -110,10 +102,6 @@ python -m stackpilot doctor --goal comfyui_starter
 
 https://github.com/user-attachments/assets/5a50b36c-ec9f-494f-af9f-0c6ae95452f6
 
-## 真实输出，不伪造 GUI
-
-<a id="preview"></a>
-
 <p align="center">
   <img src="assets/branding/readme-section-preview.svg" alt="真实输出，不伪造 GUI · Real CLI output" />
 </p>
@@ -122,10 +110,6 @@ https://github.com/user-attachments/assets/5a50b36c-ec9f-494f-af9f-0c6ae95452f6
 | --------------------------------------------------------------------- | ------------------------------------------------------------------------ | --------------------------------------------------------------------------- |
 | ![StackPilot GPU 检测扫描](assets/screenshots/scan-gpu-detection.png) | ![StackPilot ComfyUI 推荐报告](assets/screenshots/recommend-comfyui.png) | ![StackPilot 生成的安装计划](assets/screenshots/install-plan-generated.png) |
 | 读取真实本机环境。                                                    | 生成推荐和风险提示。                                                     | 输出可人工审查的计划文本。                                                  |
-
-## 快速开始
-
-<a id="quickstart"></a>
 
 <p align="center">
   <img src="assets/branding/readme-section-quickstart.svg" alt="快速开始 · Command Deck" />
@@ -190,9 +174,6 @@ python3 -m stackpilot doctor --goal comfyui_starter
 | `python -m stackpilot plan --goal comfyui_starter`      | 生成可审查安装计划。           |
 | `python -m stackpilot doctor --goal comfyui_starter`    | 一步完成检测、推荐和报告生成。 |
 
-## 支持的模板
-
-<a id="templates"></a>
 
 <p align="center">
   <img src="assets/branding/readme-section-templates.svg" alt="支持的模板 · Template Signals" />
@@ -208,10 +189,6 @@ python3 -m stackpilot doctor --goal comfyui_starter
 | `gaming_setup`        | 游戏玩家常用软件   |
 | `creator_setup`       | 视频 / 内容创作    |
 | `office_productivity` | 办公生产力         |
-
-## 跑完以后看哪里
-
-<a id="outputs"></a>
 
 <p align="center">
   <img src="assets/branding/readme-section-outputs.svg" alt="跑完以后看哪里？ · Output Files" />
@@ -241,10 +218,6 @@ outputs/plans/dry-run.json
 
 这些文件是给你打开阅读和审查的。StackPilot 当前不会自动执行里面的安装命令。
 
-## 安全边界
-
-<a id="safety"></a>
-
 <p align="center">
   <img src="assets/branding/readme-section-safety.svg" alt="安全边界 · No auto install Human review" />
 </p>
@@ -266,10 +239,6 @@ StackPilot 当前宁愿慢一点，也不偷偷替你动系统。
 
 StackPilot 的目标是降低风险，而不是假装风险不存在。如果某一步不确定，就应该把不确定写出来，而不是包装成“智能推荐”。
 
-## 常见问题
-
-<a id="faq"></a>
-
 <p align="center">
   <img src="assets/branding/readme-section-faq.svg" alt="常见问题 · FAQ" />
 </p>
@@ -289,10 +258,6 @@ StackPilot 是本地电脑环境检测、应用推荐和可审查安装计划工
 ### 推荐结果一定准确吗？
 
 不保证。StackPilot 现在需要更多真实机器反馈。你可以把不合理的推荐、识别错误或文档看不懂的地方提到 Issue。
-
-## 开发
-
-<a id="dev"></a>
 
 <p align="center">
   <img src="assets/branding/readme-section-dev.svg" alt="开发 · Local Dev Loop" />
@@ -314,10 +279,6 @@ python -m stackpilot recommend --goal comfyui_starter
 python -m stackpilot doctor --goal comfyui_starter
 python -m stackpilot plan --goal comfyui_starter
 ```
-
-## 反馈与贡献
-
-<a id="feedback"></a>
 
 <p align="center">
   <img src="assets/branding/readme-section-feedback.svg" alt="反馈与贡献 · Feedback Signals" />
@@ -341,9 +302,7 @@ StackPilot 还是早期项目，现在最需要真实机器测试。
 - 反馈模板：[docs/feedback/feedback-template.md](docs/feedback/feedback-template.md)
 - 真实机器测试记录：[docs/feedback/real-machine-tests.md](docs/feedback/real-machine-tests.md)
 
-如果你觉得这个方向有价值，欢迎点一个 Star。
-
-Star 不只是数字，它会让我知道这个项目值得继续做下去。
+如果你觉得这个方向有价值，欢迎点一个 Star
 
 ## License
 
