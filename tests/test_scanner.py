@@ -1,4 +1,5 @@
 from stackpilot.models import SystemProfile
+from stackpilot.detector import StackPilotDetector
 from stackpilot.scanner import scan_system
 
 
@@ -44,6 +45,7 @@ def test_detector_failure_records_failed_check_without_crashing(monkeypatch):
     monkeypatch.setattr(detector, "get_command_version", lambda command, args: None)
 
     profile = scan_system()
+    payload = StackPilotDetector().scan_system()
 
     assert isinstance(profile, SystemProfile)
     assert any(
@@ -51,6 +53,13 @@ def test_detector_failure_records_failed_check_without_crashing(monkeypatch):
         and check.status == "permission_denied"
         and "GPU access denied" in check.reason
         for check in profile.failed_checks
+    )
+    assert isinstance(payload, dict)
+    assert any(
+        check["check_name"] == "gpu_names"
+        and check["status"] == "permission_denied"
+        and "GPU access denied" in check["reason"]
+        for check in payload["failed_checks"]
     )
 
 

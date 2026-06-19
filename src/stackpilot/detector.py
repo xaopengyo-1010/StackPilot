@@ -1,12 +1,22 @@
 from __future__ import annotations
 
+import json
 import platform
 import re
-import json
 import shutil
 import subprocess
+from typing import Any
 
-from .utils import unique_preserve_order
+from .utils import model_to_dict, unique_preserve_order
+
+
+class StackPilotDetector:
+    """Pure-data detector API for future non-CLI frontends."""
+
+    def scan_system(self) -> dict[str, Any]:
+        from .scanner import scan_system
+
+        return model_to_dict(scan_system())
 
 
 def command_exists(command: str) -> bool:

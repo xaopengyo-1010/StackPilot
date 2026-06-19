@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
+from typing import Any
+
 from .models import (
     AppRecommendation,
     CapabilityTier,
@@ -12,6 +15,15 @@ from .rules.engine import evaluate_rules, findings_to_not_recommended, findings_
 from .scanner import scan_system
 from .scorer import score_template
 from .templates import load_app_catalog, load_template
+from .utils import model_to_dict, parse_model
+
+
+TUI_SCENARIO_GOALS = {
+    "coding": "coding_starter",
+    "gaming": "gaming_setup",
+    "ai": "comfyui_starter",
+    "creator": "creator_setup",
+}
 
 
 def _unique(values: list[str]) -> list[str]:
@@ -27,6 +39,119 @@ def _unique(values: list[str]) -> list[str]:
 
 def _primary_gpu(profile: HardwareProfile):
     return profile.primary_gpu or (profile.gpus[0] if profile.gpus else None)
+
+
+def _profile_from_data(raw_specs: HardwareProfile | Mapping[str, Any]) -> HardwareProfile:
+    if isinstance(raw_specs, HardwareProfile):
+        return raw_specs
+    return parse_model(HardwareProfile, dict(raw_specs))
+
+
+class StackPilotRecommender:
+    """Pure-data recommendation API for TUI and other non-CLI frontends."""
+
+    def evaluate(
+        self,
+        raw_specs: HardwareProfile | Mapping[str, Any],
+        goal: str = "comfyui_starter",
+    ) -> dict[str, Any]:
+        profile = _profile_from_data(raw_specs)
+        recommendation = recommend(goal, profile=profile)
+        primary_gpu = _primary_gpu(profile)
+
+        scores: dict[str, float] = {}
+        for scenario, template_id in TUI_SCENARIO_GOALS.items():
+            template = load_template(template_id)
+            findings = evaluate_rules(profile, template)
+            scores[scenario] = score_template(profile, template, findings)
+
+        risk_alerts = [
+            {
+                "level": "error" if finding.level == "critical" else "warning",
+                "msg": finding.message,
+                "id": finding.id,
+                "component": finding.related_component,
+            }
+            for finding in recommendation.findings
+            if finding.level in {"critical", "warning"}
+        ]
+
+        return {
+            "hardware_summary": {
+                "os": {
+                    "name": profile.os_name,
+                    "version": profile.os_version,
+                    "architecture": profile.architecture,
+                },
+                "cpu": {
+                    "name": profile.cpu_name,
+                    "cores": profile.cpu_cores,
+                },
+                "memory": {
+                    "ram_gb": profile.ram_gb,
+                    "total_ram_gb": profile.total_ram_gb,
+                },
+                "disk": {
+                    "anchor": profile.disk_anchor,
+                    "total_gb": profile.disk_total_gb,
+                    "free_gb": profile.disk_free_gb,
+                },
+                "gpus": [model_to_dict(gpu) for gpu in profile.gpus],
+                "primary_gpu": model_to_dict(primary_gpu) if primary_gpu is not None else None,
+                "gpu_selection_reason": profile.gpu_selection_reason,
+                "tools": {
+                    "python": {
+                        "installed": profile.python_installed,
+                        "version": profile.python_version,
+                    },
+                    "node": {
+                        "installed": profile.node_installed,
+                        "version": profile.node_version,
+                    },
+                    "git": {
+                        "installed": profile.git_installed,
+                        "version": profile.git_version,
+                    },
+                    "pnpm": {
+                        "installed": profile.pnpm_installed,
+                        "version": profile.pnpm_version,
+                    },
+                    "docker": {
+                        "installed": profile.docker_installed,
+                        "version": profile.docker_version,
+                    },
+                    "wsl": {
+                        "installed": profile.wsl_installed,
+                        "available": profile.wsl_available,
+                        "version": profile.wsl_version,
+                    },
+                },
+                "platform": model_to_dict(profile.platform_profile)
+                if profile.platform_profile is not None
+                else None,
+                "failed_checks": [model_to_dict(check) for check in profile.failed_checks],
+                "warnings": list(profile.warnings),
+            },
+            "scores": scores,
+            "risk_alerts": risk_alerts,
+            "recommendations": {
+                "goal_id": recommendation.template_id,
+                "goal_name": recommendation.display_name,
+                "apps": [model_to_dict(app) for app in recommendation.recommended_apps],
+                "config": list(recommendation.config_recommendations),
+                "not_recommended": list(recommendation.not_recommended),
+                "next_steps": list(recommendation.next_steps),
+                "capability_tier": model_to_dict(recommendation.capability_tier)
+                if recommendation.capability_tier is not None
+                else None,
+                "disk_risk_analysis": model_to_dict(recommendation.disk_risk_analysis)
+                if recommendation.disk_risk_analysis is not None
+                else None,
+                "model_path_recommendation": model_to_dict(recommendation.model_path_recommendation)
+                if recommendation.model_path_recommendation is not None
+                else None,
+            },
+        }
 
 
 def recommend(goal: str, profile: HardwareProfile | None = None) -> RecommendationResult:

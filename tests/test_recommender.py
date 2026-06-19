@@ -1,5 +1,6 @@
 from stackpilot.models import FailedCheck, GpuDevice, HardwareProfile, PlatformProfile, RecommendationResult
-from stackpilot.recommender import recommend
+from stackpilot.recommender import StackPilotRecommender, recommend
+from stackpilot.utils import model_to_dict
 
 
 def sample_profile() -> HardwareProfile:
@@ -53,7 +54,9 @@ def sample_profile() -> HardwareProfile:
 
 
 def test_comfyui_starter_recommendation_contains_chinese_display_name():
-    recommendation = recommend("comfyui_starter", profile=sample_profile())
+    profile = sample_profile()
+    recommendation = recommend("comfyui_starter", profile=profile)
+    evaluation = StackPilotRecommender().evaluate(model_to_dict(profile), goal="comfyui_starter")
 
     assert isinstance(recommendation, RecommendationResult)
     assert recommendation.template_id == "comfyui_starter"
@@ -61,6 +64,13 @@ def test_comfyui_starter_recommendation_contains_chinese_display_name():
     assert recommendation.suitability_score > 0
     assert any(app.app_id == "comfyui" for app in recommendation.recommended_apps)
     assert recommendation.findings
+    assert set(evaluation) == {"hardware_summary", "scores", "risk_alerts", "recommendations"}
+    assert set(evaluation["scores"]) == {"coding", "gaming", "ai", "creator"}
+    assert all(isinstance(score, int | float) for score in evaluation["scores"].values())
+    assert all(0 <= score <= 100 for score in evaluation["scores"].values())
+    assert evaluation["hardware_summary"]["primary_gpu"]["vram_confidence"] == "detected"
+    assert evaluation["recommendations"]["goal_id"] == "comfyui_starter"
+    assert isinstance(evaluation["recommendations"]["apps"], list)
 
 
 def test_office_productivity_recommendation_succeeds():
@@ -72,13 +82,31 @@ def test_office_productivity_recommendation_succeeds():
     assert any(app.app_id == "everything" for app in recommendation.recommended_apps)
 
 
-def test_recommendation_result_splits_required_and_optional_apps():
+def test_recommendation_result_splits_required_and_optional_apps(monkeypatch):
+    from stackpilot import main as pipeline_module
+
+    raw_specs = model_to_dict(sample_profile())
+
+    class Detector:
+        def scan_system(self):
+            return raw_specs
+
+    class Recommender:
+        def evaluate(self, specs, goal="comfyui_starter"):
+            assert specs == raw_specs
+            return {"hardware_summary": specs, "scores": {}, "risk_alerts": [], "recommendations": {"goal_id": goal}}
+
+    monkeypatch.setattr(pipeline_module, "StackPilotDetector", Detector)
+    monkeypatch.setattr(pipeline_module, "StackPilotRecommender", Recommender)
+
     recommendation = recommend("office_productivity", profile=sample_profile())
+    pipeline_data = pipeline_module.run_pipeline("office_productivity")
 
     assert recommendation.required_apps
     assert recommendation.optional_apps
     assert all(app.required for app in recommendation.required_apps)
     assert all(not app.required for app in recommendation.optional_apps)
+    assert pipeline_data["recommendations"]["goal_id"] == "office_productivity"
 
 
 def test_recommendation_uses_structured_gpus_for_nvidia_detection():
@@ -134,11 +162,14 @@ def test_recommendation_consumes_failed_checks():
     ]
 
     recommendation = recommend("comfyui_starter", profile=profile)
+    evaluation = StackPilotRecommender().evaluate(model_to_dict(profile), goal="comfyui_starter")
 
     assert recommendation.failed_checks
     assert any(finding.id == "failed_check_gpu_vram" for finding in recommendation.findings)
     assert any("任务管理器" in warning for warning in recommendation.risk_warnings)
     assert any("gpu_vram" in step for step in recommendation.next_steps)
+    assert evaluation["hardware_summary"]["failed_checks"][0]["status"] == "permission_denied"
+    assert any(alert["level"] == "warning" and isinstance(alert["msg"], str) for alert in evaluation["risk_alerts"])
 
 
 def test_comfyui_integrated_gpu_gets_entry_capability_tier_and_path_guidance():
@@ -159,6 +190,7 @@ def test_comfyui_integrated_gpu_gets_entry_capability_tier_and_path_guidance():
     profile.disk_free_gb = 80
 
     recommendation = recommend("comfyui_starter", profile=profile)
+    evaluation = StackPilotRecommender().evaluate(model_to_dict(profile), goal="comfyui_starter")
 
     assert recommendation.capability_tier is not None
     assert recommendation.capability_tier.tier == "Entry"
@@ -168,6 +200,8 @@ def test_comfyui_integrated_gpu_gets_entry_capability_tier_and_path_guidance():
     assert recommendation.model_path_recommendation is not None
     assert r"D:\AI\Models" in recommendation.model_path_recommendation.recommended_model_paths
     assert any(path.startswith("C:\\Users") for path in recommendation.model_path_recommendation.avoid_paths)
+    assert evaluation["hardware_summary"]["primary_gpu"]["vram_confidence"] == "shared"
+    assert evaluation["recommendations"]["capability_tier"]["tier"] == "Entry"
 
 
 def test_comfyui_4060_gets_standard_tier_and_5090_gets_advanced_tier():
