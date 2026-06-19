@@ -7,7 +7,7 @@ from stackpilot import cli
 from stackpilot.cli import app
 from stackpilot.executors import dry_run as dry_run_module
 from stackpilot.executors.dry_run import DryRunExecutor
-from stackpilot.models import AppRecommendation, RecommendationResult
+from stackpilot.models import AppRecommendation, FailedCheck, RecommendationResult
 from stackpilot.plans.audit import audit_install_plan
 from stackpilot.plans.models import InstallPlan, InstallSource, InstallStep
 from stackpilot.plans.planner import build_install_plan
@@ -133,6 +133,38 @@ def test_planner_blocks_unknown_apps():
     assert plan.steps[0].source.type == "unknown"
     assert plan.steps[0].risk_level == "blocked"
     assert plan.blocked_steps
+
+
+def test_install_plan_includes_failed_checks_in_summary_and_warnings():
+    profile = sample_profile()
+    profile.failed_checks = [
+        FailedCheck(
+            check_name="git",
+            status="unknown_error",
+            reason="git 检测失败：boom",
+            impact="无法确认 Git。",
+            manual_check="git --version",
+        )
+    ]
+    recommendation = recommend("coding_starter", profile=profile)
+    plan = build_install_plan(profile, recommendation)
+
+    assert "检测失败项" in plan.hardware_summary
+    assert any("git" in item for item in plan.hardware_summary["检测失败项"])
+    assert any("git 检测失败" in warning for warning in plan.warnings)
+
+
+def test_install_plan_includes_capability_disk_and_path_guidance():
+    profile = sample_profile()
+    profile.disk_anchor = "C:\\"
+    profile.disk_free_gb = 80
+    recommendation = recommend("comfyui_starter", profile=profile)
+    plan = build_install_plan(profile, recommendation)
+
+    assert plan.hardware_summary["能力分级"] == "Standard"
+    assert plan.hardware_summary["磁盘风险等级"] == "medium"
+    assert r"D:\AI\Models" in plan.hardware_summary["推荐模型目录"]
+    assert any("模型目录" in warning or "缓存目录" in warning for warning in plan.warnings)
 
 
 def test_renderers_avoid_none_and_include_required_safety_sections():

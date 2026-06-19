@@ -39,10 +39,6 @@ def _text(value: object | None) -> str | None:
     return text or None
 
 
-def _controller_name(controller: Mapping[str, object]) -> str:
-    return _text(_field(controller, "name")) or _text(_field(controller, "video_processor")) or "Unknown GPU"
-
-
 def parse_windows_gpu_controllers(raw_controllers: Iterable[Mapping[str, object]] | None) -> list[GpuDevice]:
     """Parse Win32_VideoController-like dictionaries into GPU devices."""
 
@@ -53,7 +49,7 @@ def parse_windows_gpu_controllers(raw_controllers: Iterable[Mapping[str, object]
     for controller in raw_controllers:
         if not isinstance(controller, Mapping):
             continue
-        name = _controller_name(controller)
+        name = _text(_field(controller, "name")) or _text(_field(controller, "video_processor")) or "Unknown GPU"
         vendor = classify_gpu_vendor(name)
         gpu_type = classify_gpu_type(name, vendor, controller)
         adapter_ram_gb = adapter_ram_to_gb(_field(controller, "adapter_ram"))

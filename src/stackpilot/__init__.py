@@ -1,3 +1,3 @@
-"""StackPilot v0.4 Alpha GPU detection hardening."""
+"""StackPilot v0.5 Alpha environment intelligence."""
 
-__version__ = "0.4.0a0"
+__version__ = "0.5.0a0"

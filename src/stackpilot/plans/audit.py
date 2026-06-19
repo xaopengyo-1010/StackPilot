@@ -28,7 +28,7 @@ def audit_install_plan(plan: InstallPlan) -> InstallAuditReport:
                     id=f"{step.id}.blocked",
                     level="blocked",
                     title="步骤被安全策略阻止",
-                    message="该步骤被安全策略阻止，未来不能自动执行。",
+                    message="该步骤被安全策略阻止，不能自动执行。",
                     related_step_id=step.id,
                     evidence=evidence,
                 )
@@ -64,7 +64,7 @@ def audit_install_plan(plan: InstallPlan) -> InstallAuditReport:
                     id=f"{step.id}.source_unknown",
                     level="blocked",
                     title="未知来源",
-                    message="未知来源会被阻止，未来执行前必须先补充应用目录元数据。",
+                    message="未知来源会被阻止；执行前必须先补充应用目录元数据。",
                     related_step_id=step.id,
                     evidence=evidence,
                 )

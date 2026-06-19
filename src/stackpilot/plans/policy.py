@@ -7,17 +7,8 @@ from stackpilot.utils import unique_preserve_order
 
 
 ROLLBACK_WARNING = (
-    "该步骤没有明确的回滚命令。未来真实执行前，必须先人工确认回滚方式。"
+    "该步骤没有明确的回滚命令。真实执行前，必须先人工确认回滚方式。"
 )
-
-
-def _sentence(value: str) -> str:
-    """Return text with exactly one sentence-ending punctuation mark."""
-
-    text = value.strip()
-    if text.endswith(("。", "！", "？", ".", "!", "?")):
-        return text
-    return f"{text}。"
 
 
 def build_audit_note(step: InstallStep) -> str:
@@ -33,7 +24,9 @@ def build_audit_note(step: InstallStep) -> str:
     verify = "、".join(step.verify_commands) if step.verify_commands else "需要人工验证"
     rollback = step.rollback_command or "需要人工确认回滚方式"
     admin = "需要管理员权限" if step.requires_admin else "不需要管理员权限"
-    reason = _sentence(step.reason or "它属于当前选择的目标")
+    reason = (step.reason or "它属于当前选择的目标").strip()
+    if not reason.endswith(("。", "！", "？", ".", "!", "?")):
+        reason = f"{reason}。"
     return (
         f"计划{action_names.get(step.action, step.action)} {step.app_name}，原因：{reason}"
         f"来源：{source.type}（{source.name}）。该步骤{admin}。"
@@ -55,7 +48,7 @@ def apply_step_policy(step: InstallStep) -> tuple[InstallStep, list[AuditFinding
                 id=f"{step.id}.unknown_source",
                 level="blocked",
                 title="未知安装来源",
-                message="该来源未知，因此此步骤会被阻止，未来也不能自动执行。",
+                message="该来源未知，因此此步骤会被阻止，也不能自动执行。",
                 related_step_id=step.id,
                 evidence={"source_type": step.source.type, "trusted": step.source.trusted},
             )

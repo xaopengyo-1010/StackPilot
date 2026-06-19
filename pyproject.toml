@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "stackpilot"
-version = "0.4.0a0"
+version = "0.5.0a0"
 description = "Chinese CLI assistant that recommends PC apps from local hardware facts and rule findings."
 readme = "README.md"
 requires-python = ">=3.11"

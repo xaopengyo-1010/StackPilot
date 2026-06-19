@@ -4,7 +4,7 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
-from .models import AppRecommendation, HardwareProfile, RecommendationResult, ReportData, RuleFinding
+from .models import HardwareProfile, RecommendationResult, ReportData
 from .recommender import recommend
 from .scanner import scan_system
 from .templates import project_root, template_audience
@@ -13,15 +13,12 @@ from .utils import model_to_dict
 
 REPORT_MD = "stackpilot-report.md"
 REPORT_JSON = "stackpilot-report.json"
-
 TRANSPARENCY_NOTICE = (
     "StackPilot 当前版本只生成本地推荐报告，不会自动下载、安装软件或修改系统设置。"
 )
 
 
 def default_output_dir() -> Path:
-    """Return the default directory used for generated reports."""
-
     return project_root() / "outputs" / "reports"
 
 
@@ -33,129 +30,12 @@ def _missing(value: object | None) -> str:
     return str(value)
 
 
-def _format_gb(value: float | None) -> str:
-    if value is None:
-        return "未检测到"
-    return f"{value:g} GB"
+def _gb(value: float | None) -> str:
+    return "未检测到" if value is None else f"{value:g} GB"
 
 
-def _format_score(score: float) -> str:
-    return f"{score:g}"
-
-
-def _score_explanation(score: float) -> str:
-    if score >= 90:
-        return "非常适合。"
-    if score >= 75:
-        return "比较适合。"
-    if score >= 60:
-        return "可以尝试，但需要注意限制。"
-    if score >= 40:
-        return "不太推荐，可能体验一般。"
-    return "不推荐，建议更换目标或升级配置。"
-
-
-def _format_list(values: list[str], empty_text: str) -> str:
-    if not values:
-        return empty_text
-    return "\n".join(f"- {value}" for value in values)
-
-
-def _format_profile(profile: HardwareProfile) -> str:
-    gpu_list = _format_gpu_list(profile)
-    rows = {
-        "系统": f"{_missing(profile.os_name)} {_missing(profile.os_version)}".strip(),
-        "架构": _missing(profile.architecture),
-        "CPU": _missing(profile.cpu_name),
-        "CPU 核心数": _missing(profile.cpu_cores),
-        "内存": _format_gb(profile.ram_gb),
-        "检测到的 GPU": gpu_list,
-        "主要性能判断 GPU": profile.primary_gpu.name if profile.primary_gpu else "未能可靠确认",
-        "GPU 选择原因": profile.gpu_selection_reason or "未能可靠确认 GPU 选择原因",
-        "兼容显存字段": _format_gb(profile.vram_gb),
-        "磁盘总容量": _format_gb(profile.disk_total_gb),
-        "磁盘剩余空间": _format_gb(profile.disk_free_gb),
-        "Python": profile.python_version if profile.python_installed and profile.python_version else "未检测到",
-        "Node.js": profile.node_version if profile.node_installed and profile.node_version else "未检测到",
-        "Git": profile.git_version if profile.git_installed and profile.git_version else "未检测到",
-        "pnpm": profile.pnpm_version if profile.pnpm_installed and profile.pnpm_version else "未检测到",
-        "Docker": profile.docker_version if profile.docker_installed and profile.docker_version else "未检测到",
-        "WSL": "已检测到" if profile.wsl_installed else "未检测到",
-        "NVIDIA 驱动": profile.nvidia_driver_version or "未检测到",
-    }
-    lines: list[str] = []
-    for key, value in rows.items():
-        if "\n" in value:
-            lines.append(f"- {key}：")
-            lines.append(value)
-        else:
-            lines.append(f"- {key}：{value}")
-    return "\n".join(lines)
-
-
-def _format_gpu_list(profile: HardwareProfile) -> str:
-    if profile.gpus:
-        return "\n".join(f"  - {gpu.markdown_summary()}" for gpu in profile.gpus)
-    if profile.gpu_names:
-        return "、".join(profile.gpu_names)
-    return "未检测到"
-
-
-def _format_apps(apps: list[AppRecommendation]) -> str:
-    if not apps:
-        return "暂无推荐应用。"
-
-    lines = [
-        "| 应用 | 必装/可选 | 推荐原因 | 安装方式 | 备注 |",
-        "| -- | ----- | ---- | ---- | -- |",
-    ]
-    for app in apps:
-        required = "必装" if app.required else "可选"
-        notes = [*app.config_notes, *app.risk_notes]
-        note_text = "<br>".join(notes) if notes else "无"
-        lines.append(
-            f"| {app.name} | {required} | {app.reason} | {app.install_method} | {note_text} |"
-        )
-    return "\n".join(lines)
-
-
-def _format_evidence(evidence: dict[str, object | None]) -> str:
-    if not evidence:
-        return "无"
-    parts = []
-    for key, value in evidence.items():
-        parts.append(f"{key}={_missing(value)}")
-    return "；".join(parts)
-
-
-def _format_findings(findings: list[RuleFinding]) -> str:
-    if not findings:
-        return "暂无明显风险提示。"
-
-    level_names = {
-        "critical": "严重",
-        "warning": "提醒",
-        "info": "信息",
-    }
-    lines = [
-        "| 等级 | 标题 | 说明 | 依据 |",
-        "| -- | -- | -- | -- |",
-    ]
-    for finding in findings:
-        lines.append(
-            f"| {level_names[finding.level]} | {finding.title} | {finding.message} | {_format_evidence(finding.evidence)} |"
-        )
-    return "\n".join(lines)
-
-
-def _score_reason(recommendation: RecommendationResult) -> str:
-    critical_count = sum(1 for finding in recommendation.findings if finding.level == "critical")
-    warning_count = sum(1 for finding in recommendation.findings if finding.level == "warning")
-    info_count = sum(1 for finding in recommendation.findings if finding.level == "info")
-    return (
-        "评分基于集中规则判断：严重问题每项扣 25 分，提醒项每项扣 10 分，信息项不扣分。"
-        f"当前发现严重 {critical_count} 项、提醒 {warning_count} 项、信息 {info_count} 项。"
-    )
+def _list(values: list[str], empty_text: str) -> str:
+    return "\n".join(f"- {value}" for value in values) if values else empty_text
 
 
 def render_markdown(report_data: ReportData) -> str:
@@ -163,12 +43,187 @@ def render_markdown(report_data: ReportData) -> str:
 
     profile = report_data.hardware_profile
     recommendation = report_data.recommendation
-    score = _format_score(recommendation.suitability_score)
+
+    gpu_text = (
+        "\n".join(f"  - {gpu.markdown_summary()}" for gpu in profile.gpus)
+        if profile.gpus
+        else "、".join(profile.gpu_names)
+        if profile.gpu_names
+        else "未检测到"
+    )
+    profile_lines: list[str] = []
+    for key, value in {
+        "系统": f"{_missing(profile.os_name)} {_missing(profile.os_version)}".strip(),
+        "架构": _missing(profile.architecture),
+        "CPU": _missing(profile.cpu_name),
+        "CPU 核心数": _missing(profile.cpu_cores),
+        "内存": _gb(profile.ram_gb),
+        "检测到的 GPU": gpu_text,
+        "主要性能判断 GPU": profile.primary_gpu.name if profile.primary_gpu else "未能可靠确认",
+        "GPU 选择原因": profile.gpu_selection_reason or "未能可靠确认 GPU 选择原因",
+        "兼容显存字段": _gb(profile.vram_gb),
+        "磁盘总容量": _gb(profile.disk_total_gb),
+        "磁盘剩余空间": _gb(profile.disk_free_gb),
+        "Python": profile.python_version if profile.python_installed and profile.python_version else "未检测到",
+        "Node.js": profile.node_version if profile.node_installed and profile.node_version else "未检测到",
+        "Git": profile.git_version if profile.git_installed and profile.git_version else "未检测到",
+        "pnpm": profile.pnpm_version if profile.pnpm_installed and profile.pnpm_version else "未检测到",
+        "Docker": profile.docker_version if profile.docker_installed and profile.docker_version else "未检测到",
+        "WSL": "已检测到" if profile.wsl_installed else "未检测到",
+        "NVIDIA 驱动": profile.nvidia_driver_version or "未检测到",
+    }.items():
+        if "\n" in value:
+            profile_lines.extend([f"- {key}：", value])
+        else:
+            profile_lines.append(f"- {key}：{value}")
+    profile_md = "\n".join(profile_lines)
+
+    if profile.failed_checks:
+        failed_md = "\n".join(
+            [
+                "| 检测项 | 状态 | 原因 | 影响 | 手动确认 |",
+                "| -- | -- | -- | -- | -- |",
+                *[
+                    f"| {check.check_name} | {check.status} | {check.reason} | {check.impact} | {check.manual_check} |"
+                    for check in profile.failed_checks
+                ],
+            ]
+        )
+    else:
+        failed_md = "暂无检测失败项。"
+
+    tier = recommendation.capability_tier
+    tier_md = (
+        "\n".join(
+            [
+                f"- 当前等级：{tier.tier}",
+                "",
+                "适合：",
+                _list(tier.suitable, "暂无适合项。"),
+                "",
+                "不适合：",
+                _list(tier.not_suitable, "暂无不适合项。"),
+                "",
+                "风险：",
+                _list(tier.risks, "暂无额外风险。"),
+            ]
+        )
+        if tier is not None
+        else "该目标暂无能力分级。"
+    )
+
+    disk = recommendation.disk_risk_analysis
+    disk_md = (
+        "\n".join(
+            [
+                f"- 风险等级：{disk.risk_level}",
+                f"- 扫描盘：{_missing(disk.system_drive)}",
+                f"- 剩余空间：{_gb(disk.disk_free_gb)}",
+                f"- 模型目录状态：{disk.model_directory_status}",
+                f"- 缓存目录状态：{disk.cache_directory_status}",
+                "",
+                "原因：",
+                _list(disk.reasons, "暂无额外原因。"),
+                "",
+                "建议：",
+                _list(disk.recommendations, "暂无额外建议。"),
+            ]
+        )
+        if disk is not None
+        else "暂无磁盘风险分析。"
+    )
+
+    paths = recommendation.model_path_recommendation
+    paths_md = (
+        "\n".join(
+            [
+                "推荐模型目录：",
+                _list(paths.recommended_model_paths, "暂无推荐模型目录。"),
+                "",
+                "推荐缓存目录：",
+                _list(paths.recommended_cache_paths, "暂无推荐缓存目录。"),
+                "",
+                "避免作为默认目录：",
+                _list(paths.avoid_paths, "暂无避免目录。"),
+                "",
+                "说明：",
+                _list(paths.notes, "暂无说明。"),
+            ]
+        )
+        if paths is not None
+        else "暂无模型路径建议。"
+    )
+
+    score = recommendation.suitability_score
+    if score >= 90:
+        score_text = "非常适合。"
+    elif score >= 75:
+        score_text = "比较适合。"
+    elif score >= 60:
+        score_text = "可以尝试，但需要注意限制。"
+    elif score >= 40:
+        score_text = "不太推荐，可能体验一般。"
+    else:
+        score_text = "不推荐，建议更换目标或升级配置。"
+
+    critical_count = sum(1 for finding in recommendation.findings if finding.level == "critical")
+    warning_count = sum(1 for finding in recommendation.findings if finding.level == "warning")
+    info_count = sum(1 for finding in recommendation.findings if finding.level == "info")
+    score_reason = (
+        "评分基于集中规则判断：严重问题每项扣 25 分，提醒项每项扣 10 分，信息项不扣分。"
+        f"当前发现严重 {critical_count} 项、提醒 {warning_count} 项、信息 {info_count} 项。"
+    )
+
+    if recommendation.recommended_apps:
+        app_rows = [
+            "| 应用 | 必装/可选 | 推荐原因 | 安装方式 | 备注 |",
+            "| -- | ----- | ---- | ---- | -- |",
+        ]
+        for item in recommendation.recommended_apps:
+            notes = [*item.config_notes, *item.risk_notes]
+            app_rows.append(
+                f"| {item.name} | {'必装' if item.required else '可选'} | {item.reason} | {item.install_method} | {'<br>'.join(notes) if notes else '无'} |"
+            )
+        apps_md = "\n".join(app_rows)
+    else:
+        apps_md = "暂无推荐应用。"
+
+    if recommendation.findings:
+        level_names = {"critical": "严重", "warning": "提醒", "info": "信息"}
+        finding_rows = [
+            "| 等级 | 标题 | 说明 | 依据 |",
+            "| -- | -- | -- | -- |",
+        ]
+        for finding in recommendation.findings:
+            evidence = "；".join(f"{key}={_missing(value)}" for key, value in finding.evidence.items()) if finding.evidence else "无"
+            finding_rows.append(
+                f"| {level_names[finding.level]} | {finding.title} | {finding.message} | {evidence} |"
+            )
+        findings_md = "\n".join(finding_rows)
+    else:
+        findings_md = "暂无明显风险提示。"
+
     return f"""# StackPilot 应用推荐报告
 
 ## 电脑配置摘要
 
-{_format_profile(profile)}
+{profile_md}
+
+## 检测失败项
+
+{failed_md}
+
+## 能力分级
+
+{tier_md}
+
+## 磁盘风险分析
+
+{disk_md}
+
+## 模型路径建议
+
+{paths_md}
 
 ## 使用目标
 
@@ -178,31 +233,31 @@ def render_markdown(report_data: ReportData) -> str:
 
 ## 适配度评分
 
-适配度评分：{score} / 100
+适配度评分：{score:g} / 100
 
-{_score_explanation(recommendation.suitability_score)}
+{score_text}
 
-{_score_reason(recommendation)}
+{score_reason}
 
 ## 推荐应用
 
-{_format_apps(recommendation.recommended_apps)}
+{apps_md}
 
 ## 规则判断与风险提示
 
-{_format_findings(recommendation.findings)}
+{findings_md}
 
 ## 配置建议
 
-{_format_list(recommendation.config_recommendations, "暂无额外配置建议。")}
+{_list(recommendation.config_recommendations, "暂无额外配置建议。")}
 
 ## 当前不推荐事项
 
-{_format_list(recommendation.not_recommended, "暂无明显不推荐事项。")}
+{_list(recommendation.not_recommended, "暂无明显不推荐事项。")}
 
 ## 下一步建议
 
-{_format_list(recommendation.next_steps, "暂无下一步建议。")}
+{_list(recommendation.next_steps, "暂无下一步建议。")}
 
 ## 说明
 
@@ -211,16 +266,12 @@ def render_markdown(report_data: ReportData) -> str:
 """
 
 
-def _apps_to_dict(apps: list[AppRecommendation]) -> list[dict]:
-    return [model_to_dict(app) for app in apps]
-
-
 def render_json_payload(report_data: ReportData) -> dict:
     """Render a structured JSON-compatible report payload."""
 
     recommendation = report_data.recommendation
     profile = report_data.hardware_profile
-    payload = {
+    return {
         "generated_at": report_data.generated_at,
         "hardware_profile": model_to_dict(profile),
         "goal": {
@@ -230,9 +281,10 @@ def render_json_payload(report_data: ReportData) -> dict:
             "summary": recommendation.summary,
         },
         "suitability_score": recommendation.suitability_score,
-        "required_apps": _apps_to_dict(recommendation.required_apps),
-        "optional_apps": _apps_to_dict(recommendation.optional_apps),
+        "required_apps": [model_to_dict(app) for app in recommendation.required_apps],
+        "optional_apps": [model_to_dict(app) for app in recommendation.optional_apps],
         "findings": [model_to_dict(finding) for finding in recommendation.findings],
+        "failed_checks": [model_to_dict(check) for check in profile.failed_checks],
         "warnings": recommendation.warnings,
         "not_recommended": recommendation.not_recommended,
         "next_steps": recommendation.next_steps,
@@ -243,7 +295,6 @@ def render_json_payload(report_data: ReportData) -> dict:
         "profile": model_to_dict(profile),
         "recommendation": model_to_dict(recommendation),
     }
-    return payload
 
 
 def generate_report(
@@ -260,13 +311,11 @@ def generate_report(
 
     md_path = target_dir / REPORT_MD
     json_path = target_dir / REPORT_JSON
-    generated_at = datetime.now(timezone.utc).isoformat()
     report_data = ReportData(
         hardware_profile=profile,
         recommendation=recommendation,
-        generated_at=generated_at,
+        generated_at=datetime.now(timezone.utc).isoformat(),
     )
-
     md_path.write_text(render_markdown(report_data), encoding="utf-8")
     json_path.write_text(
         json.dumps(render_json_payload(report_data), ensure_ascii=False, indent=2),

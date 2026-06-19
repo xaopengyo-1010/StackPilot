@@ -20,7 +20,7 @@ def build_snapshot_plan(install_plan: InstallPlan | None = None) -> SnapshotPlan
 
     notes = [
         "StackPilot v0.3 只生成备份 / 快照计划，不会创建真实系统还原点。",
-        "在未来任何执行器修改电脑前，都应先人工审查快照计划。",
+        "在任何执行器修改电脑前，都应先人工审查快照计划。",
     ]
     if install_plan is not None:
         notes.append(f"Related install plan: {install_plan.plan_id}")

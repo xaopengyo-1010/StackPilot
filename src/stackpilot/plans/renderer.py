@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from stackpilot.executors.dry_run import DryRunResult
-from stackpilot.plans.models import InstallAuditReport, InstallPlan, InstallStep
+from stackpilot.plans.models import InstallAuditReport, InstallPlan
 from stackpilot.rollbacks.models import RollbackPlan
 from stackpilot.snapshots.models import SnapshotPlan
 from stackpilot.templates import project_root
@@ -40,21 +40,6 @@ def _yes_no(value: bool | None) -> str:
     return "是" if value else "否"
 
 
-def _format_mb(value: int | None) -> str:
-    if value is None:
-        return "未检测到"
-    return f"{value} MB"
-
-
-def _action_label(action: str) -> str:
-    return {
-        "install": "安装",
-        "configure": "配置",
-        "verify": "验证",
-        "manual": "人工处理",
-    }.get(action, action)
-
-
 def _source_label(source_type: str) -> str:
     return {
         "winget": "winget",
@@ -75,22 +60,31 @@ def _list(values: list[Any], empty_text: str = "未检测到") -> str:
     return "\n".join(f"- {_safe(value)}" for value in values)
 
 
-def _step_header(step: InstallStep) -> str:
-    return f"### {step.id} - {step.app_name}"
+def render_install_plan_markdown(plan: InstallPlan) -> str:
+    """Render an install plan to Markdown."""
 
-
-def _step_block(step: InstallStep) -> str:
-    return f"""{_step_header(step)}
+    hardware = "\n".join(f"- {key}: {_safe(value)}" for key, value in plan.hardware_summary.items())
+    action_labels = {
+        "install": "安装",
+        "configure": "配置",
+        "verify": "验证",
+        "manual": "人工处理",
+    }
+    step_blocks = []
+    for step in plan.steps:
+        disk_mb = "未检测到" if step.estimated_disk_mb is None else f"{step.estimated_disk_mb} MB"
+        step_blocks.append(
+            f"""### {step.id} - {step.app_name}
 
 - App ID: `{_safe(step.app_id)}`
-- 操作: {_action_label(step.action)} (`{_safe(step.action)}`)
+- 操作: {action_labels.get(step.action, step.action)} (`{_safe(step.action)}`)
 - 来源: {_source_label(step.source.type)} (`{_safe(step.source.type)}`) / {_safe(step.source.name)}
 - 包 ID: `{_safe(step.source.package_id)}`
 - 来源 URL: {_safe(step.source.url)}
 - 来源可信: {_yes_no(step.source.trusted)}
 - 风险等级: `{_safe(step.risk_level)}`
 - 需要管理员权限: {_yes_no(step.requires_admin)}
-- 预计磁盘占用: {_format_mb(step.estimated_disk_mb)}
+- 预计磁盘占用: {disk_mb}
 - 命令预览: `{_safe(step.command)}`
 - 回滚命令预览: `{_safe(step.rollback_command)}`
 - 验证命令: {_safe("、".join(step.verify_commands) if step.verify_commands else None)}
@@ -101,13 +95,8 @@ def _step_block(step: InstallStep) -> str:
 - 风险提醒:
 {_list(step.warnings, "暂无额外提醒")}
 """
-
-
-def render_install_plan_markdown(plan: InstallPlan) -> str:
-    """Render an install plan to Markdown."""
-
-    hardware = "\n".join(f"- {key}: {_safe(value)}" for key, value in plan.hardware_summary.items())
-    steps = "\n".join(_step_block(step) for step in plan.steps)
+        )
+    steps = "\n".join(step_blocks)
     blocked = "\n".join(f"- {step.id}: {step.app_name} (`{step.risk_level}`)" for step in plan.blocked_steps)
     return f"""# StackPilot 安装计划
 
@@ -242,7 +231,7 @@ def render_snapshot_plan_markdown(plan: SnapshotPlan) -> str:
 ## 为什么需要备份
 
 - 安装和配置软件可能影响 PATH、环境变量、配置文件和软件列表。
-- 备份记录可以帮助未来人工审查和回滚，降低风险。
+- 备份记录可以帮助后续人工审查和回滚，降低风险。
 
 ## 当前版本说明
 

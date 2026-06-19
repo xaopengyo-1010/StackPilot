@@ -1,4 +1,4 @@
-from stackpilot.models import GpuDevice, HardwareProfile, PlatformProfile, RecommendationResult
+from stackpilot.models import FailedCheck, GpuDevice, HardwareProfile, PlatformProfile, RecommendationResult
 from stackpilot.recommender import recommend
 
 
@@ -116,3 +116,91 @@ def test_recommendation_keeps_cuda_optional_without_nvidia_gpu():
     assert "不要按 CUDA 必装路径处理" in cuda_note.reason
     assert nvidia_app.required is False
     assert "可以跳过" in nvidia_app.reason
+    comfyui_app = next(app for app in recommendation.recommended_apps if app.app_id == "comfyui")
+    assert "AMD Radeon 780M Graphics" in comfyui_app.reason
+    assert "Flux" in comfyui_app.reason
+
+
+def test_recommendation_consumes_failed_checks():
+    profile = sample_profile()
+    profile.failed_checks = [
+        FailedCheck(
+            check_name="gpu_vram",
+            status="permission_denied",
+            reason="gpu_vram 检测失败：access denied",
+            impact="GPU 推荐可信度下降。",
+            manual_check="任务管理器 -> 性能 -> GPU",
+        )
+    ]
+
+    recommendation = recommend("comfyui_starter", profile=profile)
+
+    assert recommendation.failed_checks
+    assert any(finding.id == "failed_check_gpu_vram" for finding in recommendation.findings)
+    assert any("任务管理器" in warning for warning in recommendation.risk_warnings)
+    assert any("gpu_vram" in step for step in recommendation.next_steps)
+
+
+def test_comfyui_integrated_gpu_gets_entry_capability_tier_and_path_guidance():
+    integrated_gpu = GpuDevice(
+        name="AMD Radeon 780M Graphics",
+        vendor="AMD",
+        gpu_type="integrated",
+        shared_memory_gb=4,
+        vram_confidence="shared",
+        source="fixture",
+    )
+    profile = sample_profile()
+    profile.gpu_names = [integrated_gpu.name]
+    profile.gpus = [integrated_gpu]
+    profile.primary_gpu = integrated_gpu
+    profile.vram_gb = None
+    profile.disk_anchor = "C:\\"
+    profile.disk_free_gb = 80
+
+    recommendation = recommend("comfyui_starter", profile=profile)
+
+    assert recommendation.capability_tier is not None
+    assert recommendation.capability_tier.tier == "Entry"
+    assert any("Flux" in item for item in recommendation.capability_tier.not_suitable)
+    assert recommendation.disk_risk_analysis is not None
+    assert recommendation.disk_risk_analysis.risk_level == "medium"
+    assert recommendation.model_path_recommendation is not None
+    assert r"D:\AI\Models" in recommendation.model_path_recommendation.recommended_model_paths
+    assert any(path.startswith("C:\\Users") for path in recommendation.model_path_recommendation.avoid_paths)
+
+
+def test_comfyui_4060_gets_standard_tier_and_5090_gets_advanced_tier():
+    standard_gpu = GpuDevice(
+        name="NVIDIA GeForce RTX 4060",
+        vendor="NVIDIA",
+        gpu_type="dedicated",
+        dedicated_vram_gb=8,
+        vram_confidence="detected",
+        source="fixture",
+    )
+    advanced_gpu = GpuDevice(
+        name="NVIDIA GeForce RTX 5090",
+        vendor="NVIDIA",
+        gpu_type="dedicated",
+        dedicated_vram_gb=32,
+        vram_confidence="detected",
+        source="fixture",
+    )
+    standard_profile = sample_profile()
+    standard_profile.gpus = [standard_gpu]
+    standard_profile.primary_gpu = standard_gpu
+    standard_profile.vram_gb = 8
+    advanced_profile = sample_profile()
+    advanced_profile.gpus = [advanced_gpu]
+    advanced_profile.primary_gpu = advanced_gpu
+    advanced_profile.vram_gb = 32
+    advanced_profile.ram_gb = 64
+
+    standard = recommend("comfyui_starter", profile=standard_profile)
+    advanced = recommend("local_llm", profile=advanced_profile)
+
+    assert standard.capability_tier is not None
+    assert standard.capability_tier.tier == "Standard"
+    assert advanced.capability_tier is not None
+    assert advanced.capability_tier.tier == "Advanced"

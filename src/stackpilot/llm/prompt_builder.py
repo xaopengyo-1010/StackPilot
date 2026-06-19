@@ -23,7 +23,7 @@ def build_report_prompt(
     template: TemplateDefinition,
     recommendation_result: RecommendationResult,
 ) -> str:
-    """Build a Chinese prompt for a future LLM report writer.
+    """Build a Chinese prompt for an optional LLM report writer.
 
     This function does not call any LLM API. It only turns structured facts,
     rule findings, and recommendations into a constrained prompt that can be
@@ -56,7 +56,7 @@ def build_report_prompt(
         [
             "你是 StackPilot 的中文报告撰写助手。",
             "",
-            "请基于已提供事实、规则判断和推荐结果，写出面向电脑小白的简洁中文建议。",
+            "请基于已提供事实、规则判断和推荐结果，写出面向电脑入门用户的简洁中文建议。",
             "",
             "硬性约束：",
             "1. 只基于已提供事实，不编造未检测到的信息。",

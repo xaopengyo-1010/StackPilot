@@ -2,7 +2,7 @@ from typer.testing import CliRunner
 
 from stackpilot import cli
 from stackpilot.cli import app
-from stackpilot.models import GpuDevice, HardwareProfile
+from stackpilot.models import FailedCheck, GpuDevice, HardwareProfile
 from tests.test_recommender import sample_profile
 
 
@@ -32,6 +32,9 @@ def test_recommend_command_still_runs(monkeypatch):
     assert result.exit_code == 0
     assert "推荐结果：AI 绘图入门" in result.output
     assert "规则判断与风险提示" in result.output
+    assert "能力分级" in result.output
+    assert "磁盘风险分析" in result.output
+    assert "模型路径建议" in result.output
 
 
 def test_scan_command_shows_gpu_list_and_primary_gpu(monkeypatch):
@@ -57,6 +60,15 @@ def test_scan_command_shows_gpu_list_and_primary_gpu(monkeypatch):
         },
         python_installed=True,
         python_version="3.11.9",
+        failed_checks=[
+            FailedCheck(
+                check_name="gpu_vram",
+                status="unknown_error",
+                reason="gpu_vram 检测失败：boom",
+                impact="无法确认显存。",
+                manual_check="任务管理器 -> 性能 -> GPU",
+            )
+        ],
     )
     monkeypatch.setattr(cli, "scan_system", lambda: profile)
 
@@ -69,6 +81,8 @@ def test_scan_command_shows_gpu_list_and_primary_gpu(monkeypatch):
     assert "默认安装后端" in result.output
     assert "NVIDIA GeForce RTX 4060 Laptop GPU" in result.output
     assert "显存置信度：detected" in result.output
+    assert "检测失败项" in result.output
+    assert "gpu_vram" in result.output
 
 
 def test_doctor_command_generates_markdown_and_json(tmp_path, monkeypatch):

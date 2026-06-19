@@ -12,6 +12,16 @@ GpuSource = Literal["wmi", "powershell", "system_profiler", "lspci", "fixture", 
 OsFamily = Literal["windows", "macos", "linux", "unknown"]
 Architecture = Literal["x86_64", "arm64", "unknown"]
 InstallerBackend = Literal["winget", "brew", "apt", "manual", "unknown"]
+CheckStatus = Literal[
+    "permission_denied",
+    "command_not_found",
+    "parse_failed",
+    "unavailable",
+    "unknown_error",
+    "timeout",
+]
+RiskLevel = Literal["low", "medium", "high"]
+CapabilityTierName = Literal["Entry", "Standard", "Advanced", "Unknown"]
 
 
 def _safe_text(value: object | None, fallback: str) -> str:
@@ -132,6 +142,47 @@ class PlatformProfile(BaseModel):
         super().__init__(**data)
 
 
+class FailedCheck(BaseModel):
+    """A non-fatal detector failure that should be visible to downstream logic."""
+
+    check_name: str
+    status: CheckStatus = "unknown_error"
+    reason: str
+    impact: str
+    manual_check: str
+
+
+class DiskRiskAnalysis(BaseModel):
+    """Disk and path risk analysis for model-heavy workflows."""
+
+    risk_level: RiskLevel = "low"
+    system_drive: str | None = None
+    disk_free_gb: float | None = None
+    model_directory_status: str = "not_configured"
+    cache_directory_status: str = "not_configured"
+    reasons: list[str] = Field(default_factory=list)
+    recommendations: list[str] = Field(default_factory=list)
+
+
+class ModelPathRecommendation(BaseModel):
+    """Concrete model and cache path guidance."""
+
+    recommended_model_paths: list[str] = Field(default_factory=list)
+    recommended_cache_paths: list[str] = Field(default_factory=list)
+    avoid_paths: list[str] = Field(default_factory=list)
+    notes: list[str] = Field(default_factory=list)
+
+
+class CapabilityTier(BaseModel):
+    """Goal-specific capability tier derived from hardware facts."""
+
+    goal_id: str
+    tier: CapabilityTierName = "Unknown"
+    suitable: list[str] = Field(default_factory=list)
+    not_suitable: list[str] = Field(default_factory=list)
+    risks: list[str] = Field(default_factory=list)
+
+
 class HardwareProfile(BaseModel):
     """Structured facts collected from the local machine.
 
@@ -156,8 +207,10 @@ class HardwareProfile(BaseModel):
     vram_gb: float | None = None
     gpu_vram_gb: float | None = None
     platform_profile: PlatformProfile | None = None
+    failed_checks: list[FailedCheck] = Field(default_factory=list)
     disk_total_gb: float | None = None
     disk_free_gb: float | None = None
+    disk_anchor: str | None = None
     python_installed: bool = False
     python_version: str | None = None
     node_installed: bool = False
@@ -263,6 +316,10 @@ class RecommendationResult(BaseModel):
     risk_warnings: list[str] = Field(default_factory=list)
     not_recommended: list[str] = Field(default_factory=list)
     next_steps: list[str] = Field(default_factory=list)
+    failed_checks: list[FailedCheck] = Field(default_factory=list)
+    disk_risk_analysis: DiskRiskAnalysis | None = None
+    model_path_recommendation: ModelPathRecommendation | None = None
+    capability_tier: CapabilityTier | None = None
 
     @property
     def goal_id(self) -> str:

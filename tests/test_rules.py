@@ -1,4 +1,4 @@
-from stackpilot.models import GpuDevice, HardwareProfile
+from stackpilot.models import FailedCheck, GpuDevice, HardwareProfile
 from stackpilot.rules.engine import evaluate_rules
 from stackpilot.templates import load_template
 
@@ -167,11 +167,33 @@ def test_local_llm_unknown_gpu_and_vram_are_conservative():
     assert "vram_unknown" in ids
 
 
+def test_local_llm_low_dedicated_vram_generates_warning():
+    dedicated = GpuDevice(
+        name="NVIDIA GeForce GTX 1650",
+        vendor="NVIDIA",
+        gpu_type="dedicated",
+        dedicated_vram_gb=4,
+        vram_confidence="detected",
+    )
+    profile = profile_with(gpus=[dedicated], primary_gpu=dedicated, vram_gb=4, gpu_vram_gb=4)
+    findings = evaluate_rules(profile, load_template("local_llm"))
+
+    assert any(finding.id == "local_llm_vram_low" and finding.level == "warning" for finding in findings)
+
+
 def test_creator_setup_missing_gpu_generates_warning():
     profile = profile_with(gpus=[], primary_gpu=None, gpu_names=[], vram_gb=None, gpu_vram_gb=None)
     findings = evaluate_rules(profile, load_template("creator_setup"))
 
     assert any(finding.id == "gpu_missing" and finding.level == "warning" for finding in findings)
+
+
+def test_creator_setup_integrated_gpu_generates_warning():
+    integrated = GpuDevice(name="Intel Iris Xe Graphics", vendor="Intel", gpu_type="integrated", vram_confidence="shared")
+    profile = profile_with(gpus=[integrated], primary_gpu=integrated, vram_gb=None, gpu_vram_gb=None)
+    findings = evaluate_rules(profile, load_template("creator_setup"))
+
+    assert any(finding.id == "creator_integrated_gpu" and finding.level == "warning" for finding in findings)
 
 
 def test_vibe_coding_does_not_emit_gpu_missing_for_non_gpu_goal():
@@ -185,3 +207,30 @@ def test_old_vram_only_profile_remains_compatible_for_comfyui():
     findings = evaluate_rules(profile, load_template("comfyui_starter"))
 
     assert any(finding.id == "comfyui_vram_low" and finding.level == "warning" for finding in findings)
+
+
+def test_failed_checks_become_rule_findings():
+    profile = profile_with(
+        failed_checks=[
+            FailedCheck(
+                check_name="disk",
+                status="unknown_error",
+                reason="disk 检测失败：boom",
+                impact="无法确认剩余空间。",
+                manual_check="资源管理器 -> 此电脑",
+            )
+        ],
+        disk_free_gb=None,
+    )
+    findings = evaluate_rules(profile, load_template("comfyui_starter"))
+
+    failed = next(finding for finding in findings if finding.id == "failed_check_disk")
+    assert failed.level == "critical"
+    assert "资源管理器" in failed.message
+
+
+def test_windows_goal_missing_wsl_generates_info():
+    profile = profile_with(wsl_installed=False, wsl_available=False, wsl_version=None)
+    findings = evaluate_rules(profile, load_template("coding_starter"))
+
+    assert any(finding.id == "wsl_missing" and finding.level == "info" for finding in findings)
