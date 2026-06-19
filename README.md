@@ -1,4 +1,4 @@
-# StackPilot (v0.6-Alpha)
+# StackPilot (v0.5-Alpha)
 
 Windows 本地硬件检测与环境配置规划工具。当前版本为极早期命令行（CLI）内部测试版。
 
