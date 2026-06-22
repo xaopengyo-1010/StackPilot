@@ -1,135 +1,241 @@
+```gitignore
 # =========================================================
 # StackPilot .gitignore
-# Keep official assets, ignore local/generated junk
+# Python + PyInstaller + TUI + future Tauri/Rust GUI
 # =========================================================
 
 
-# Python cache
+# ---------------------------------------------------------
+# Python cache / bytecode
+# ---------------------------------------------------------
 __pycache__/
 *.py[cod]
 *$py.class
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-.coverage
-coverage.xml
-htmlcov/
+*.pyo
+*.pyd
 
 
-# Virtual environments
-.venv/
+# ---------------------------------------------------------
+# Python virtual environments
+# ---------------------------------------------------------
 venv/
+.venv/
 env/
+.env/
 ENV/
 
 
-# Build / packaging
+# ---------------------------------------------------------
+# Python build / packaging
+# ---------------------------------------------------------
 build/
 dist/
 *.egg-info/
 .eggs/
+*.egg
 pip-wheel-metadata/
-*.whl
+wheels/
 
 
-# Generated reports
-outputs/reports/*.md
-outputs/reports/*.json
-outputs/reports/*.html
-outputs/reports/*.log
-!outputs/reports/.gitkeep
+# ---------------------------------------------------------
+# PyInstaller
+# ---------------------------------------------------------
+*.spec
+*.manifest
+*.pyz
 
 
-# Runtime outputs / temp
-outputs/tmp/
-outputs/cache/
-outputs/debug/
+# ---------------------------------------------------------
+# Test / coverage / lint cache
+# ---------------------------------------------------------
+.pytest_cache/
+.pytest_tmp/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+.mypy_cache/
+.pyre/
+.ruff_cache/
+.hypothesis/
+
+
+# ---------------------------------------------------------
+# Local generated outputs
+# ---------------------------------------------------------
+outputs/
+reports/
+logs/
 *.log
 *.tmp
 *.bak
 
 
-# Local config / secrets
+# ---------------------------------------------------------
+# StackPilot generated files
+# ---------------------------------------------------------
+stackpilot-report.md
+stackpilot-report.json
+install-plan.md
+install-plan.json
+install-audit.md
+install-audit.json
+snapshot-plan.md
+snapshot-plan.json
+rollback-plan.md
+rollback-plan.json
+dry-run.md
+dry-run.json
+
+
+# ---------------------------------------------------------
+# Environment / secrets
+# ---------------------------------------------------------
 .env
 .env.*
-*.env
-secrets.json
-local_config.json
-config.local.json
-*.secret
-*.key
-*.pem
+!.env.example
+*.local
 
 
+# ---------------------------------------------------------
+# Windows / macOS / Linux system files
+# ---------------------------------------------------------
+Thumbs.db
+Desktop.ini
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Trashes
+.fseventsd/
+.Spotlight-V100/
+
+
+# ---------------------------------------------------------
 # IDE / editor
+# ---------------------------------------------------------
 .vscode/
 .idea/
-*.sublime-workspace
-*.sublime-project
+*.swp
+*.swo
+*.swn
+*.iml
 
 
-# OS files
-.DS_Store
-Thumbs.db
-desktop.ini
+# ---------------------------------------------------------
+# PowerShell / local scripts cache
+# ---------------------------------------------------------
+*.ps1xml
+*.pssc
+*.psrc
 
 
-# Node / frontend future-proofing
+# ---------------------------------------------------------
+# Node / frontend / future Tauri GUI
+# ---------------------------------------------------------
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+.pnpm-store/
 .next/
-out/
+.nuxt/
+.svelte-kit/
+vite.config.*.timestamp-*
 
 
-# Tauri / desktop future-proofing
-src-tauri/target/
+# ---------------------------------------------------------
+# Tauri / Rust build cache
+# ---------------------------------------------------------
 target/
+src-tauri/target/
 
 
 # ---------------------------------------------------------
-# Assets
-# Official README assets SHOULD be committed:
-# - assets/stackpilot-logo.png
-# - assets/screenshots/*.png
-# - assets/demo/*.gif
-#
-# Only ignore raw drafts / temp design files.
+# Native build artifacts
 # ---------------------------------------------------------
-assets/raw/
-assets/drafts/
-assets/temp/
-assets/tmp/
+*.exe
+*.dll
+*.lib
+*.obj
+*.pdb
+*.ilk
+*.exp
+*.so
+*.dylib
+*.a
+*.o
 
-*.psd
-*.kra
-*.xcf
-*.afdesign
+
+# ---------------------------------------------------------
+# Local AI / Codex / personal notes
+# ---------------------------------------------------------
 AGENTS.md
-.pytest_tmp/
+AGENTS.local.md
+.codex/
+.openai/
+.gemini/
+.grok/
 
 
-# Local AI agent skills / workspace config
+# ---------------------------------------------------------
+# Do not ignore important project files
+# ---------------------------------------------------------
+!README.md
+!LICENSE
+!pyproject.toml
+!requirements.txt
+!requirements-dev.txt
+!package.json
+!pnpm-lock.yaml
+!Cargo.toml
+!Cargo.lock
+```
+
+# Local AI / agent workspace
 .agents/
-skills-lock.json
-
-# Generated StackPilot outputs
-outputs/plans/
-outputs/reports/
-
-# Local drafts / temporary files
+references/
 goal.md
-example/
+skills-lock.json
+check-readme-inspiration-assets.py
+
+# Future website / not part of v0.7 TUI release
+apps/web/
+
+# Local logo experiments / not required for v0.7 README
 assets/LOGO/
 
-README.local.bak.md
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
-# Local README inspiration files
-references/readme-inspiration/
+# Virtual environments
+venv/
+.venv/
+env/
 
-# Local README inspiration files
-references/readme-inspiration/
-references/reports/
-check-readme-inspiration-assets.py
+# Build outputs
+build/
+dist/
+*.spec
+
+# Generated outputs
+outputs/
+reports/
+logs/
+*.log
+
+# Secrets
+.env
+.env.*
+!.env.example
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini

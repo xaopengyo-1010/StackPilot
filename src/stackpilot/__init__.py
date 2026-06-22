@@ -1,3 +1,3 @@
-"""StackPilot v0.5 Alpha environment intelligence."""
+"""StackPilot v0.7 Alpha TUI orchestration."""
 
-__version__ = "0.5.0a0"
+__version__ = "0.7.0a0"

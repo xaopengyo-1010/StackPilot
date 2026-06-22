@@ -56,7 +56,8 @@ class StackPilotRecommender:
         goal: str = "comfyui_starter",
     ) -> dict[str, Any]:
         profile = _profile_from_data(raw_specs)
-        recommendation = recommend(goal, profile=profile)
+        template_goal = TUI_SCENARIO_GOALS.get(goal, goal)
+        recommendation = recommend(template_goal, profile=profile)
         primary_gpu = _primary_gpu(profile)
 
         scores: dict[str, float] = {}
@@ -135,6 +136,7 @@ class StackPilotRecommender:
             "scores": scores,
             "risk_alerts": risk_alerts,
             "recommendations": {
+                "selected_goal": goal,
                 "goal_id": recommendation.template_id,
                 "goal_name": recommendation.display_name,
                 "apps": [model_to_dict(app) for app in recommendation.recommended_apps],

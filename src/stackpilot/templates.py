@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 
 from .models import AppCatalogItem, TemplateDefinition
@@ -50,12 +51,14 @@ def config_dir(path: str | Path | None = None) -> Path:
     if path is not None:
         return Path(path)
 
+    meipass = getattr(sys, "_MEIPASS", None)
     candidates = [
+        Path(meipass) / "configs" if meipass else None,
         Path.cwd() / "configs",
         project_root() / "configs",
     ]
     for candidate in candidates:
-        if candidate.exists():
+        if candidate is not None and candidate.exists():
             return candidate
     return project_root() / "configs"
 
