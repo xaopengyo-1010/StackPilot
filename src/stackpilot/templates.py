@@ -66,7 +66,12 @@ def config_dir(path: str | Path | None = None) -> Path:
 def load_app_catalog(path: str | Path | None = None) -> dict[str, AppCatalogItem]:
     catalog_path = config_dir(path) / "app_catalog.json"
     raw = json.loads(catalog_path.read_text(encoding="utf-8"))
-    apps = raw.get("apps", raw)
+    if isinstance(raw, dict):
+        apps = raw.get("apps", [])
+    elif isinstance(raw, list):
+        apps = raw
+    else:
+        raise ValueError("app_catalog.json must contain a list or an object with an apps list.")
     catalog: dict[str, AppCatalogItem] = {}
     for item in apps:
         app = parse_model(AppCatalogItem, item)

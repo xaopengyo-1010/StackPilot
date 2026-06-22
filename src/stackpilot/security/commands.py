@@ -7,15 +7,26 @@ from dataclasses import dataclass
 FORBIDDEN_COMMAND_PATTERNS = [
     re.compile(r"invoke-webrequest\b.*\|\s*iex", re.IGNORECASE),
     re.compile(r"\bcurl\b.*\|\s*powershell", re.IGNORECASE),
+    re.compile(r"\bcurl\b.*\|\s*(?:sh|bash|zsh)\b", re.IGNORECASE),
+    re.compile(r"\bwget\b.*\|\s*(?:sh|bash|zsh)\b", re.IGNORECASE),
     re.compile(r"\birm\b.*\|\s*iex", re.IGNORECASE),
     re.compile(r"\biwr\b.*\|\s*iex", re.IGNORECASE),
+    re.compile(r"\b(?:powershell|pwsh)\b.*-encodedcommand\b", re.IGNORECASE),
     re.compile(r"set-executionpolicy\s+bypass", re.IGNORECASE),
     re.compile(r"remove-item\s+-recurse\s+c:\\", re.IGNORECASE),
+    re.compile(r"\brm\s+-rf\s+/(?:\s|$)", re.IGNORECASE),
     re.compile(r"\breg\s+add\b", re.IGNORECASE),
     re.compile(r"\breg\s+delete\b", re.IGNORECASE),
     re.compile(r"start-process\b.*\.exe", re.IGNORECASE),
     re.compile(r"\|\s*iex\b", re.IGNORECASE),
 ]
+
+SAFE_TOKEN = r"[A-Za-z0-9_.-]+"
+ALLOWED_WINGET_PATTERN = re.compile(
+    rf"^winget\s+(?:install|uninstall)\s+(?:--id\s+)?{SAFE_TOKEN}(?:\s+--source\s+winget)?$",
+    re.IGNORECASE,
+)
+ALLOWED_WHERE_PATTERN = re.compile(rf"^where\s+{SAFE_TOKEN}$", re.IGNORECASE)
 
 
 @dataclass(frozen=True)
@@ -57,11 +68,6 @@ def is_allowed_command_preview(command: str | None) -> bool:
         return True
 
     lowered = text.casefold()
-    allowed_prefixes = (
-        "winget install ",
-        "winget uninstall ",
-        "where ",
-    )
     allowed_exact = {
         "python --version",
         "git --version",
@@ -70,7 +76,9 @@ def is_allowed_command_preview(command: str | None) -> bool:
         "ffmpeg -version",
         "ollama --version",
     }
-    return lowered in allowed_exact or lowered.startswith(allowed_prefixes)
+    return lowered in allowed_exact or bool(
+        ALLOWED_WINGET_PATTERN.fullmatch(text) or ALLOWED_WHERE_PATTERN.fullmatch(text)
+    )
 
 
 def review_command(command: str | None) -> CommandReview:

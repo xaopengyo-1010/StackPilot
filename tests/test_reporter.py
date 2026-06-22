@@ -81,6 +81,26 @@ def test_reporter_writes_markdown_file_without_opening_notepad(tmp_path):
     assert "ComfyUI" in path.read_text(encoding="utf-8")
 
 
+def test_reporter_does_not_overwrite_reports_with_same_timestamp(tmp_path, monkeypatch):
+    class FixedDateTime:
+        @classmethod
+        def now(cls):
+            return cls()
+
+        def strftime(self, fmt):
+            return "20260622_101802"
+
+    monkeypatch.setattr(reporter, "datetime", FixedDateTime)
+
+    first = reporter.export_report(sample_evaluation(), tmp_path, open_notepad=False)
+    second = reporter.export_report(sample_evaluation(), tmp_path, open_notepad=False)
+
+    assert first.name == "report_20260622_101802.md"
+    assert second.name == "report_20260622_101802_2.md"
+    assert first.exists()
+    assert second.exists()
+
+
 def test_reporter_opens_notepad_with_nonblocking_popen(tmp_path, monkeypatch):
     calls = []
 
@@ -88,7 +108,7 @@ def test_reporter_opens_notepad_with_nonblocking_popen(tmp_path, monkeypatch):
         def __init__(self, args, **kwargs):
             calls.append((args, kwargs))
 
-    monkeypatch.setattr(reporter.os, "name", "nt", raising=False)
+    monkeypatch.setattr(reporter, "_should_open_notepad", lambda: True)
     monkeypatch.setattr(reporter.subprocess, "Popen", PopenSpy)
     monkeypatch.setattr(reporter.subprocess, "CREATE_NO_WINDOW", 0, raising=False)
 

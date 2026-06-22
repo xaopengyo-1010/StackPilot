@@ -1,3 +1,5 @@
+import json
+
 import pytest
 
 from stackpilot.templates import UnknownTemplateError, load_app_catalog, load_template, load_templates
@@ -85,6 +87,30 @@ def test_app_catalog_can_load():
 
     assert required_app_ids <= set(catalog)
     assert catalog["git"].install_methods[0] == "从官方网站或包管理器手动安装"
+
+
+def test_app_catalog_supports_legacy_top_level_list(tmp_path):
+    catalog_path = tmp_path / "app_catalog.json"
+    catalog_path.write_text(
+        json.dumps(
+            [
+                {
+                    "app_id": "git",
+                    "name": "Git",
+                    "category": "dev",
+                    "official_source": "https://git-scm.com",
+                    "install_methods": ["manual"],
+                    "description": "Version control.",
+                }
+            ]
+        ),
+        encoding="utf-8",
+    )
+
+    catalog = load_app_catalog(tmp_path)
+
+    assert set(catalog) == {"git"}
+    assert catalog["git"].name == "Git"
 
 
 def test_all_template_apps_exist_in_catalog():

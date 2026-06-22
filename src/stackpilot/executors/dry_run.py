@@ -4,7 +4,8 @@ from pydantic import BaseModel, Field
 
 from stackpilot.executors.base import PlanExecutor
 from stackpilot.plans.models import InstallPlan, utc_now
-from stackpilot.security.commands import is_manual_plan_text
+from stackpilot.security.commands import is_manual_plan_text, review_command
+from stackpilot.security.risk import max_risk
 
 
 class DryRunStepResult(BaseModel):
@@ -36,6 +37,14 @@ class DryRunExecutor(PlanExecutor):
 
         results: list[DryRunStepResult] = []
         for step in plan.steps:
+            reviewed_commands = [("command", step.command), ("rollback_command", step.rollback_command)]
+            reviewed_commands.extend(
+                (f"verify_command:{index}", command) for index, command in enumerate(step.verify_commands)
+            )
+            command_reviews = [(field, review_command(command)) for field, command in reviewed_commands]
+            blocked_review = next((item for item in command_reviews if item[1].blocked), None)
+            manual_review = next((item for item in command_reviews if not item[1].allowed), None)
+
             if step.risk_level == "blocked":
                 results.append(
                     DryRunStepResult(
@@ -46,6 +55,32 @@ class DryRunExecutor(PlanExecutor):
                         skipped=True,
                         skip_reason="已被安全策略阻止",
                         risk_level=step.risk_level,
+                    )
+                )
+                continue
+            if blocked_review is not None:
+                results.append(
+                    DryRunStepResult(
+                        step_id=step.id,
+                        app_name=step.app_name,
+                        planned_command=step.command,
+                        would_run=False,
+                        skipped=True,
+                        skip_reason=f"{blocked_review[0]} blocked by command safety policy",
+                        risk_level="blocked",
+                    )
+                )
+                continue
+            if manual_review is not None:
+                results.append(
+                    DryRunStepResult(
+                        step_id=step.id,
+                        app_name=step.app_name,
+                        planned_command=step.command,
+                        would_run=False,
+                        skipped=True,
+                        skip_reason=f"{manual_review[0]} requires manual command review",
+                        risk_level=max_risk(step.risk_level, "medium"),
                     )
                 )
                 continue

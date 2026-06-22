@@ -106,6 +106,22 @@ def default_report_dir() -> Path:
     return project_root() / "outputs" / "reports"
 
 
+def _should_open_notepad() -> bool:
+    return os.name == "nt"
+
+
+def _unique_report_path(target_dir: Path, timestamp: str) -> Path:
+    report_path = target_dir / f"report_{timestamp}.md"
+    if not report_path.exists():
+        return report_path
+    counter = 2
+    while True:
+        candidate = target_dir / f"report_{timestamp}_{counter}.md"
+        if not candidate.exists():
+            return candidate
+        counter += 1
+
+
 def export_report(
     evaluation_data: dict[str, Any],
     output_dir: str | Path | None = None,
@@ -115,10 +131,10 @@ def export_report(
     target_dir = Path(output_dir) if output_dir is not None else default_report_dir()
     target_dir.mkdir(parents=True, exist_ok=True)
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    report_path = target_dir / f"report_{timestamp}.md"
+    report_path = _unique_report_path(target_dir, timestamp)
     report_path.write_text(render_markdown(evaluation_data), encoding="utf-8")
 
-    if open_notepad and os.name == "nt":
+    if open_notepad and _should_open_notepad():
         creationflags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
         subprocess.Popen(
             ["cmd", "/c", "start", "", "notepad.exe", str(report_path)],
