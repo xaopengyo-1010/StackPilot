@@ -184,6 +184,64 @@ def score_bar(score: int | float | None, width: int = 10) -> str:
     return f"[{'■' * filled}{'□' * empty}] {value:3d}/100"
 
 
+def _line(value: object | None) -> str:
+    if value is None:
+        return "未检测到"
+    if isinstance(value, str) and not value.strip():
+        return "未检测到"
+    return str(value)
+
+
+def _gb(value: object | None) -> str:
+    return "未检测到" if value is None else f"{value:g} GB" if isinstance(value, int | float) else str(value)
+
+
+def render_hardware_summary(evaluation_data: dict[str, Any], write: Callable[[str], None]) -> None:
+    hardware = evaluation_data.get("hardware_summary", {})
+    os_info = hardware.get("os") or {}
+    computer = hardware.get("computer_model") or {}
+    baseboard = hardware.get("baseboard") or {}
+    bios = hardware.get("bios") or {}
+    cpu = hardware.get("cpu") or {}
+    cpu_details = cpu.get("details") or {}
+    memory = hardware.get("memory") or {}
+    memory_details = memory.get("details") or {}
+    disk = hardware.get("disk") or {}
+    disk_devices = disk.get("devices") or []
+    disk_volumes = disk.get("volumes") or []
+    primary_gpu = hardware.get("primary_gpu") or {}
+
+    write(f"{ANSI['cyan']}┌─ 电脑配置摘要 ──────────────────────────────────────────┐{ANSI['reset']}")
+    write(f"{ANSI['gray']}│  系统: {_line(os_info.get('name'))} {_line(os_info.get('version'))} / {_line(os_info.get('architecture'))}{ANSI['reset']}")
+    if computer:
+        write(f"{ANSI['gray']}│  整机: {_line(computer.get('manufacturer'))} {_line(computer.get('model'))}{ANSI['reset']}")
+    if baseboard:
+        write(f"{ANSI['gray']}│  主板: {_line(baseboard.get('manufacturer'))} {_line(baseboard.get('product'))}{ANSI['reset']}")
+    if bios:
+        write(f"{ANSI['gray']}│  BIOS: {_line(bios.get('manufacturer'))} {_line(bios.get('version'))} {_line(bios.get('release_date'))}{ANSI['reset']}")
+    cpu_name = cpu_details.get("name") or cpu.get("name")
+    cpu_cores = (
+        f"{cpu_details.get('physical_cores') or '?'}C/{cpu_details.get('logical_cores') or cpu.get('cores') or '?'}T"
+        if cpu_details or cpu.get("cores")
+        else "未检测到"
+    )
+    write(f"{ANSI['gray']}│  CPU: {_line(cpu_name)} / {cpu_cores}{ANSI['reset']}")
+    write(f"{ANSI['gray']}│  内存: {_gb(memory_details.get('total_gb') or memory.get('ram_gb') or memory.get('total_ram_gb'))}{ANSI['reset']}")
+    if disk_devices:
+        first_disk = disk_devices[0]
+        more = f" 等 {len(disk_devices)} 块" if len(disk_devices) > 1 else ""
+        write(f"{ANSI['gray']}│  硬盘: {_line(first_disk.get('model'))} / {_gb(first_disk.get('size_gb'))}{more}{ANSI['reset']}")
+    if disk_volumes:
+        first_volume = disk_volumes[0]
+        more = f" 等 {len(disk_volumes)} 个卷" if len(disk_volumes) > 1 else ""
+        write(f"{ANSI['gray']}│  分区: {_line(first_volume.get('name'))} 总计 {_gb(first_volume.get('size_gb'))} 剩余 {_gb(first_volume.get('free_gb'))}{more}{ANSI['reset']}")
+    else:
+        write(f"{ANSI['gray']}│  分区: {_line(disk.get('anchor'))} 总计 {_gb(disk.get('total_gb'))} 剩余 {_gb(disk.get('free_gb'))}{ANSI['reset']}")
+    write(f"{ANSI['gray']}│  GPU: {_line(primary_gpu.get('name'))} / {_line(primary_gpu.get('gpu_type'))} / {_line(primary_gpu.get('vram_confidence'))}{ANSI['reset']}")
+    write(f"{ANSI['cyan']}└────────────────────────────────────────────────────────┘{ANSI['reset']}")
+    write("")
+
+
 def render_scores(
     evaluation_data: dict[str, Any],
     selected_goal: str,
@@ -262,6 +320,7 @@ def render_evaluation(
     selected_goal: str,
     write: Callable[[str], None] = print,
 ) -> None:
+    render_hardware_summary(evaluation_data, write)
     render_scores(evaluation_data, selected_goal, write)
     render_risks(evaluation_data, write)
     render_recommendations(evaluation_data, write)

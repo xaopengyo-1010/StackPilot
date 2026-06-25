@@ -1,0 +1,90 @@
+{
+  "ComputerSystem": {
+    "Manufacturer": "Lenovo",
+    "Model": "Yoga Pro 7 14APH8",
+    "SystemFamily": "Yoga",
+    "SystemSKUNumber": "83AU",
+    "TotalPhysicalMemory": 34359738368
+  },
+  "BaseBoard": {
+    "Manufacturer": "LENOVO",
+    "Product": "LNVNB161216",
+    "Version": "SDK0T76463",
+    "SerialNumber": "PF123456"
+  },
+  "BIOS": {
+    "Manufacturer": "LENOVO",
+    "Name": "M1CN41WW",
+    "SMBIOSBIOSVersion": "M1CN41WW",
+    "ReleaseDate": "20240521000000.000000+000"
+  },
+  "Processors": [
+    {
+      "Name": "AMD Ryzen 7 7840HS w/ Radeon 780M Graphics",
+      "Manufacturer": "AuthenticAMD",
+      "Architecture": 9,
+      "NumberOfCores": 8,
+      "NumberOfLogicalProcessors": 16,
+      "MaxClockSpeed": 3801
+    }
+  ],
+  "PhysicalMemory": [
+    {
+      "Manufacturer": "Samsung",
+      "PartNumber": "LPDDR5",
+      "Capacity": 17179869184,
+      "Speed": 6400,
+      "BankLabel": "BANK 0",
+      "DeviceLocator": "ChannelA"
+    },
+    {
+      "Manufacturer": "Samsung",
+      "PartNumber": "LPDDR5",
+      "Capacity": 17179869184,
+      "Speed": 6400,
+      "BankLabel": "BANK 1",
+      "DeviceLocator": "ChannelB"
+    }
+  ],
+  "DiskDrives": [
+    {
+      "Model": "WD PC SN740 SDDPNQD-1T00",
+      "InterfaceType": "SCSI",
+      "MediaType": "Fixed hard disk media",
+      "Size": 1000202273280,
+      "SerialNumber": "WD123"
+    }
+  ],
+  "LogicalDisks": [
+    {
+      "DeviceID": "C:",
+      "Name": "C:",
+      "FileSystem": "NTFS",
+      "DriveType": 3,
+      "Size": 500106780160,
+      "FreeSpace": 214748364800
+    },
+    {
+      "DeviceID": "D:",
+      "Name": "D:",
+      "FileSystem": "NTFS",
+      "DriveType": 3,
+      "Size": 500095492096,
+      "FreeSpace": 322122547200
+    }
+  ],
+  "VideoControllers": [
+    {
+      "Name": "AMD Radeon 780M Graphics",
+      "AdapterRAM": 536870912,
+      "DriverVersion": "31.0.24033.1003",
+      "PNPDeviceID": "PCI\\VEN_1002&DEV_15BF"
+    }
+  ],
+  "OperatingSystem": {
+    "Caption": "Microsoft Windows 11 Home",
+    "Version": "10.0.26100",
+    "BuildNumber": "26100",
+    "OSArchitecture": "64-bit"
+  }
+}

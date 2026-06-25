@@ -84,18 +84,27 @@ class StackPilotRecommender:
                     "version": profile.os_version,
                     "architecture": profile.architecture,
                 },
+                "computer_model": model_to_dict(profile.computer_model)
+                if profile.computer_model is not None
+                else None,
+                "baseboard": model_to_dict(profile.baseboard) if profile.baseboard is not None else None,
+                "bios": model_to_dict(profile.bios) if profile.bios is not None else None,
                 "cpu": {
                     "name": profile.cpu_name,
                     "cores": profile.cpu_cores,
+                    "details": model_to_dict(profile.cpu) if profile.cpu is not None else None,
                 },
                 "memory": {
                     "ram_gb": profile.ram_gb,
                     "total_ram_gb": profile.total_ram_gb,
+                    "details": model_to_dict(profile.memory) if profile.memory is not None else None,
                 },
                 "disk": {
                     "anchor": profile.disk_anchor,
                     "total_gb": profile.disk_total_gb,
                     "free_gb": profile.disk_free_gb,
+                    "devices": [model_to_dict(disk) for disk in profile.disks],
+                    "volumes": [model_to_dict(volume) for volume in profile.disk_volumes],
                 },
                 "gpus": [model_to_dict(gpu) for gpu in profile.gpus],
                 "primary_gpu": model_to_dict(primary_gpu) if primary_gpu is not None else None,

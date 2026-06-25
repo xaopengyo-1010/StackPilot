@@ -43,6 +43,63 @@ def _platform_value(profile: HardwareProfile, field: str) -> str:
     return "未检测到" if profile.platform_profile is None else _missing(getattr(profile.platform_profile, field))
 
 
+def _join_parts(*parts: object | None) -> str:
+    values = [_missing(part) for part in parts if part is not None and _missing(part) != "鏈娴嬪埌"]
+    return " / ".join(values) if values else "鏈娴嬪埌"
+
+
+def _computer_model(profile: HardwareProfile) -> str:
+    model = profile.computer_model
+    return "鏈娴嬪埌" if model is None else _join_parts(model.manufacturer, model.model, model.system_sku)
+
+
+def _baseboard(profile: HardwareProfile) -> str:
+    board = profile.baseboard
+    return "鏈娴嬪埌" if board is None else _join_parts(board.manufacturer, board.product, board.version)
+
+
+def _bios(profile: HardwareProfile) -> str:
+    bios = profile.bios
+    return "鏈娴嬪埌" if bios is None else _join_parts(bios.manufacturer, bios.version, bios.release_date)
+
+
+def _cpu(profile: HardwareProfile) -> str:
+    cpu = profile.cpu
+    if cpu is None:
+        return _missing(profile.cpu_name)
+    cores = f"{cpu.physical_cores or '?'}C/{cpu.logical_cores or '?'}T" if cpu.physical_cores or cpu.logical_cores else None
+    clock = f"{cpu.max_clock_mhz} MHz" if cpu.max_clock_mhz else None
+    return _join_parts(cpu.name, cores, clock)
+
+
+def _memory(profile: HardwareProfile) -> str:
+    memory = profile.memory
+    if memory is None:
+        return _gb(profile.ram_gb)
+    modules = [
+        _join_parts(module.device_locator or module.bank_label, _gb(module.capacity_gb), f"{module.speed_mhz} MHz" if module.speed_mhz else None)
+        for module in memory.modules
+    ]
+    suffix = "\n".join(f"- {module}" for module in modules if module != "鏈娴嬪埌")
+    total = f"总计 {_gb(memory.total_gb)}"
+    return f"{total}\n{suffix}" if suffix else total
+
+
+def _disk_devices(profile: HardwareProfile) -> str:
+    if not profile.disks:
+        return "鏈娴嬪埌"
+    return "\n".join(f"- {_join_parts(disk.model, _gb(disk.size_gb), disk.media_type, disk.interface_type)}" for disk in profile.disks)
+
+
+def _disk_volumes(profile: HardwareProfile) -> str:
+    if not profile.disk_volumes:
+        return _join_parts(profile.disk_anchor, f"总计 {_gb(profile.disk_total_gb)}", f"剩余 {_gb(profile.disk_free_gb)}")
+    return "\n".join(
+        f"- {_join_parts(volume.name, volume.file_system, f'总计 {_gb(volume.size_gb)}', f'剩余 {_gb(volume.free_gb)}')}"
+        for volume in profile.disk_volumes
+    )
+
+
 def _print_items(title: str, values: list[str], empty_text: str) -> None:
     console.print(f"[bold]{title}[/bold]")
     if values:
@@ -97,13 +154,18 @@ def scan_command() -> None:
         "架构": _missing(profile.architecture),
         "平台类型": _platform_value(profile, "os_family"),
         "默认安装后端": _platform_value(profile, "default_installer_backend"),
-        "CPU": _missing(profile.cpu_name),
+        "整机型号": _computer_model(profile),
+        "主板": _baseboard(profile),
+        "BIOS": _bios(profile),
+        "CPU": _cpu(profile),
         "CPU 核心数": _missing(profile.cpu_cores),
-        "内存": _gb(profile.ram_gb),
+        "内存": _memory(profile),
         "检测到的 GPU": gpu_list,
         "主要性能判断 GPU": profile.primary_gpu.name if profile.primary_gpu else "未能可靠确认",
         "GPU 选择原因": profile.gpu_selection_reason or "未能可靠确认 GPU 选择原因",
         "兼容显存字段": _gb(profile.vram_gb),
+        "物理磁盘": _disk_devices(profile),
+        "磁盘卷": _disk_volumes(profile),
         "磁盘总容量": _gb(profile.disk_total_gb),
         "磁盘剩余空间": _gb(profile.disk_free_gb),
         "Python": profile.python_version if profile.python_installed and profile.python_version else "未检测到",

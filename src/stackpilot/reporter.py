@@ -30,9 +30,16 @@ def render_markdown(evaluation_data: dict[str, Any]) -> str:
     recommendations = evaluation_data.get("recommendations", {})
 
     os_info = hardware.get("os") or {}
+    computer = hardware.get("computer_model") or {}
+    baseboard = hardware.get("baseboard") or {}
+    bios = hardware.get("bios") or {}
     cpu = hardware.get("cpu") or {}
+    cpu_details = cpu.get("details") or {}
     memory = hardware.get("memory") or {}
+    memory_details = memory.get("details") or {}
     disk = hardware.get("disk") or {}
+    disk_devices = disk.get("devices") or []
+    disk_volumes = disk.get("volumes") or []
     primary_gpu = hardware.get("primary_gpu") or {}
     tools = hardware.get("tools") or {}
 
@@ -67,10 +74,15 @@ def render_markdown(evaluation_data: dict[str, Any]) -> str:
             "",
             f"- OS: {_line(os_info.get('name'))} {_line(os_info.get('version'))}",
             f"- Architecture: {_line(os_info.get('architecture'))}",
-            f"- CPU: {_line(cpu.get('name'))}",
-            f"- CPU cores: {_line(cpu.get('cores'))}",
-            f"- RAM GB: {_line(memory.get('ram_gb') or memory.get('total_ram_gb'))}",
+            f"- Computer: {_line(computer.get('manufacturer'))} {_line(computer.get('model'))}",
+            f"- Baseboard: {_line(baseboard.get('manufacturer'))} {_line(baseboard.get('product'))}",
+            f"- BIOS: {_line(bios.get('manufacturer'))} {_line(bios.get('version'))} {_line(bios.get('release_date'))}",
+            f"- CPU: {_line(cpu_details.get('name') or cpu.get('name'))}",
+            f"- CPU cores: {_line(cpu_details.get('physical_cores'))}C/{_line(cpu_details.get('logical_cores') or cpu.get('cores'))}T",
+            f"- RAM GB: {_line(memory_details.get('total_gb') or memory.get('ram_gb') or memory.get('total_ram_gb'))}",
             f"- Disk: {_line(disk.get('anchor'))} total={_line(disk.get('total_gb'))}GB free={_line(disk.get('free_gb'))}GB",
+            f"- Physical disks: {_line(len(disk_devices))}",
+            f"- Disk volumes: {_line(len(disk_volumes))}",
             f"- Primary GPU: {_line(primary_gpu.get('name'))}",
             f"- GPU type: {_line(primary_gpu.get('gpu_type'))}",
             f"- VRAM confidence: {_line(primary_gpu.get('vram_confidence'))}",

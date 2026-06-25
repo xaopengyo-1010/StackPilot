@@ -54,6 +54,14 @@ def parse_windows_gpu_controllers(raw_controllers: Iterable[Mapping[str, object]
         gpu_type = classify_gpu_type(name, vendor, controller)
         adapter_ram_gb = adapter_ram_to_gb(_field(controller, "adapter_ram"))
         estimated_vram_gb = estimate_dedicated_vram_from_name(name) if gpu_type == "dedicated" else None
+        if (
+            gpu_type == "dedicated"
+            and adapter_ram_gb is not None
+            and estimated_vram_gb is not None
+            and adapter_ram_gb <= 4
+            and estimated_vram_gb > adapter_ram_gb
+        ):
+            adapter_ram_gb = None
         vram_confidence = classify_vram_confidence(
             name=name,
             gpu_type=gpu_type,

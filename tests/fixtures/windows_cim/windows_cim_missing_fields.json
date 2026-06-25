@@ -1,0 +1,30 @@
+{
+  "ComputerSystem": {
+    "Manufacturer": "Default string",
+    "Model": null
+  },
+  "BaseBoard": null,
+  "BIOS": {
+    "Manufacturer": "To Be Filled By O.E.M.",
+    "ReleaseDate": "bad-date"
+  },
+  "Processors": [],
+  "PhysicalMemory": [
+    {
+      "Capacity": "not-a-number",
+      "Speed": null
+    }
+  ],
+  "DiskDrives": [
+    {
+      "Model": "Unknown Disk",
+      "Size": "not-a-number"
+    }
+  ],
+  "LogicalDisks": [],
+  "VideoControllers": {
+    "Name": "Microsoft Basic Display Adapter",
+    "AdapterRAM": 0
+  },
+  "OperatingSystem": {}
+}

@@ -37,6 +37,7 @@ def test_detector_failure_records_failed_check_without_crashing(monkeypatch):
     def raise_permission_error():
         raise PermissionError("GPU access denied")
 
+    monkeypatch.setattr(detector, "detect_windows_hardware_snapshot", lambda: {})
     monkeypatch.setattr(detector, "detect_windows_gpu_controllers", lambda: [])
     monkeypatch.setattr(detector, "detect_gpu_names", raise_permission_error)
     monkeypatch.setattr(detector, "detect_gpu_vram_gb", lambda: None)
@@ -72,6 +73,7 @@ def test_core_probe_failures_are_non_fatal_and_structured(monkeypatch):
 
     monkeypatch.setattr(scanner_module.psutil, "disk_usage", lambda anchor: raise_runtime_error("disk"))
     monkeypatch.setattr(scanner_module.platform, "python_version", lambda: raise_runtime_error("python"))
+    monkeypatch.setattr(detector, "detect_windows_hardware_snapshot", lambda: {})
     monkeypatch.setattr(detector, "detect_windows_gpu_controllers", lambda: [])
     monkeypatch.setattr(detector, "detect_gpu_names", lambda: raise_runtime_error("gpu"))
     monkeypatch.setattr(detector, "detect_gpu_vram_gb", lambda: None)
@@ -117,6 +119,7 @@ def test_missing_command_records_command_not_found(monkeypatch):
 def test_scanner_uses_windows_gpu_parser_and_primary_selector(monkeypatch):
     from stackpilot import detector
 
+    monkeypatch.setattr(detector, "detect_windows_hardware_snapshot", lambda: {})
     monkeypatch.setattr(
         detector,
         "detect_windows_gpu_controllers",

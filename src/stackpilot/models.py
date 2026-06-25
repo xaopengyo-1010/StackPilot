@@ -152,6 +152,92 @@ class FailedCheck(BaseModel):
     manual_check: str
 
 
+class ComputerModel(BaseModel):
+    """Computer vendor and model facts reported by the operating system."""
+
+    manufacturer: str | None = None
+    model: str | None = None
+    system_family: str | None = None
+    system_sku: str | None = None
+    total_physical_memory_gb: float | None = None
+    source: str = "unknown"
+
+
+class BaseboardInfo(BaseModel):
+    """Motherboard/baseboard facts."""
+
+    manufacturer: str | None = None
+    product: str | None = None
+    version: str | None = None
+    serial_number: str | None = None
+    source: str = "unknown"
+
+
+class BiosInfo(BaseModel):
+    """BIOS/UEFI facts."""
+
+    manufacturer: str | None = None
+    name: str | None = None
+    version: str | None = None
+    release_date: str | None = None
+    serial_number: str | None = None
+    source: str = "unknown"
+
+
+class CpuInfo(BaseModel):
+    """Structured CPU facts."""
+
+    name: str | None = None
+    manufacturer: str | None = None
+    architecture: str | None = None
+    physical_cores: int | None = None
+    logical_cores: int | None = None
+    max_clock_mhz: int | None = None
+    source: str = "unknown"
+
+
+class MemoryModule(BaseModel):
+    """Single physical memory module facts."""
+
+    manufacturer: str | None = None
+    part_number: str | None = None
+    capacity_gb: float | None = None
+    speed_mhz: int | None = None
+    bank_label: str | None = None
+    device_locator: str | None = None
+    source: str = "unknown"
+
+
+class MemoryInfo(BaseModel):
+    """Structured memory facts."""
+
+    total_gb: float | None = None
+    modules: list[MemoryModule] = Field(default_factory=list)
+    source: str = "unknown"
+
+
+class DiskDevice(BaseModel):
+    """Physical disk facts."""
+
+    model: str | None = None
+    interface_type: str | None = None
+    media_type: str | None = None
+    size_gb: float | None = None
+    serial_number: str | None = None
+    source: str = "unknown"
+
+
+class DiskVolume(BaseModel):
+    """Logical disk/volume facts."""
+
+    name: str | None = None
+    file_system: str | None = None
+    drive_type: str | None = None
+    size_gb: float | None = None
+    free_gb: float | None = None
+    source: str = "unknown"
+
+
 class DiskRiskAnalysis(BaseModel):
     """Disk and path risk analysis for model-heavy workflows."""
 
@@ -195,10 +281,17 @@ class HardwareProfile(BaseModel):
     os_name: str = "未知"
     os_version: str = "未知"
     architecture: str = "未知"
+    computer_model: ComputerModel | None = None
+    baseboard: BaseboardInfo | None = None
+    bios: BiosInfo | None = None
+    cpu: CpuInfo | None = None
     cpu_name: str | None = None
     cpu_cores: int | None = None
+    memory: MemoryInfo | None = None
     ram_gb: float | None = None
     total_ram_gb: float | None = None
+    disks: list[DiskDevice] = Field(default_factory=list)
+    disk_volumes: list[DiskVolume] = Field(default_factory=list)
     gpu_name: str | None = None
     gpu_names: list[str] = Field(default_factory=list)
     gpus: list[GpuDevice] = Field(default_factory=list)
@@ -228,6 +321,18 @@ class HardwareProfile(BaseModel):
     warnings: list[str] = Field(default_factory=list)
 
     def __init__(self, **data):
+        cpu = data.get("cpu")
+        if data.get("cpu_name") is None and cpu is not None:
+            data["cpu_name"] = cpu.name if isinstance(cpu, CpuInfo) else cpu.get("name") if isinstance(cpu, dict) else None
+        if data.get("cpu_cores") is None and cpu is not None:
+            data["cpu_cores"] = (
+                cpu.logical_cores if isinstance(cpu, CpuInfo) else cpu.get("logical_cores") if isinstance(cpu, dict) else None
+            )
+
+        memory = data.get("memory")
+        if data.get("ram_gb") is None and memory is not None:
+            data["ram_gb"] = memory.total_gb if isinstance(memory, MemoryInfo) else memory.get("total_gb") if isinstance(memory, dict) else None
+
         if data.get("ram_gb") is None and data.get("total_ram_gb") is not None:
             data["ram_gb"] = data["total_ram_gb"]
         if data.get("total_ram_gb") is None and data.get("ram_gb") is not None:

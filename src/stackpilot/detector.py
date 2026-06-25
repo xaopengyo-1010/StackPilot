@@ -66,7 +66,11 @@ def _powershell_command(script: str) -> str | None:
     shell = "powershell" if command_exists("powershell") else "pwsh"
     if not command_exists(shell):
         return None
-    return safe_run([shell, "-NoProfile", "-NonInteractive", "-Command", script])
+    utf8_prefix = (
+        "[Console]::OutputEncoding = [System.Text.UTF8Encoding]::new($false); "
+        "$OutputEncoding = [Console]::OutputEncoding; "
+    )
+    return safe_run([shell, "-NoProfile", "-NonInteractive", "-Command", f"{utf8_prefix}{script}"])
 
 
 def detect_wsl() -> bool:
@@ -149,6 +153,41 @@ def detect_windows_gpu_controllers() -> list[dict[str, object]]:
     if isinstance(payload, list):
         return [item for item in payload if isinstance(item, dict)]
     return []
+
+
+def detect_windows_hardware_snapshot() -> dict[str, object]:
+    if platform.system() != "Windows":
+        return {}
+
+    output = _powershell_command(
+        "$payload = [ordered]@{"
+        "ComputerSystem = Get-CimInstance Win32_ComputerSystem | "
+        "Select-Object Manufacturer,Model,SystemFamily,SystemSKUNumber,TotalPhysicalMemory;"
+        "BaseBoard = Get-CimInstance Win32_BaseBoard | "
+        "Select-Object Manufacturer,Product,Version,SerialNumber;"
+        "BIOS = Get-CimInstance Win32_BIOS | "
+        "Select-Object Manufacturer,Name,SMBIOSBIOSVersion,Version,ReleaseDate,SerialNumber;"
+        "Processors = @(Get-CimInstance Win32_Processor | "
+        "Select-Object Name,Manufacturer,Architecture,NumberOfCores,NumberOfLogicalProcessors,MaxClockSpeed);"
+        "PhysicalMemory = @(Get-CimInstance Win32_PhysicalMemory | "
+        "Select-Object Manufacturer,PartNumber,Capacity,Speed,ConfiguredClockSpeed,BankLabel,DeviceLocator);"
+        "DiskDrives = @(Get-CimInstance Win32_DiskDrive | "
+        "Select-Object Model,Caption,InterfaceType,MediaType,Size,SerialNumber);"
+        "LogicalDisks = @(Get-CimInstance Win32_LogicalDisk -Filter 'DriveType=3' | "
+        "Select-Object DeviceID,Name,FileSystem,DriveType,Size,FreeSpace);"
+        "VideoControllers = @(Get-CimInstance Win32_VideoController | "
+        "Select-Object Name,VideoProcessor,AdapterRAM,DriverVersion,PNPDeviceID);"
+        "OperatingSystem = Get-CimInstance Win32_OperatingSystem | "
+        "Select-Object Caption,Version,BuildNumber,OSArchitecture"
+        "}; $payload | ConvertTo-Json -Depth 5"
+    )
+    if not output:
+        return {}
+    try:
+        payload = json.loads(output)
+    except json.JSONDecodeError:
+        return {}
+    return payload if isinstance(payload, dict) else {}
 
 
 def detect_gpu_vram_gb() -> float | None:

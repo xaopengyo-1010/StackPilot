@@ -10,6 +10,7 @@ from . import detector
 from .hardware.gpu_classifier import classify_gpu_type, classify_gpu_vendor, classify_vram_confidence
 from .hardware.gpu_selector import select_primary_gpu
 from .hardware.vram import estimate_dedicated_vram_from_name
+from .hardware.windows_cim import parse_windows_hardware_snapshot
 from .hardware.windows_gpu import parse_windows_gpu_controllers
 from .models import FailedCheck, GpuDevice, HardwareProfile
 from .platform.detector import detect_platform_profile
@@ -17,6 +18,10 @@ from .utils import bytes_to_gb
 
 
 CHECK_METADATA = {
+    "windows_hardware_snapshot": (
+        "无法一次性读取 Windows 结构化硬件快照，部分配置会使用备用探测或显示为未检测到。",
+        "打开 系统信息(msinfo32) 或 设备管理器 手动确认整机、主板、BIOS、磁盘和显卡信息",
+    ),
     "memory": (
         "无法读取内存信息，内存容量相关建议可信度下降。",
         "任务管理器 -> 性能 -> 内存",
@@ -170,10 +175,21 @@ def scan_system() -> HardwareProfile:
         )
         return output.splitlines()[0].strip() if output else None
 
+    raw_windows_hardware = probe("windows_hardware_snapshot", detector.detect_windows_hardware_snapshot, {})
+    windows_hardware = parse_windows_hardware_snapshot(raw_windows_hardware)
+    computer_model = windows_hardware.get("computer_model")
+    baseboard = windows_hardware.get("baseboard")
+    bios = windows_hardware.get("bios")
+    cpu_info = windows_hardware.get("cpu")
+    memory_info = windows_hardware.get("memory")
+    disk_devices = windows_hardware.get("disks") or []
+    disk_volumes = windows_hardware.get("disk_volumes") or []
+    operating_system = windows_hardware.get("operating_system")
+
     ram = probe("memory", psutil.virtual_memory)
     disk = probe("disk", lambda: psutil.disk_usage(disk_anchor))
     platform_profile = probe("platform", detect_platform_profile)
-    raw_windows_gpus = probe("gpu_controllers", detector.detect_windows_gpu_controllers, [])
+    raw_windows_gpus = windows_hardware.get("raw_gpu_controllers") or probe("gpu_controllers", detector.detect_windows_gpu_controllers, [])
     gpus = parse_windows_gpu_controllers(raw_windows_gpus)
     legacy_gpu_vram_gb = None
 
@@ -229,22 +245,46 @@ def scan_system() -> HardwareProfile:
     pnpm_version = command_version("pnpm", "pnpm", ["--version"])
     docker_version = command_version("docker", "docker", ["--version"])
 
+    os_name = platform.system() or "未知"
+    os_version = platform.version() or platform.release() or "未知"
+    architecture = platform.machine() or "未知"
+    if isinstance(operating_system, dict):
+        os_name = str(operating_system.get("Caption") or os_name).strip()
+        os_version = str(operating_system.get("Version") or operating_system.get("BuildNumber") or os_version).strip()
+        architecture = str(operating_system.get("OSArchitecture") or architecture).strip()
+
+    anchor_volume = None
+    for volume in disk_volumes:
+        if getattr(volume, "name", None) and disk_anchor.casefold().startswith(str(volume.name).casefold()):
+            anchor_volume = volume
+            break
+    disk_total_gb = getattr(anchor_volume, "size_gb", None) if anchor_volume is not None else bytes_to_gb(disk.total) if disk else None
+    disk_free_gb = getattr(anchor_volume, "free_gb", None) if anchor_volume is not None else bytes_to_gb(disk.free) if disk else None
+    ram_gb = getattr(memory_info, "total_gb", None) or (bytes_to_gb(ram.total) if ram else None)
+
     return HardwareProfile(
-        os_name=platform.system() or "未知",
-        os_version=platform.version() or platform.release() or "未知",
-        architecture=platform.machine() or "未知",
+        os_name=os_name,
+        os_version=os_version,
+        architecture=architecture,
+        computer_model=computer_model,
+        baseboard=baseboard,
+        bios=bios,
+        cpu=cpu_info,
+        memory=memory_info,
+        disks=disk_devices,
+        disk_volumes=disk_volumes,
         platform_profile=platform_profile,
         failed_checks=failed_checks,
-        cpu_name=probe("cpu", cpu_name),
-        cpu_cores=probe("cpu_cores", lambda: psutil.cpu_count(logical=True)),
-        total_ram_gb=bytes_to_gb(ram.total) if ram else None,
+        cpu_name=getattr(cpu_info, "name", None) or probe("cpu", cpu_name),
+        cpu_cores=getattr(cpu_info, "logical_cores", None) or probe("cpu_cores", lambda: psutil.cpu_count(logical=True)),
+        total_ram_gb=ram_gb,
         gpu_names=gpu_names,
         gpus=gpus,
         primary_gpu=primary_gpu,
         gpu_selection_reason=gpu_selection_reason,
         gpu_vram_gb=gpu_vram_gb,
-        disk_total_gb=bytes_to_gb(disk.total) if disk else None,
-        disk_free_gb=bytes_to_gb(disk.free) if disk else None,
+        disk_total_gb=disk_total_gb,
+        disk_free_gb=disk_free_gb,
         disk_anchor=disk_anchor,
         python_installed=python_version is not None,
         python_version=python_version,

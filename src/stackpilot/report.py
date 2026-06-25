@@ -38,6 +38,46 @@ def _list(values: list[str], empty_text: str) -> str:
     return "\n".join(f"- {value}" for value in values) if values else empty_text
 
 
+def _join_parts(*parts: object | None) -> str:
+    values = [_missing(part) for part in parts if part is not None and _missing(part) != "未检测到"]
+    return " / ".join(values) if values else "未检测到"
+
+
+def _hardware_detail_lines(profile: HardwareProfile) -> list[str]:
+    lines: list[str] = []
+    if profile.computer_model is not None:
+        lines.append(
+            f"- 整机型号：{_join_parts(profile.computer_model.manufacturer, profile.computer_model.model, profile.computer_model.system_sku)}"
+        )
+    if profile.baseboard is not None:
+        lines.append(f"- 主板：{_join_parts(profile.baseboard.manufacturer, profile.baseboard.product, profile.baseboard.version)}")
+    if profile.bios is not None:
+        lines.append(f"- BIOS：{_join_parts(profile.bios.manufacturer, profile.bios.version, profile.bios.release_date)}")
+    if profile.cpu is not None:
+        cores = (
+            f"{profile.cpu.physical_cores or '?'}C/{profile.cpu.logical_cores or '?'}T"
+            if profile.cpu.physical_cores or profile.cpu.logical_cores
+            else None
+        )
+        clock = f"{profile.cpu.max_clock_mhz} MHz" if profile.cpu.max_clock_mhz else None
+        lines.append(f"- CPU 详情：{_join_parts(profile.cpu.name, cores, clock)}")
+    if profile.memory is not None:
+        lines.append(f"- 内存详情：总计 {_gb(profile.memory.total_gb)}")
+        for module in profile.memory.modules:
+            lines.append(
+                f"  - {_join_parts(module.device_locator or module.bank_label, _gb(module.capacity_gb), f'{module.speed_mhz} MHz' if module.speed_mhz else None)}"
+            )
+    if profile.disks:
+        lines.append("- 物理磁盘：")
+        for disk in profile.disks:
+            lines.append(f"  - {_join_parts(disk.model, _gb(disk.size_gb), disk.media_type, disk.interface_type)}")
+    if profile.disk_volumes:
+        lines.append("- 磁盘卷：")
+        for volume in profile.disk_volumes:
+            lines.append(f"  - {_join_parts(volume.name, volume.file_system, f'总计 {_gb(volume.size_gb)}', f'剩余 {_gb(volume.free_gb)}')}")
+    return lines
+
+
 def render_markdown(report_data: ReportData) -> str:
     """Render a Chinese Markdown report from structured report data."""
 
@@ -76,6 +116,7 @@ def render_markdown(report_data: ReportData) -> str:
             profile_lines.extend([f"- {key}：", value])
         else:
             profile_lines.append(f"- {key}：{value}")
+    profile_lines.extend(_hardware_detail_lines(profile))
     profile_md = "\n".join(profile_lines)
 
     if profile.failed_checks:

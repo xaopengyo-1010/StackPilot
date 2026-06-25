@@ -1,0 +1,82 @@
+{
+  "ComputerSystem": {
+    "Manufacturer": "System manufacturer",
+    "Model": "System Product Name",
+    "SystemSKUNumber": "SKU",
+    "TotalPhysicalMemory": 68719476736
+  },
+  "BaseBoard": {
+    "Manufacturer": "ASUSTeK COMPUTER INC.",
+    "Product": "TUF GAMING B650M-PLUS",
+    "Version": "Rev 1.xx"
+  },
+  "BIOS": {
+    "Manufacturer": "American Megatrends Inc.",
+    "SMBIOSBIOSVersion": "2413",
+    "ReleaseDate": "20240207000000.000000+000"
+  },
+  "Processors": {
+    "Name": "AMD Ryzen 7 7800X3D 8-Core Processor",
+    "Manufacturer": "AuthenticAMD",
+    "Architecture": 9,
+    "NumberOfCores": 8,
+    "NumberOfLogicalProcessors": 16,
+    "MaxClockSpeed": 4200
+  },
+  "PhysicalMemory": [
+    {
+      "Manufacturer": "Kingston",
+      "PartNumber": "KF560C36",
+      "Capacity": 34359738368,
+      "ConfiguredClockSpeed": 6000,
+      "DeviceLocator": "DIMM_A2"
+    },
+    {
+      "Manufacturer": "Kingston",
+      "PartNumber": "KF560C36",
+      "Capacity": 34359738368,
+      "ConfiguredClockSpeed": 6000,
+      "DeviceLocator": "DIMM_B2"
+    }
+  ],
+  "DiskDrives": [
+    {
+      "Model": "Samsung SSD 990 PRO 2TB",
+      "InterfaceType": "SCSI",
+      "MediaType": "SSD",
+      "Size": 2000398934016
+    },
+    {
+      "Model": "ST4000DM004-2CV104",
+      "InterfaceType": "IDE",
+      "MediaType": null,
+      "Size": 4000784417280
+    }
+  ],
+  "LogicalDisks": {
+    "DeviceID": "C:",
+    "FileSystem": "NTFS",
+    "DriveType": 3,
+    "Size": 2000396742656,
+    "FreeSpace": 1099511627776
+  },
+  "VideoControllers": [
+    {
+      "Name": "NVIDIA GeForce RTX 4070 SUPER",
+      "AdapterRAM": 4293918720,
+      "DriverVersion": "555.85",
+      "PNPDeviceID": "PCI\\VEN_10DE&DEV_2783"
+    },
+    {
+      "Name": "AMD Radeon(TM) Graphics",
+      "AdapterRAM": 536870912,
+      "DriverVersion": "31.0.24033.1003"
+    }
+  ],
+  "OperatingSystem": {
+    "Caption": "Microsoft Windows 11 Pro",
+    "Version": "10.0.22631",
+    "BuildNumber": "22631",
+    "OSArchitecture": "64-bit"
+  }
+}
