@@ -178,6 +178,6 @@ def test_build_command_uses_onefile_clean_name_and_configs():
 
     assert "--onefile" in command
     assert "--clean" in command
-    assert "--name=stackpilot" in command
+    assert "--name=StackPilot_TUI" in command
     assert "--add-data" in command
     assert any("configs" in item for item in command)

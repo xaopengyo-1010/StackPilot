@@ -8,6 +8,7 @@ from typing import Any, Callable
 from stackpilot.detector import StackPilotDetector
 from stackpilot.recommender import StackPilotRecommender
 from stackpilot.reporter import export_report
+from stackpilot.templates import UnknownTemplateError
 
 
 VERSION = "v0.7.1-beta"
@@ -20,6 +21,45 @@ ANSI = {
     "gray": "\033[90m",
     "reset": "\033[0m",
 }
+
+
+class TuiInputClosed(Exception):
+    """Raised when stdin closes while the TUI is waiting for input."""
+
+
+def format_tui_error(exc: Exception) -> str:
+    if isinstance(exc, UnknownTemplateError):
+        if not exc.available:
+            return (
+                "未找到内置配置模板。请确认正在运行的是最新的 StackPilot_TUI.exe；"
+                "如果是从源码运行，请在项目根目录执行。"
+            )
+        return str(exc)
+    if isinstance(exc, FileNotFoundError):
+        return f"配置文件缺失：{exc}"
+    if isinstance(exc, OSError):
+        return f"检测或文件访问失败：{exc}"
+    if isinstance(exc, ValueError):
+        return f"配置数据解析失败：{exc}"
+    return f"检测流程失败：{exc.__class__.__name__}: {exc}"
+
+
+def render_tui_error(message: str, write: Callable[[str], None] = print) -> None:
+    write(f"{ANSI['red']}[错误] {message}{ANSI['reset']}")
+    write(f"{ANSI['yellow']}程序没有修改系统。请保留这段提示，方便反馈问题。{ANSI['reset']}")
+    write("")
+
+
+def wait_after_error(
+    read: Callable[[str], str] = input,
+    write: Callable[[str], None] = print,
+) -> bool:
+    try:
+        read(f"{ANSI['gray']}按 Enter 返回主菜单，或关闭窗口退出...{ANSI['reset']}")
+    except (EOFError, KeyboardInterrupt):
+        write(f"{ANSI['gray']}输入已结束，程序退出。{ANSI['reset']}")
+        return False
+    return True
 
 SCENARIOS = {
     "1": ("coding", "Coding 环境", "通用软件开发后端"),
@@ -57,7 +97,10 @@ def clear_screen() -> None:
 
 def prompt(read: Callable[[str], str] = input, accent: str = "cyan") -> str:
     prefix = f"{ANSI['gray']}stackpilot@local {ANSI[accent]}❯ {ANSI['reset']}"
-    return read(prefix).strip()
+    try:
+        return read(prefix).strip()
+    except (EOFError, KeyboardInterrupt) as exc:
+        raise TuiInputClosed from exc
 
 
 def run_pipeline(goal: str = "ai") -> dict[str, Any]:
@@ -252,7 +295,7 @@ def control_loop(
             write("")
             continue
         if choice == "3":
-            sys.exit(0)
+            return "exit"
         write(f"{ANSI['yellow']}请输入 1、2 或 3。{ANSI['reset']}")
         write("")
 
@@ -264,18 +307,34 @@ def tui_loop(
     while True:
         clear_screen()
         draw_logo(write)
-        goal = choose_goal(read, write)
+        try:
+            goal = choose_goal(read, write)
+        except TuiInputClosed:
+            write(f"{ANSI['gray']}输入已结束，程序退出。{ANSI['reset']}")
+            return
 
         clear_screen()
         draw_logo(write)
         write(f"{ANSI['green']}正在检测当前主机，目标场景: {SCENARIO_NAMES[goal]}{ANSI['reset']}")
         write("")
 
-        evaluation_data = run_pipeline(goal)
+        try:
+            evaluation_data = run_pipeline(goal)
+        except Exception as exc:
+            render_tui_error(format_tui_error(exc), write)
+            if wait_after_error(read, write):
+                continue
+            return
         render_evaluation(evaluation_data, goal, write)
 
-        if control_loop(evaluation_data, read, write) == "rescan":
+        try:
+            action = control_loop(evaluation_data, read, write)
+        except TuiInputClosed:
+            write(f"{ANSI['gray']}输入已结束，程序退出。{ANSI['reset']}")
+            return
+        if action == "rescan":
             continue
+        return
 
 
 def run_tui(

@@ -28,7 +28,7 @@ def build_command() -> list[str]:
         "-m",
         "PyInstaller",
         "--onefile",
-        "--name=stackpilot",
+        "--name=StackPilot_TUI",
         "--clean",
         "--paths",
         str(SRC_DIR),
