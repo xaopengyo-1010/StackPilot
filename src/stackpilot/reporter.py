@@ -9,6 +9,35 @@ from typing import Any
 from .templates import project_root
 
 
+SCENARIO_NAMES = {
+    "coding": "Coding 环境",
+    "gaming": "Gaming 配置",
+    "ai": "AI 场景评估",
+    "creator": "Creator 方案",
+}
+
+LEVEL_NAMES = {
+    "error": "严重",
+    "critical": "严重",
+    "warning": "警告",
+    "info": "信息",
+}
+
+GPU_TYPE_NAMES = {
+    "dedicated": "独立显卡",
+    "integrated": "核显",
+    "virtual": "虚拟显卡",
+    "unknown": "未确认",
+}
+
+VRAM_CONFIDENCE_NAMES = {
+    "detected": "已检测",
+    "estimated": "估算",
+    "shared": "共享内存",
+    "unknown": "未确认",
+}
+
+
 def _bar(score: int | float | None, width: int = 10) -> str:
     value = max(0, min(100, int(score or 0)))
     filled = round(value / 100 * width)
@@ -17,10 +46,53 @@ def _bar(score: int | float | None, width: int = 10) -> str:
 
 def _line(value: object | None) -> str:
     if value is None:
-        return "unknown"
+        return "未检测到"
     if isinstance(value, str) and not value.strip():
-        return "unknown"
+        return "未检测到"
+    if isinstance(value, bool):
+        return "是" if value else "否"
     return str(value)
+
+
+def _scenario_name(key: object | None) -> str:
+    text = _line(key)
+    return SCENARIO_NAMES.get(text, text)
+
+
+def _level_name(key: object | None) -> str:
+    text = _line(key)
+    return LEVEL_NAMES.get(text, text)
+
+
+def _gpu_type_name(key: object | None) -> str:
+    text = _line(key)
+    return GPU_TYPE_NAMES.get(text, text)
+
+
+def _vram_confidence_name(key: object | None) -> str:
+    text = _line(key)
+    return VRAM_CONFIDENCE_NAMES.get(text, text)
+
+
+def _yes_no(value: object | None) -> str:
+    return "必选" if bool(value) else "可选"
+
+
+def _join_available(*values: object | None) -> str:
+    available = [_line(value) for value in values if _line(value) != "未检测到"]
+    return " ".join(available) if available else "未检测到"
+
+
+def _cpu_cores(cpu_details: dict[str, Any], cpu: dict[str, Any]) -> str:
+    physical = _line(cpu_details.get("physical_cores"))
+    logical = _line(cpu_details.get("logical_cores") or cpu.get("cores"))
+    if physical == "未检测到" and logical == "未检测到":
+        return "未检测到"
+    if physical == "未检测到":
+        return f"{logical} 线程"
+    if logical == "未检测到":
+        return f"{physical} 核"
+    return f"{physical}C/{logical}T"
 
 
 def render_markdown(evaluation_data: dict[str, Any]) -> str:
@@ -43,70 +115,70 @@ def render_markdown(evaluation_data: dict[str, Any]) -> str:
     primary_gpu = hardware.get("primary_gpu") or {}
     tools = hardware.get("tools") or {}
 
-    score_rows = ["| Scenario | Score |", "| --- | --- |"]
+    score_rows = ["| 场景 | 评分 |", "| --- | --- |"]
     for key in ("coding", "gaming", "ai", "creator"):
-        score_rows.append(f"| {key} | {_bar(scores.get(key))} |")
+        score_rows.append(f"| {_scenario_name(key)} | {_bar(scores.get(key))} |")
 
-    risk_rows = ["| Level | Message | Component |", "| --- | --- | --- |"]
+    risk_rows = ["| 等级 | 说明 | 组件 |", "| --- | --- | --- |"]
     if risks:
         for item in risks:
             risk_rows.append(
-                f"| {_line(item.get('level'))} | {_line(item.get('msg'))} | {_line(item.get('component'))} |"
+                f"| {_level_name(item.get('level'))} | {_line(item.get('msg'))} | {_line(item.get('component'))} |"
             )
     else:
-        risk_rows.append("| info | no risk alerts | none |")
+        risk_rows.append("| 信息 | 暂无风险提示 | 无 |")
 
-    app_rows = ["| App | Required | Reason |", "| --- | --- | --- |"]
+    app_rows = ["| 应用 | 必选/可选 | 推荐原因 |", "| --- | --- | --- |"]
     apps = recommendations.get("apps") or []
     if apps:
         for app in apps:
             app_rows.append(
-                f"| {_line(app.get('name'))} | {_line(app.get('required'))} | {_line(app.get('reason'))} |"
+                f"| {_line(app.get('name'))} | {_yes_no(app.get('required'))} | {_line(app.get('reason'))} |"
             )
     else:
-        app_rows.append("| none | false | no recommendations |")
+        app_rows.append("| 暂无 | 可选 | 暂无推荐 |")
 
     return "\n".join(
         [
-            "# StackPilot Report",
+            "# StackPilot 报告",
             "",
-            "## Hardware Summary",
+            "## 硬件摘要",
             "",
-            f"- OS: {_line(os_info.get('name'))} {_line(os_info.get('version'))}",
-            f"- Architecture: {_line(os_info.get('architecture'))}",
-            f"- Computer: {_line(computer.get('manufacturer'))} {_line(computer.get('model'))}",
-            f"- Baseboard: {_line(baseboard.get('manufacturer'))} {_line(baseboard.get('product'))}",
-            f"- BIOS: {_line(bios.get('manufacturer'))} {_line(bios.get('version'))} {_line(bios.get('release_date'))}",
-            f"- CPU: {_line(cpu_details.get('name') or cpu.get('name'))}",
-            f"- CPU cores: {_line(cpu_details.get('physical_cores'))}C/{_line(cpu_details.get('logical_cores') or cpu.get('cores'))}T",
-            f"- RAM GB: {_line(memory_details.get('total_gb') or memory.get('ram_gb') or memory.get('total_ram_gb'))}",
-            f"- Disk: {_line(disk.get('anchor'))} total={_line(disk.get('total_gb'))}GB free={_line(disk.get('free_gb'))}GB",
-            f"- Physical disks: {_line(len(disk_devices))}",
-            f"- Disk volumes: {_line(len(disk_volumes))}",
-            f"- Primary GPU: {_line(primary_gpu.get('name'))}",
-            f"- GPU type: {_line(primary_gpu.get('gpu_type'))}",
-            f"- VRAM confidence: {_line(primary_gpu.get('vram_confidence'))}",
+            f"- 系统：{_line(os_info.get('name'))} {_line(os_info.get('version'))}",
+            f"- 架构：{_line(os_info.get('architecture'))}",
+            f"- 整机型号：{_join_available(computer.get('manufacturer'), computer.get('model'))}",
+            f"- 主板：{_join_available(baseboard.get('manufacturer'), baseboard.get('product'))}",
+            f"- BIOS：{_join_available(bios.get('manufacturer'), bios.get('version'), bios.get('release_date'))}",
+            f"- CPU：{_line(cpu_details.get('name') or cpu.get('name'))}",
+            f"- CPU 核心：{_cpu_cores(cpu_details, cpu)}",
+            f"- 内存：{_line(memory_details.get('total_gb') or memory.get('ram_gb') or memory.get('total_ram_gb'))} GB",
+            f"- 磁盘：{_line(disk.get('anchor'))} 总计 {_line(disk.get('total_gb'))} GB，剩余 {_line(disk.get('free_gb'))} GB",
+            f"- 物理磁盘数量：{_line(len(disk_devices))}",
+            f"- 磁盘卷数量：{_line(len(disk_volumes))}",
+            f"- 主要 GPU：{_line(primary_gpu.get('name'))}",
+            f"- GPU 类型：{_gpu_type_name(primary_gpu.get('gpu_type'))}",
+            f"- 显存置信度：{_vram_confidence_name(primary_gpu.get('vram_confidence'))}",
             "",
-            "## Tool Status",
+            "## 工具状态",
             "",
-            f"- Python: {_line((tools.get('python') or {}).get('version'))}",
-            f"- Git: {_line((tools.get('git') or {}).get('version'))}",
-            f"- Docker: {_line((tools.get('docker') or {}).get('version'))}",
-            f"- WSL: {_line((tools.get('wsl') or {}).get('available'))}",
+            f"- Python：{_line((tools.get('python') or {}).get('version'))}",
+            f"- Git：{_line((tools.get('git') or {}).get('version'))}",
+            f"- Docker：{_line((tools.get('docker') or {}).get('version'))}",
+            f"- WSL：{_line((tools.get('wsl') or {}).get('available'))}",
             "",
-            "## Scores",
+            "## 场景评分",
             "",
             *score_rows,
             "",
-            "## Risk Alerts",
+            "## 风险提示",
             "",
             *risk_rows,
             "",
-            "## Recommendations",
+            "## 推荐配置",
             "",
-            f"- Selected goal: {_line(recommendations.get('selected_goal'))}",
-            f"- Goal ID: {_line(recommendations.get('goal_id'))}",
-            f"- Goal name: {_line(recommendations.get('goal_name'))}",
+            f"- 当前场景：{_scenario_name(recommendations.get('selected_goal'))}",
+            f"- 模板 ID：{_line(recommendations.get('goal_id'))}",
+            f"- 模板名称：{_line(recommendations.get('goal_name'))}",
             "",
             *app_rows,
             "",

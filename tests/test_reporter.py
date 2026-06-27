@@ -8,7 +8,7 @@ from stackpilot import reporter
 from stackpilot.templates import config_dir
 
 
-def sample_evaluation() -> dict:
+def sample_evaluation(selected_goal: str = "ai") -> dict:
     return {
         "hardware_summary": {
             "os": {"name": "Windows", "version": "11", "architecture": "x86_64"},
@@ -38,37 +38,62 @@ def sample_evaluation() -> dict:
         "risk_alerts": [
             {
                 "level": "warning",
-                "msg": "Docker is not available.",
+                "msg": "Docker 不可用。",
                 "id": "docker_missing",
                 "component": "docker",
             }
         ],
         "recommendations": {
-            "selected_goal": "ai",
+            "selected_goal": selected_goal,
             "goal_id": "comfyui_starter",
-            "goal_name": "AI starter",
+            "goal_name": "AI 入门",
             "apps": [
                 {
                     "name": "ComfyUI",
                     "required": True,
-                    "reason": "Local workflow.",
+                    "reason": "本地工作流。",
                 }
             ],
         },
     }
 
 
-def test_reporter_renders_markdown_from_evaluation_data():
+def test_reporter_renders_chinese_markdown_from_evaluation_data():
     markdown = reporter.render_markdown(sample_evaluation())
 
-    assert "# StackPilot Report" in markdown
-    assert "## Hardware Summary" in markdown
-    assert "## Scores" in markdown
-    assert "| Scenario | Score |" in markdown
-    assert "| ai | [■■■■■■■■□□] 80/100 |" in markdown
-    assert "## Risk Alerts" in markdown
-    assert "| warning | Docker is not available. | docker |" in markdown
+    assert "# StackPilot 报告" in markdown
+    assert "## 硬件摘要" in markdown
+    assert "## 工具状态" in markdown
+    assert "## 场景评分" in markdown
+    assert "| 场景 | 评分 |" in markdown
+    assert "| AI 场景评估 | [■■■■■■■■□□] 80/100 |" in markdown
+    assert "## 风险提示" in markdown
+    assert "| 警告 | Docker 不可用。 | docker |" in markdown
+    assert "## 推荐配置" in markdown
+    assert "| ComfyUI | 必选 | 本地工作流。 |" in markdown
+    assert "- 当前场景：AI 场景评估" in markdown
+    assert "- GPU 类型：独立显卡" in markdown
+    assert "- 显存置信度：已检测" in markdown
     assert "NVIDIA GeForce RTX 4070" in markdown
+    assert "Hardware Summary" not in markdown
+    assert "Tool Status" not in markdown
+    assert "Risk Alerts" not in markdown
+    assert "Recommendations" not in markdown
+
+
+def test_reporter_renders_chinese_goal_name_for_all_tui_options():
+    expected = {
+        "coding": "Coding 环境",
+        "gaming": "Gaming 配置",
+        "ai": "AI 场景评估",
+        "creator": "Creator 方案",
+    }
+
+    for goal, label in expected.items():
+        markdown = reporter.render_markdown(sample_evaluation(goal))
+
+        assert f"- 当前场景：{label}" in markdown
+        assert f"| {label} |" in markdown
 
 
 def test_reporter_writes_markdown_file_without_opening_notepad(tmp_path):
@@ -78,7 +103,9 @@ def test_reporter_writes_markdown_file_without_opening_notepad(tmp_path):
     assert path.parent == tmp_path
     assert path.name.startswith("report_")
     assert path.suffix == ".md"
-    assert "ComfyUI" in path.read_text(encoding="utf-8")
+    text = path.read_text(encoding="utf-8")
+    assert "# StackPilot 报告" in text
+    assert "ComfyUI" in text
 
 
 def test_reporter_does_not_overwrite_reports_with_same_timestamp(tmp_path, monkeypatch):
