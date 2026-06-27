@@ -30,7 +30,8 @@ dev = [
 ]
 
 [project.scripts]
-stackpilot = "stackpilot.cli:main"
+stackpilot = "stackpilot.main:main"
+stackpilot-cli = "stackpilot.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

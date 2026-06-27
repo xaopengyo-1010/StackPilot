@@ -61,6 +61,14 @@ stackpilot
 python -m stackpilot
 ```
 
+如果需要使用命令式 CLI，可以运行：
+
+```powershell
+stackpilot-cli --help
+# 或
+python -m stackpilot.cli --help
+```
+
 ### 3. 单元测试验证
 
 开发者可以运行测试：
